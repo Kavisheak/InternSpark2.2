@@ -1,10 +1,11 @@
+import AdvertismentPage from "./Components/GuestComponents/AdvertismentPage"
 
 
 function App() {
  
   return (
     <>
-      
+      <AdvertismentPage/>
     </>
   )
 }

@@ -14,3 +14,7 @@ export const cardContents1 = [
     { title: "Browse Candidate Profiles", content: "Search and filter through student profiles to find candidates with the skills, interests, and backgrounds that align with your openings", icon: <RiUserSearchLine /> },
     { title: "Promote Your Brand", content: "Showcase your company culture, values, and opportunities to attract motivated students who align with your mission", icon: <IoMegaphone /> },
   ];
+
+
+
+ 

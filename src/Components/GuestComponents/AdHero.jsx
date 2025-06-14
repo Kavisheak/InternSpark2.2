@@ -1,7 +1,6 @@
-import React from 'react';
-import { cardContents1, cardContents2 } from '../../Constants/Constants';
-
-
+import React from "react";
+import { cardContents1, cardContents2 } from "../../Constants/Constants";
+import AdTestimonials from "./AdTestimonials";
 
 
 export const AdHero = () => {
@@ -33,11 +32,15 @@ export const AdHero = () => {
             >
               <div className="flex items-center mb-4">
                 <div className="flex items-center justify-center p-4 mr-4 text-white border border-blue-300 rounded-full">
-                  {card.icon}
+                   {card.icon}
                 </div>
-                <h2 className="text-xl font-semibold text-white">{card.title}</h2>
+                <h2 className="text-xl font-semibold text-white">
+                   {card.title}
+                </h2>
               </div>
-              <p className="text-sm text-center text-gray-300">{card.content}</p>
+              <p className="text-sm text-center text-gray-300">
+                {card.content}
+              </p>
             </div>
           ))}
         </div>
@@ -53,15 +56,24 @@ export const AdHero = () => {
             >
               <div className="flex items-center mb-4">
                 <div className="flex items-center justify-center p-4 mr-4 text-white border border-blue-300 rounded-full">
-                  {card.icon}
+                   {card.icon}
                 </div>
-                <h2 className="text-xl font-semibold text-white">{card.title}</h2>
+                <h2 className="text-xl font-semibold text-white">
+                   {card.title}
+                </h2>
               </div>
-              <p className="text-sm text-center text-gray-300">{card.content}</p>
+              <p className="text-sm text-center text-gray-300">
+                {card.content}
+              </p>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Testimonials Section */}
+      < AdTestimonials/>
     </div>
-  );
+  )
 };
+
+export default AdHero;

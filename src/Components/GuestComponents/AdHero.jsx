@@ -1,5 +1,6 @@
 import React from 'react';
-import { cardContents1, cardContents2 } from '../Constants/Constants';
+import { cardContents1, cardContents2 } from '../../Constants/Constants';
+
 
 
 

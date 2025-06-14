@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.hero-background {
+  background-color: black;
+  background-image: radial-gradient(circle at top right, #0d47a1 20%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  overflow: hidden;
+}

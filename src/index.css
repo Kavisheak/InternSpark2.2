@@ -3,11 +3,9 @@
 @tailwind utilities;
 
 
-.hero-background {
-  background-color: black;
-  background-image: radial-gradient(circle at top right, #0d47a1 20%, transparent 70%);
+ .all-bg {
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #0d47a1 20%, transparent 70%), black;
   background-repeat: no-repeat;
   background-size: cover;
-  width: 100%;
-  overflow: hidden;
 }

@@ -47,7 +47,7 @@ export const AdHero = () => {
       </div>
 
       {/* Section for cardContents2 */}
-      <div className="flex justify-center px-6 pb-16">
+      <div className="flex justify-center px-6 pb-16 mb-8">
         <div className="grid grid-cols-1 gap-y-8 gap-x-16 sm:grid-cols-2 md:grid-cols-3">
           {cardContents2.map((card, index) => (
             <div

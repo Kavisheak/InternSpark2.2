@@ -1,85 +1,94 @@
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-function CompanyNavbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  
-  const links = [
-    { name: "Home", path: "/" },
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "My Internships", path: "/my-internships" },
-    { name: "Applications", path: "/applications" },
-    { name: "Profile", path: "/profile" },
+const CompanyNavbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const navItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'My Internships', path: '/internships' },
+    { name: 'Applications', path: '/applications' },
+    { name: 'Profile', path: '/profile' },
   ];
 
-  const handleLogout = () => {
-    // Handle your logout here
-    console.log("Logging out...");
-    // e.g.: clear auth, navigate to login, etc.
-  };
-  
   return (
-    <nav className="p-4 text-gray-200 bg-gray-900">
-      <div className="flex items-center justify-between mx-auto max-w-7xl">
-        {/* Logo or Title */}
-        <Link to="/" className="text-2xl font-semibold">
-          MyApp
-        </Link>
+    <nav className="sticky top-0 z-50 border-b shadow-md backdrop-blur-lg bg-white/10 border-white/20">
+      <div className="flex items-center justify-between px-6 py-4">
+        <h1 className="text-2xl font-bold text-white">Internspark</h1>
 
-        {/* Menu button (Mobile) */}
-        <button
-          aria-label="Toggle Menu"
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="ml-4 text-gray-200 md:hidden"
-        >
-          {/* Hamburg icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="#ffffff"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-
-        {/* Menu Links */}
-        <ul
-          className={`${
-            isOpen ? "flex" : "hidden"
-          } md:flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 mt-4 md:mt-0`}
-        >
-          {links.map((link) => (
-            <li key={link.path}>
-              <NavLink
-                to={link.path}
-                className={({ isActive }) =>
-                   isActive ? "text-cyan-400 font-semibold" : "hover:text-cyan-400"
-                }
-              >
-                {link.name}
-              </NavLink>
-            </li>
-          ))}
-          {/* Logout Button */}
+        {/* Desktop Nav */}
+        <ul className="items-center hidden space-x-6 md:flex">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={item.name}>
+                <Link
+                  to={item.path}
+                  className={`relative text-sm font-medium px-1 pb-1 transition duration-300 ease-in-out ${
+                    isActive ? 'text-white' : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  {item.name}
+                  <span
+                    className={`absolute left-0 bottom-0 h-[2px] w-full transform transition-all duration-300 ease-in-out ${
+                      isActive
+                        ? 'bg-white scale-x-100'
+                        : 'bg-white/50 scale-x-0 group-hover:scale-x-100'
+                    }`}
+                    style={{ transformOrigin: 'left' }}
+                  />
+                </Link>
+              </li>
+            );
+          })}
           <li>
-            <button
-              onClick={handleLogout}
-              className="px-3 py-1 ml-0 transition duration-300 bg-red-500 rounded-md hover:bg-red-600 md:ml-4"
-            >
+            <button className="text-sm font-medium transition text-red-50 hover:text-red-100">
               Logout
             </button>
           </li>
         </ul>
+
+        {/* Mobile Toggle */}
+        <button
+          onClick={toggleMenu}
+          className="text-2xl text-white md:hidden focus:outline-none"
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </div>
+
+      {/* Mobile Nav */}
+      {menuOpen && (
+        <ul className="px-6 pb-4 space-y-2 bg-white/10 backdrop-blur-lg md:hidden">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={item.name}>
+                <Link
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block py-2 text-sm font-medium transition duration-300 ${
+                    isActive ? 'text-white font-semibold' : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            );
+          })}
+          <li>
+            <button className="block w-full py-2 text-sm font-medium text-left text-red-400 transition hover:text-red-500">
+              Logout
+            </button>
+          </li>
+        </ul>
+      )}
     </nav>
-  )
-}
+  );
+};
 
 export default CompanyNavbar;

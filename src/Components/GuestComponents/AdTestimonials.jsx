@@ -25,7 +25,7 @@ const testimonials = [
 // AdTestimonials Component
 export const AdTestimonials = () => {
   return (
-    <div className="flex flex-col items-center px-6 mb-12">
+    <div className="flex flex-col items-center px-6 mb-10">
       <h2 className="mb-4 text-3xl font-semibold text-gray-100">
         Success Stories
       </h2>

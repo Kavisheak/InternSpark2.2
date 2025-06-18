@@ -49,7 +49,8 @@ export default function CompanyMyInternships() {
           />
         </div>
 
-          <button className="px-4 py-1.5 font-semibold transition border rounded hover:bg-gray-100 hover:text-black" onClick={()=>navigate('/postinternship')}>
+          <button className="px-4 py-1.5 font-semibold transition border rounded hover:bg-gray-100 hover:text-black" 
+          onClick={()=>navigate('/company/postinternship')}>
             + Post New
           </button>
         </div>
@@ -95,7 +96,7 @@ export default function CompanyMyInternships() {
                    {/* View Applications */}
                    <div className="relative group" >
                    <button
-                     onClick={() => navigate('/applications')}
+                     onClick={() => navigate('/company/applications')}
                      aria-label="View Applications"
                      className="p-2 transition border rounded-full hover:bg-gray-100 hover:text-black">
                      <FiUsers size={13} />
@@ -108,7 +109,7 @@ export default function CompanyMyInternships() {
                    {/* Edit */}
                    <div className="relative group">
                    <button
-                     onClick={() =>navigate(`/postinternship/${job.id}`, { state: { internship: job } },)} //it sends full job object
+                     onClick={() =>navigate(`/company/postinternship/${job.id}`, { state: { internship: job } },)} //it sends full job object
                      aria-label="Edit"
                      className="p-2 transition border rounded-full hover:bg-gray-100 hover:text-black">
                      <FiEdit size={13} />

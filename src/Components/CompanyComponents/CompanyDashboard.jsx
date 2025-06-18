@@ -129,7 +129,7 @@ const CompanyDashboard = () => {
                      .split(" ")
                      .some((word) => word.startsWith(searchTerm.toLowerCase()))
           )
-            .slice(0,2)  // limit the application
+            .slice(0,6)  // limit the application
             .map((job, idx) => (
               <div key={idx} className="relative p-6 shadow bg-white/10 rounded-xl">
                 <h3 className="mb-1 text-lg font-semibold">{job.title}</h3>
@@ -142,10 +142,17 @@ const CompanyDashboard = () => {
                   <span className="px-3 py-1 text-sm text-black bg-white rounded-full">
                     {job.applications} Applications
                   </span>
-                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black">
+                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black"
+                  onClick={()=>navigate(`/postinternship/${job.id}`, { state: { internship: job } },)}
+                  >
                     Edit
                   </button>
-                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black">
+                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black"
+                  onClick={()=>navigate(`/postinternship/${job.id}`, {
+            state: { internship:job, viewOnly: true },
+       })
+}
+                  >
                     View
                   </button>
                 </div>

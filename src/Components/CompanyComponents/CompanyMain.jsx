@@ -5,6 +5,7 @@ import CompanyDashboard from './CompanyDashboard';
 import CompanyMyInternships from './CompanyMyInternships';
 import CompanyApplications from './CompanyApplications';
 import CompanyProfile from './CompanyProfile';
+import PostInternshipForm from './PostInternshipForm';
 
 const CompanyMain = () => {
   return (
@@ -16,7 +17,10 @@ const CompanyMain = () => {
         <Route path="/dashboard" element={<CompanyDashboard />} />
         <Route path="/internships" element={<CompanyMyInternships />} />
         <Route path="/applications" element={<CompanyApplications />} />
+        <Route path="/applications/:applicantId" element={<CompanyApplications />} />
         <Route path="/profile" element={<CompanyProfile />} />
+        <Route path='/postinternship' element={<PostInternshipForm />} />
+        <Route path="/postinternship/:id" element={<PostInternshipForm />} />
       </Routes>
     </Router>
     </div>

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { FiCalendar, FiFilter, FiSearch } from 'react-icons/fi';
 import { MdWorkOutline, MdFiberNew, MdAssignment } from 'react-icons/md';
-
+import { useNavigate } from 'react-router-dom';
 const CompanyDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAllApplications, setShowAllApplications] = useState(false);
+  const navigate=useNavigate();
 
 
   const recentApplications = [
     { name: 'Sarah Johnson', role: 'Frontend Developer Intern', status: 'New', time: '2h ago' },
     { name: 'Michael Chen', role: 'UX Design Intern', status: 'Reviewing', time: '1 day ago' },
     { name: 'Alex Washington', role: 'Data Science Intern', status: 'Interviewing', time: '3 days ago' },
+    { name: 'John Mac', role: 'Cyber Intern', status: 'Reviewing', time: '2 days ago' },
+    
   ];
 
   const activeInternships = [
@@ -38,7 +40,7 @@ const CompanyDashboard = () => {
           { label: 'New Applications', icon: <MdFiberNew size={26} />, value: newApplications },
           { label: 'Total Applications', icon: <MdAssignment size={26} />, value: totalApplications }
         ].map((item, idx) => (
-          <div key={idx} className="flex items-center p-5 shadow bg-white/85 rounded-xl" >
+          <div key={idx} className="flex items-center p-5 shadow bg-white/90 rounded-xl" >
             <div className="mr-4 text-black">{item.icon}</div>
             <div>
               <p className="text-sm text-black/60">{item.label}</p>
@@ -72,10 +74,12 @@ const CompanyDashboard = () => {
         <div className="space-y-3">
           {recentApplications
             .filter(app =>
-              app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              app.role.toLowerCase().includes(searchTerm.toLowerCase())
+              app.name.toLowerCase().split(" ")
+            .some((word) => word.startsWith(searchTerm.toLowerCase()) ||
+             app.role.toLowerCase().split(" ")
+            .some((word) => word.startsWith(searchTerm.toLowerCase()) ) ) 
             )
-            .slice(0,showAllApplications ? 6 : 3)  //limit only 3 application
+            .slice(0,4)  //limit only 4 application
             .map((app, idx) => (
               <div key={idx} className="flex items-center justify-between p-4 rounded-lg shadow bg-white/10">
                 <div>
@@ -88,23 +92,17 @@ const CompanyDashboard = () => {
                   <span className={`text-sm px-3 py-1 rounded-full ${statusColors[app.status]}`}>
                     {app.status}
                   </span>
-                  <button className="underline text-white/90 hover:text-white">View</button>
+                  <button className="underline text-white/90 hover:text-white"
+                  onClick={()=>navigate(`/applications/${app.name.replace(/\s+/g, '-').toLowerCase()}`)}
+                  >
+                    View
+                  </button>
                 </div>
               </div>
             ))
             
           }
-          {recentApplications.length > 3 && (
-  <div className="mt-4 text-center">
-    <button
-      onClick={() => setShowAllApplications(!showAllApplications)}
-      className="text-sm underline hover:text-white/90"
-    >
-      {showAllApplications ? 'Show Less' : 'Show More'}
-    </button>
-  </div>
-)}
-
+    
           
 
           {/* No applications found message */}
@@ -121,11 +119,16 @@ const CompanyDashboard = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold">Your Active Internships</h2>
-          <button className="px-4 py-1 transition border rounded hover:bg-white hover:text-black">Manage All</button>
+          <button className="px-4 py-1 transition border rounded hover:bg-white hover:text-black"
+          onClick={()=>navigate('/internships')}
+          >Manage All</button>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {activeInternships
-            .filter(job => job.title.toLowerCase().includes(searchTerm.toLowerCase()))
+            .filter(job => job.title.toLowerCase()
+                     .split(" ")
+                     .some((word) => word.startsWith(searchTerm.toLowerCase()))
+          )
             .slice(0,2)  // limit the application
             .map((job, idx) => (
               <div key={idx} className="relative p-6 shadow bg-white/10 rounded-xl">

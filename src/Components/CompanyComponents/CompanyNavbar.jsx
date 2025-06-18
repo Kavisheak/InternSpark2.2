@@ -8,11 +8,11 @@ const CompanyNavbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'My Internships', path: '/internships' },
-    { name: 'Applications', path: '/applications' },
-    { name: 'Profile', path: '/profile' },
+    { name: 'Home', path: '/company/' },
+    { name: 'Dashboard', path: '/company/dashboard' },
+    { name: 'My Internships', path: '/company/internships' },
+    { name: 'Applications', path: '/company/applications' },
+    { name: 'Profile', path: '/company/profile' },
   ];
 
   return (

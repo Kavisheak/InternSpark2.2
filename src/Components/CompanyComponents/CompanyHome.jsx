@@ -23,7 +23,7 @@ const CompanyHome = () => {
       <div className="flex justify-center pt-3">
         <button
           className="flex items-center justify-center w-40 px-6 py-3 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
-          onClick={()=>navigate('/internships')}
+          onClick={()=>navigate('/company/internships')}
         >          
           Get Started
           
@@ -31,7 +31,7 @@ const CompanyHome = () => {
 
         <button
           className="flex items-center justify-center w-40 px-6 py-3 ml-6 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
-          onClick={()=>navigate('/profile')}
+          onClick={()=>navigate('/company/profile')}
         >
           My Profile
         </button>

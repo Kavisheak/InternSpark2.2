@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FiArrowRight, FiUser } from 'react-icons/fi';
 
 const CompanyHome = () => {
   const navigate=useNavigate();
@@ -13,7 +14,7 @@ const CompanyHome = () => {
           Fuel Your Future Team
         </h1>
         {/* Title shadow */}
-        <h1 className="-mt-2 text-6xl font-bold text-center text-white transform pointer-events-none opacity-20 blur-sm rotate-x-12 sm:disabled:">
+        <h1 className="-mt-4 text-6xl font-bold text-center text-white transform pointer-events-none opacity-20 blur-sm rotate-x-12 sm:disabled:">
           Fuel Your Future Team
         </h1>
       </div>
@@ -23,8 +24,9 @@ const CompanyHome = () => {
         <button
           className="flex items-center justify-center w-40 px-6 py-3 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
           onClick={()=>navigate('/internships')}
-        >
+        >          
           Get Started
+          
         </button>
 
         <button
@@ -51,12 +53,15 @@ const CompanyHome = () => {
           </div>
 
           <div className="p-6 text-white border shadow-md rounded-xl bg-white/10 backdrop-blur-md border-white/30 md:shadow-lg">
-            <h2 className="mb-2 overflow-hidden text-2xl font-bold">
-              <span className="block marquee">Left Card 2</span>
-            </h2>
-            <p className="text-white/90">
-              Content for the second left-side card.
-            </p>
+           <h2 className="mb-2 text-2xl font-bold">What You Can Do</h2>
+          <p className="text-white/90">
+            1.Post new internship opportunities in seconds<br />
+            2.View and manage applications easily<br />
+            3.Update company profile & preferences<br />
+            4.Shortlist or reject candidates instantly<br />
+            5.Track student engagement and metrics
+          </p>
+
           </div>
         </div>
 

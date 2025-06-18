@@ -21,7 +21,7 @@ const PostInternshipForm = () => {
     applicationLimit: "",
   });
 
-  const [isEditable, setIsEditable] = useState(!id); // editable if creating
+  const [isEditable, setIsEditable] = useState(!true); // editable if creating
 
   useEffect(() => {
     if (editingInternship) {
@@ -36,7 +36,7 @@ const PostInternshipForm = () => {
         deadline: editingInternship.deadline || "",
         applicationLimit: editingInternship.applicationLimit || "",
       });
-
+      setIsEditable(!isViewOnlyMode)
       if (isViewOnlyMode) {
         setIsEditable(false); // force view-only mode
       }
@@ -64,7 +64,7 @@ const PostInternshipForm = () => {
       console.log("✅ Creating new internship:", formData);
       alert("Post has been published");
     }
-    navigate("/internships");
+    navigate("/company/internships");
   };
 
   return (
@@ -224,7 +224,7 @@ const PostInternshipForm = () => {
                 type="button"
                 onClick={() => {
                   if (isViewOnlyMode) {
-                    navigate("/dashboard");
+                    navigate("/company/dashboard");
                   } else {
                     setIsEditable(false);
                   }

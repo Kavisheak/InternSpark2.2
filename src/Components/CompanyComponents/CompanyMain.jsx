@@ -10,7 +10,7 @@ import PostInternshipForm from './PostInternshipForm';
 const CompanyMain = () => {
   return (
     <div className='all-bg'>
-      <Router>
+     
       <CompanyNavbar />
       <Routes>
         <Route path="/" element={<CompanyHome/>} />
@@ -22,7 +22,7 @@ const CompanyMain = () => {
         <Route path='/postinternship' element={<PostInternshipForm />} />
         <Route path="/postinternship/:id" element={<PostInternshipForm />} />
       </Routes>
-    </Router>
+    
     </div>
   )
 }

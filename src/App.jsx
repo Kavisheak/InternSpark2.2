@@ -2,8 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
 
+
 function App() {
   return (
+
     <Router>
       <Routes>
         <Route path="/" element={<AdvertismentPage />} />
@@ -12,6 +14,7 @@ function App() {
       </Routes>
     </Router>
   );
+
 }
 
 export default App;

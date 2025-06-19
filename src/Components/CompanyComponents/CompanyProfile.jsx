@@ -120,7 +120,7 @@ const CompanyProfileForm = () => {
         </div>
 
         {/* Input Form */}
-        <div className="flex flex-col justify-between h-full p-6 text-black bg-gray-100 border border-black shadow-md rounded-xl">
+        <div className="flex flex-col justify-between h-full p-6 text-white border border-black shadow-md profile-bg rounded-xl">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {fields.map(({ label, name, type, placeholder }) => (
               <div key={name}>

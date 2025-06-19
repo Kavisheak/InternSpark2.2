@@ -51,7 +51,7 @@ const CompanyDashboard = () => {
       </div>
 
       {/* Search + Filter Controls */}
-      <div className="flex flex-col items-start justify-between mb-6 space-y-4 sm:flex-row sm:items-center sm:space-y-0">
+      <div className="flex flex-col items-start justify-between space-y-4 mb-9 sm:flex-row sm:items-center sm:space-y-0">
         <div className="flex items-center w-full px-3 py-2 rounded-lg bg-white/10 sm:w-1/3">
           <FiSearch className="mr-2 text-white/60" />
           <input
@@ -70,7 +70,12 @@ const CompanyDashboard = () => {
 
       {/* Recent Applications */}
       <div className="mb-10">
-        <h2 className="mb-4 text-2xl font-semibold">Recent Applications</h2>
+         <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-semibold">Recent Applications</h2>
+          <button className="px-4 py-1 transition border rounded hover:bg-white hover:text-black"
+          onClick={()=>navigate('/company/applications')}
+          >View All</button>
+        </div>
         <div className="space-y-3">
           {recentApplications
             .filter(app =>

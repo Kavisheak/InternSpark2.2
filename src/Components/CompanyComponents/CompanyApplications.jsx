@@ -19,16 +19,16 @@ const initialApplications = [
         role: "Senior Manager",
         company: "Tech Solutions Ltd.",
         email: "john.peterson@techsolutions.com",
-        phone: "+94 71 123 0456"
+        phone: "+94 71 123 0456",
       },
       {
         name: "Alice Brown",
         role: "Team Lead",
         company: "WebTech Solutions",
         email: "alice.brown@webtech.com",
-        phone: "+94 77 654 7890"
-      }
-    ]
+        phone: "+94 77 654 7890",
+      },
+    ],
   },
   {
     id: 2,
@@ -40,7 +40,7 @@ const initialApplications = [
     experience: "Intern at TechDesign",
     skills: "Design is my passion…",
     email: "m.chen@example.com",
-    status: "Reviewing"
+    status: "Reviewing",
   },
   {
     id: 3,
@@ -52,7 +52,7 @@ const initialApplications = [
     experience: "Intern at AnalyticsPro",
     skills: "I am eager to learn…",
     email: "alex.w@example.com",
-    status: "Interviewing"
+    status: "Interviewing",
   },
   {
     id: 4,
@@ -64,56 +64,8 @@ const initialApplications = [
     experience: "Intern at WebTech Solutions",
     skills: "I am passionate about coding…",
     email: "jamie.g@example.com",
-    status: "Rejected"
+    status: "Rejected",
   },
-  {
-    id: 5,
-    name: "Alex Washington",
-    gender: "Male",
-    role: "Data Science Intern",
-    applied: "5/14/2025",
-    education: "Data Analytics, MIT",
-    experience: "Intern at AnalyticsPro",
-    skills: "I am eager to learn…",
-    email: "alex.w@example.com",
-    status: "Interviewing"
-  },
-  {
-    id: 6,
-    name: "Jamie Garcia",
-    gender: "Female",
-    role: "Frontend Developer Intern",
-    applied: "5/13/2025",
-    education: "Web Development, Harvard University",
-    experience: "Intern at WebTech Solutions",
-    skills: "I am passionate about coding…",
-    email: "jamie.g@example.com",
-    status: "Rejected"
-  },
-  {
-    id: 7,
-    name: "Alex Washington",
-    gender: "Male",
-    role: "Data Science Intern",
-    applied: "5/14/2025",
-    education: "Data Analytics, MIT",
-    experience: "Intern at AnalyticsPro",
-    skills: "I am eager to learn…",
-    email: "alex.w@example.com",
-    status: "Interviewing"
-  },
-  {
-    id: 8,
-    name: "Jamie Garcia",
-    gender: "Female",
-    role: "Frontend Developer Intern",
-    applied: "5/13/2025",
-    education: "Web Development, Harvard University",
-    experience: "Intern at WebTech Solutions",
-    skills: "I am passionate about coding…",
-    email: "jamie.g@example.com",
-    status: "Rejected"
-  }
 ];
 
 function getStatusClass(status) {
@@ -123,40 +75,55 @@ function getStatusClass(status) {
       Reviewing: "bg-gray-900 text-gray-400",
       Interviewing: "bg-blue-900 text-blue-400",
       Shortlisted: "bg-green-900 text-green-400",
-      Rejected: "bg-red-900 text-red-400"
+      Rejected: "bg-red-900 text-red-400",
     }[status] || "bg-gray-900 text-gray-400"
   );
 }
 
 export default function CompanyApplications() {
-  const [applications, setApplications] = useState(initialApplications);
   const { applicantId } = useParams();
+  const [applications, setApplications] = useState(initialApplications);
   const [selectedId, setSelectedId] = useState(null);
   const [activeFilter, setActiveFilter] = useState("All");
 
+  // Parse role from URL param (convert dashes back to spaces)
+  const roleFromUrl = applicantId ? applicantId.replace(/-/g, " ") : null;
+
   useEffect(() => {
     if (applicantId) {
-      const match = applications.find(
-        (app) => app.name.replace(/\s+/g, "-").toLowerCase() === applicantId
+      // Select first application with matching role
+      const filteredApps = applications.filter(
+        (app) => app.role.toLowerCase() === roleFromUrl.toLowerCase()
       );
-      if (match) setSelectedId(match.id);
+      if (filteredApps.length > 0) {
+        setSelectedId(filteredApps[0].id);
+      } else {
+        setSelectedId(null);
+      }
     } else {
-      setSelectedId(applications[0].id); // default to first
+      // Default: select first application overall
+      setSelectedId(applications.length > 0 ? applications[0].id : null);
     }
-  }, [applicantId, applications]);
+  }, [applicantId, applications, roleFromUrl]);
 
   const handleStatusUpdate = (id, newStatus) => {
     setApplications((apps) =>
-      apps.map((app) =>
-        app.id === id ? { ...app, status: newStatus } : app
-      )
+      apps.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
     );
   };
 
+  // Filter applications by role param
+  const roleFilteredApps = roleFromUrl
+    ? applications.filter(
+        (app) => app.role.toLowerCase() === roleFromUrl.toLowerCase()
+      )
+    : applications;
+
+  // Further filter by activeFilter (status)
   const filteredApps =
     activeFilter === "All"
-      ? applications
-      : applications.filter((app) => app.status === activeFilter);
+      ? roleFilteredApps
+      : roleFilteredApps.filter((app) => app.status === activeFilter);
 
   const selected = applications.find((app) => app.id === selectedId);
 
@@ -167,7 +134,14 @@ export default function CompanyApplications() {
         {/* Filter Buttons */}
         <div className="sticky top-0 z-10 pt-1 pb-2 bg-transparent">
           <div className="flex flex-wrap gap-2">
-            {["All", "New", "Reviewing", "Shortlisted", "Interviewing", "Rejected"].map((status) => (
+            {[
+              "All",
+              "New",
+              "Reviewing",
+              "Shortlisted",
+              "Interviewing",
+              "Rejected",
+            ].map((status) => (
               <button
                 key={status}
                 onClick={() => setActiveFilter(status)}
@@ -185,6 +159,9 @@ export default function CompanyApplications() {
 
         {/* Scrollable Card List */}
         <div className="flex-1 pr-1 mt-3 overflow-y-auto">
+          {filteredApps.length === 0 && (
+            <p className="mt-4 text-center text-gray-400">No applications found.</p>
+          )}
           {filteredApps.map((app) => (
             <div
               key={app.id}

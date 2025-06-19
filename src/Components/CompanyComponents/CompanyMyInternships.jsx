@@ -66,6 +66,7 @@ export default function CompanyMyInternships() {
             .some((word) => word.startsWith(searchTerm.toLowerCase()) ) 
                 
           )
+          .slice(0,6)
           .map((job) => (
             <div
               key={job.id}

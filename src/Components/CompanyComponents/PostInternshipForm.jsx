@@ -21,7 +21,7 @@ const PostInternshipForm = () => {
     applicationLimit: "",
   });
 
-  const [isEditable, setIsEditable] = useState(!true); // editable if creating
+  const [isEditable, setIsEditable] = useState(!id); // editable if creating
 
   useEffect(() => {
     if (editingInternship) {
@@ -63,6 +63,7 @@ const PostInternshipForm = () => {
     } else {
       console.log("✅ Creating new internship:", formData);
       alert("Post has been published");
+      
     }
     navigate("/company/internships");
   };

@@ -1,7 +1,15 @@
+
+
+
+import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain"
+
+
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
 import Index from './Components/AdminComponent/UserManagement';
+
 
 
 
@@ -18,8 +26,8 @@ function App() {
     </Routes>
  </Router>
     
-  );
 
+   )
 
 }
 

@@ -9,36 +9,35 @@ const CompanyHome = () => {
   return (
   <div className='min-h-screen mt-48'>
       {/* Title */}
-<div className="relative flex flex-col items-center w-full mt-6">
-  <h1 className="relative z-10 text-6xl font-extrabold text-center text-white md:text-8xl">
-    Fuel Your Future Team
-  </h1>
-  <h1 className="absolute z-0 text-6xl text-center text-white top-1 md:text-8xl opacity-20 blur-sm">
-    Fuel Your Future Team
+  <div className="flex flex-col w-full mt-6 ">
+  <p className='pl-16 mb-6 text-2xl font-semibold text-white'>Welcome !</p>
+  <h1 className="relative z-10 text-6xl font-bold text-white pl-14 md:text-7xl">
+    Build Powerful Teams,  <br/><p className='pt-4 text-5xl '>Drive Real Impact.</p>
   </h1>
 </div>
 
 
       {/* Buttons */}
-      <div className="flex justify-center pt-3 mt-10 mb-80">
+      <div className="flex pt-3 pl-16 mt-10 mb-64">
         <button
-          className="flex items-center justify-center w-40 px-6 py-3 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
+          className="flex items-center justify-center w-40 px-6 py-4 font-semibold text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
           onClick={()=>navigate('/company/internships')}
         >          
           Get Started
-          
+          <FiArrowRight className='ml-2'/>
         </button>
 
         <button
-          className="flex items-center justify-center w-40 px-6 py-3 ml-6 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
+          className="flex items-center justify-center w-40 px-6 py-3 font-semibold text-center text-white transition-colors border rounded-lg ml-9 backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
           onClick={()=>navigate('/company/profile')}
         >
+          <FiUser className='mr-2'/>
           My Profile
         </button>
       </div>
 
       {/* Cards */}
-      <div className="flex flex-col gap-6 mt-16 ml-4 mr-4 mb-96 md:flex-row md:ml-10 md:mr-10">
+      <div className="flex flex-col gap-6 mt-5 ml-4 mr-4 mb-96 md:flex-row md:ml-10 md:mr-10">
         {/* Left Column */}
         <div className="flex flex-col gap-6 md:w-1/3">
           <div className="p-6 text-white border shadow-md rounded-xl bg-white/10 backdrop-blur-md border-white/30 md:shadow-lg">

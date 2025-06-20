@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiCalendar, FiEdit, FiTrash, FiSearch, FiMapPin, FiUsers } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import CompanyNavbar from "./CompanyNavbar";
 
 const internships = [
   {
@@ -34,6 +35,8 @@ export default function CompanyMyInternships() {
   const navigate = useNavigate();
 
   return (
+     <div className="min-h-screen "> 
+     <CompanyNavbar/>
     <div className="min-h-screen p-6 text-gray-100 bg-transparent md:p-10">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-9">
@@ -63,7 +66,7 @@ export default function CompanyMyInternships() {
       <div className="flex flex-col space-y-4">
         {internships
           .filter((job) =>
-            job.title.toLowerCase().includes(searchTerm.toLowerCase())
+            job.title.toLowerCase().startsWith(searchTerm.toLowerCase())
           )
           .slice(0, 6)
           .map((job) => (
@@ -161,6 +164,7 @@ export default function CompanyMyInternships() {
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }

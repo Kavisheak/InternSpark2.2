@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Activity } from 'lucide-react';
 
 const RecentActivities = () => {
@@ -26,12 +26,12 @@ const RecentActivities = () => {
   ];
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <div className="flex items-center space-x-2 mb-4">
+    <div className="p-6 bg-white border border-gray-200 rounded-lg">
+      <div className="flex items-center mb-4 space-x-2">
         <Activity size={20} className="text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Recent Activities</h3>
       </div>
-      <p className="text-sm text-gray-500 mb-6">Latest platform activities</p>
+      <p className="mb-6 text-sm text-gray-500">Latest platform activities</p>
       
       <div className="space-y-4">
         {activities.map((activity, index) => (

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CompanyNavbar from './CompanyNavbar';
+
 import CompanyHome from './CompanyHome';
 import CompanyDashboard from './CompanyDashboard';
 import CompanyMyInternships from './CompanyMyInternships';
@@ -11,7 +11,7 @@ const CompanyMain = () => {
   return (
     <div className='all-bg'>
      
-      <CompanyNavbar />
+      
       <Routes>
         <Route path="/" element={<CompanyHome/>} />
         <Route path="/dashboard" element={<CompanyDashboard />} />

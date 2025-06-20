@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import CompanyNavbar from "./CompanyNavbar";
 
 const initialApplications = [
   {
@@ -128,6 +129,8 @@ export default function CompanyApplications() {
   const selected = applications.find((app) => app.id === selectedId);
 
   return (
+     <div className="min-h-screen "> 
+     <CompanyNavbar/>
     <div className="flex items-start min-h-screen gap-6 p-6 mt-0 text-gray-200 bg-transparent">
       {/* Side panel */}
       <div className="w-1/4 mr-6 flex flex-col max-h-[calc(100vh-3rem)]">
@@ -274,6 +277,7 @@ export default function CompanyApplications() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FiCalendar, FiFilter, FiSearch } from 'react-icons/fi';
 import { MdWorkOutline, MdFiberNew, MdAssignment } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import CompanyNavbar from './CompanyNavbar';
 const CompanyDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate=useNavigate();
@@ -31,6 +32,8 @@ const CompanyDashboard = () => {
   };
 
   return (
+     <div className="min-h-screen "> 
+     <CompanyNavbar/>
     <div className="min-h-screen p-6 text-white bg-transparent md:p-10">
 
       {/* Summary Cards */}
@@ -172,6 +175,7 @@ const CompanyDashboard = () => {
           )}
         
       </div>
+    </div>
     </div>
   );
 };

@@ -15,13 +15,7 @@ function App() {
   return (
 
     <>
-     { /* <AdvertismentPage/>
-      <CompanyMain/> */}
-      
-    
   
-
-
     <Router>
       <Routes>
         <Route path="/" element={<AdvertismentPage />} />

@@ -1,5 +1,8 @@
-import CompanyMain from "./Components/CompanyComponents/CompanyMain"
-import AdvertismentPage from "./Components/GuestComponents/AdvertismentPage"
+
+
+import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain"
+
+
 
 
 
@@ -7,9 +10,9 @@ function App() {
  
   return (
     <>
-      {/* <AdvertismentPage/> */}
-      <CompanyMain/>
-      
+     { /* <AdvertismentPage/>
+      <CompanyMain/> */}
+      <AdminMain/>
     </>
   )
 }

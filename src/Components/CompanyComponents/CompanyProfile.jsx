@@ -8,11 +8,14 @@ import {
   FaInfoCircle,
 } from 'react-icons/fa';
 import { BsBuildingsFill } from 'react-icons/bs';
+import CompanyNavbar from './CompanyNavbar';
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState('Company Profile');
 
   return (
+       <div className="min-h-screen "> 
+     <CompanyNavbar/>
     <div className="flex flex-col p-4 bg-transparent">
       <h1 className='mb-6 ml-6 text-3xl font-bold text-white'>Company Profile</h1>
       <div className="max-w-md">
@@ -30,6 +33,7 @@ const CompanyProfile = () => {
         </div>
       </div>
       <div className='ml-0'>{activeTab === 'Company Profile' ? <CompanyProfileForm /> : <ContactInfoForm />}</div>
+    </div>
     </div>
   );
 };

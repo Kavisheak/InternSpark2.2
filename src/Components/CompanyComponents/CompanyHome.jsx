@@ -1,12 +1,15 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiArrowRight, FiUser } from 'react-icons/fi';
+import CompanyNavbar from './CompanyNavbar';
 
 const CompanyHome = () => {
   const navigate=useNavigate();
 
   
   return (
+     <div className="min-h-screen "> 
+     <CompanyNavbar/>
   <div className='min-h-screen mt-48'>
       {/* Title */}
   <div className="flex flex-col w-full mt-6 ">
@@ -28,7 +31,7 @@ const CompanyHome = () => {
         </button>
 
         <button
-          className="flex items-center justify-center w-40 px-6 py-3 font-semibold text-center text-white transition-colors border rounded-lg ml-9 backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
+          className="flex items-center justify-center w-40 px-6 py-3 ml-12 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
           onClick={()=>navigate('/company/profile')}
         >
           <FiUser className='mr-2'/>
@@ -37,6 +40,7 @@ const CompanyHome = () => {
       </div>
 
       {/* Cards */}
+      <div className='w-full h-full p-5 bg-blue-950'>
       <div className="flex flex-col gap-6 mt-5 ml-4 mr-4 mb-96 md:flex-row md:ml-10 md:mr-10">
         {/* Left Column */}
         <div className="flex flex-col gap-6 md:w-1/3">
@@ -91,6 +95,7 @@ const CompanyHome = () => {
   <p className="mt-6 italic">“Find the perfect intern. Reduce time-to-hire. Grow your team with confidence.”</p>
         </div>
       </div>
+      </div>
     
      <div className="w-full h-screen">
       <div className="relative w-full h-full">
@@ -106,7 +111,15 @@ const CompanyHome = () => {
       </div>
     </div>
 
-      <div className='h-screen bg-transparent mt-36'></div>
+      <div className='flex items-center justify-center h-screen mt-0 bg-transparent my-gradient-div d-bg'>
+  <h1 className='text-5xl font-bold text-center text-white'>
+    Empowering Futures with Exceptional <br />Internship Opportunities
+  </h1>
+</div>
+
+<div className='min-h-screen bg-teal-700'></div>
+
+    </div>
     </div>
   )
 }

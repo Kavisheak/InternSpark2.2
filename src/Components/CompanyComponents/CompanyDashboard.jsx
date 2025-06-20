@@ -16,9 +16,9 @@ const CompanyDashboard = () => {
   ];
 
   const activeInternships = [
-    { title: 'Frontend Developer Intern', deadline: 'May 20, 2025', applications: 9, filled: 60 },
-    { title: 'UI/UX Intern', deadline: 'May 30, 2025', applications: 3, filled: 25 },
-    { title: 'Data Analyst Intern', deadline: 'June 10, 2025', applications: 6, filled: 40 },
+    { id: 1, title: 'Frontend Developer Intern', deadline: 'May 20, 2025', applications: 9, filled: 60 },
+  { id: 2, title: 'UI/UX Intern', deadline: 'May 30, 2025', applications: 3, filled: 25 },
+  { id: 3, title: 'Data Analyst Intern', deadline: 'June 10, 2025', applications: 6, filled: 40 },
   ];
 
   const totalApplications = activeInternships.reduce((sum, job) => sum + job.applications, 0);
@@ -93,7 +93,7 @@ const CompanyDashboard = () => {
                     {app.status}
                   </span>
                   <button className="underline text-white/90 hover:text-white"
-                  onClick={()=>navigate(`/applications/${app.name.replace(/\s+/g, '-').toLowerCase()}`)}
+                  onClick={()=>navigate(`/company/applications/${app.name.replace(/\s+/g, '-').toLowerCase()}`)}
                   >
                     View
                   </button>
@@ -120,7 +120,7 @@ const CompanyDashboard = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold">Your Active Internships</h2>
           <button className="px-4 py-1 transition border rounded hover:bg-white hover:text-black"
-          onClick={()=>navigate('/internships')}
+          onClick={()=>navigate('/company/internships')}
           >Manage All</button>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
@@ -129,7 +129,7 @@ const CompanyDashboard = () => {
                      .split(" ")
                      .some((word) => word.startsWith(searchTerm.toLowerCase()))
           )
-            .slice(0,2)  // limit the application
+            .slice(0,6)  // limit the application
             .map((job, idx) => (
               <div key={idx} className="relative p-6 shadow bg-white/10 rounded-xl">
                 <h3 className="mb-1 text-lg font-semibold">{job.title}</h3>
@@ -142,10 +142,17 @@ const CompanyDashboard = () => {
                   <span className="px-3 py-1 text-sm text-black bg-white rounded-full">
                     {job.applications} Applications
                   </span>
-                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black">
+                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black"
+                  onClick={()=>navigate(`/company/postinternship/${job.id}`, { state: { internship: job,viewOnly:false }, })}
+                  >
                     Edit
                   </button>
-                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black">
+                  <button className="px-3 py-1 text-sm transition border border-white rounded hover:bg-white hover:text-black"
+                  onClick={()=>navigate(`/company/postinternship/${job.id}`, {
+            state: { internship:job, viewOnly: true },
+       })
+}
+                  >
                     View
                   </button>
                 </div>

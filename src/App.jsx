@@ -12,14 +12,14 @@ function App() {
           {/* Default route redirects to login */}
           <Route path="/" element={<Navigate to="/LoginPage" replace />} />
           
-          {/* Login page route */}
+          {/* Login page  */}
           <Route path="/login" element={<LoginPage />} />
           
-          {/* Registration page route */}
+          {/* Registration page */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/signup" element={<RegisterPage />} /> {/* Alternative route */}
           
-          {/* Catch-all route for 404 - redirects to login */}
+          
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

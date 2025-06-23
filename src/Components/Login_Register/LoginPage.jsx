@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onNavigateToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('Student');
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add your login logic here
-    console.log('Login attempt:', { email, password, userType });
+    console.log('Login attempt:', { email, password });
   };
 
   return (
@@ -29,28 +26,8 @@ const Login = () => {
           <p className="text-gray-400">Sign in to fuel your future team</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <label className="block text-gray-300 text-sm font-medium mb-3">Login as</label>
-            <div className="grid grid-cols-3 gap-2">
-              {['Student', 'Company', 'Admin'].map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setUserType(type)}
-                  className={`p-3 rounded-lg border text-sm font-medium transition-all ${
-                    userType === type
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-slate-700 border-slate-600 text-gray-300 hover:bg-slate-600'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-4">
+        <div className="space-y-4">
+          <div>
             <label className="block text-gray-300 text-sm font-medium mb-2">Email Address</label>
             <input
               type="email"
@@ -58,11 +35,10 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-              required
             />
           </div>
 
-          <div className="mb-4">
+          <div>
             <label className="block text-gray-300 text-sm font-medium mb-2">Password</label>
             <input
               type="password"
@@ -70,36 +46,206 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-              required
             />
           </div>
 
-          <div className="text-right mb-6">
-            <Link to="/forgot-password" className="text-blue-400 hover:text-blue-300 text-sm">
+          <div className="text-right">
+            <button className="text-blue-400 hover:text-blue-300 text-sm">
               Forgot your password?
-            </Link>
+            </button>
           </div>
 
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="w-full bg-slate-600 hover:bg-slate-500 text-white font-medium py-3 px-4 rounded-lg transition-colors"
           >
-            Sign In as User
+            Sign In
           </button>
-        </form>
+        </div>
 
         <div className="text-center mt-6">
           <span className="text-gray-400">Don't have an account? </span>
-          <Link 
-            to="/register" 
+          <button 
+            onClick={onNavigateToRegister}
             className="text-blue-400 hover:text-blue-300 font-medium"
           >
             Sign up
-          </Link>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+const Register = ({ onNavigateToLogin }) => {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    userType: 'Student looking for internships',
+    password: '',
+    confirmPassword: '',
+    agreeToTerms: false
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    
+    if (!formData.agreeToTerms) {
+      alert('Please agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    // Add your registration logic here
+    console.log('Registration attempt:', formData);
+    
+    // After successful registration, navigate to login
+    alert('Account created successfully! Please sign in.');
+    onNavigateToLogin();
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center py-8">
+      <div className="bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
+          <p className="text-gray-400">Join thousands of aspiring interns</p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">I am a</label>
+            <select
+              name="userType"
+              value={formData.userType}
+              onChange={handleChange}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="Student looking for internships">Student looking for internships</option>
+              <option value="Company hiring interns">Company hiring interns</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="flex items-start">
+              <input
+                type="checkbox"
+                name="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={handleChange}
+                className="mt-1 mr-2"
+              />
+              <span className="text-gray-400 text-sm">
+                I agree to the{' '}
+                <button className="text-blue-400 hover:text-blue-300 underline">
+                  Terms of Service
+                </button>
+                {' '}and{' '}
+                <button className="text-blue-400 hover:text-blue-300 underline">
+                  Privacy Policy
+                </button>
+              </span>
+            </label>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          >
+            Create Account
+          </button>
+        </div>
+
+        <div className="text-center mt-6">
+          <span className="text-gray-400">Already have an account? </span>
+          <button 
+            onClick={onNavigateToLogin}
+            className="text-blue-400 hover:text-blue-300 font-medium"
+          >
+            Sign in
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('login');
+
+  const navigateToLogin = () => setCurrentPage('login');
+  const navigateToRegister = () => setCurrentPage('register');
+
+  return (
+    <div>
+      {currentPage === 'login' ? (
+        <Login onNavigateToRegister={navigateToRegister} />
+      ) : (
+        <Register onNavigateToLogin={navigateToLogin} />
+      )}
+    </div>
+  );
+};
+
+export default App;

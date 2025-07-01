@@ -1,0 +1,130 @@
+
+
+.d-bg {
+  min-height: 115vh;
+  background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.95) 25%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(to top left, rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0) 80%),
+    url("https://prod.ucwe.capgemini.com/in-en/wp-content/uploads/sites/18/2021/11/8_Learning-Development.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+
+  .card {
+    width: 300px;
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    border: none;
+    background: none;
+    padding: 10px;
+  }
+
+  .marquee-text {
+    position: absolute;
+    display: inline-flex;       /* side by side */
+    white-space: nowrap;
+    color: #fff;
+    font-weight: bold;
+    animation: marquee 5s linear infinite;
+  }
+
+
+.dashboard {
+  min-height: 100vh;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.05)),
+    url("https://i.pinimg.com/736x/06/d2/68/06d2688932421cf31d7896fdf5dcb989.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment:fixed;
+}
+
+
+
+  /* Animate from 0 to -50% to scroll one full text width */
+  @keyframes marquee {
+    0% {
+      transform: translateX(80%);
+    }
+    100% {
+      transform: translateX(-90%);
+    }
+  }
+
+  .dashboard-bg {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://elements-resized.envatousercontent.com/elements-video-cover-images/files/7f7ae297-66b8-45a5-9614-8e520b93ff67/inline_image_preview.jpg?w=500&cf_fit=cover&q=85&format=auto&s=6fcce189d75cfd488da9f6782d2e3640f9ebba10012af01676c632ce86a4f774");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+  .internship-bg {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://img.freepik.com/premium-photo/dark-invigorating-aesthetic-desk-workspace-with-black-coffee-laptop-lush-plant-ar-32_1000124-76921.jpg?w=360");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+  .application-bg {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://img.freepik.com/premium-photo/dark-blue-gradient-background_901408-33654.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+  .profile-bg {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWCsTf43z9IaYQWnELoVvZsfuAizGrd_7xhA&s");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+  .cv {
+ 
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://t4.ftcdn.net/jpg/06/24/00/89/360_F_624008977_PZW5vV7a5NuDWthvWtmfKqcxBUH6Oezm.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  
+}
+
+.rounded-rectangle {
+  width: 100%;               /* Full width of the container */
+  height:30vh ;              /* Maintain aspect ratio */
+  border-radius: 16px;       /* Rounded corners */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;         /* Ensures the image covers the area nicely */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  display: block;  
+    background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;          /* Removes inline spacing issues */
+}
+
+
+.myinternship {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://i.pinimg.com/736x/f7/73/3e/f7733eef5df5f678f759cb24655f7d41.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}

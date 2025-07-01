@@ -17,7 +17,7 @@ const CompanyMain = () => {
         <Route path="/dashboard" element={<CompanyDashboard />} />
         <Route path="/internships" element={<CompanyMyInternships />} />
         <Route path="/applications" element={<CompanyApplications />} />
-        <Route path="/applications/:applicantId" element={<CompanyApplications />} />
+        <Route path="/applications/:roleSlug" element={<CompanyApplications />} />
         <Route path="/profile" element={<CompanyProfile />} />
         <Route path='/postinternship' element={<PostInternshipForm />} />
         <Route path="/postinternship/:id" element={<PostInternshipForm />} />

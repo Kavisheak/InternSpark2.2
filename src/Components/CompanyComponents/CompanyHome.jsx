@@ -1,127 +1,135 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FiArrowRight, FiUser } from 'react-icons/fi';
-import CompanyNavbar from './CompanyNavbar';
-
+import { useNavigate } from "react-router-dom";
+import { FiArrowRight, FiUser } from "react-icons/fi";
+import CompanyNavbar from "./CompanyNavbar";
+import "./Company.css";
+import "./CompanyHome.css";
+import Footer from "./Footer";
+import ForCompanies from "./ForCompanies";
+import TalktoUs from "./TalktoUs";
 const CompanyHome = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  
   return (
-     <div className="min-h-screen "> 
-     <CompanyNavbar/>
-  <div className='min-h-screen mt-48'>
-      {/* Title */}
-  <div className="flex flex-col w-full mt-6 ">
-  <p className='pl-16 mb-6 text-2xl font-semibold text-white'>Welcome !</p>
-  <h1 className="relative z-10 text-6xl font-bold text-white pl-14 md:text-7xl">
-    Build Powerful Teams,  <br/><p className='pt-4 text-5xl '>Drive Real Impact.</p>
-  </h1>
-</div>
+    <div className="min-h-screen all-bg">
+      <CompanyNavbar />
+      <div className="min-h-screen mt-48">
+        {/* Title */}
+        <div className="flex flex-col w-full mt-6 ">
+          <p className="pl-16 mb-6 text-2xl font-semibold text-white">
+            Welcome !
+          </p>
+          <h1 className="relative z-10 text-6xl font-bold text-white pl-14 md:text-7xl">
+            Build Powerful Teams, <br />
+            <p className="pt-4 text-5xl ">Drive Real Impact.</p>
+          </h1>
+        </div>
 
+        {/* Buttons */}
+        <div className="flex pt-3 pl-16 mt-10 mb-64">
+          <button
+            className="flex items-center justify-center w-40 px-6 py-4 font-semibold text-white transition-colors border rounded-lg backdrop-blur-md bg-white/20 hover:bg-white/30 border-white/40"
+            onClick={() => navigate("/company/internships")}
+          >
+            Get Started
+            <FiArrowRight className="ml-2" />
+          </button>
 
-      {/* Buttons */}
-      <div className="flex pt-3 pl-16 mt-10 mb-64">
-        <button
-          className="flex items-center justify-center w-40 px-6 py-4 font-semibold text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
-          onClick={()=>navigate('/company/internships')}
-        >          
-          Get Started
-          <FiArrowRight className='ml-2'/>
-        </button>
+          <button
+            className="flex items-center justify-center w-40 px-6 py-3 ml-10 font-semibold text-white transition-colors border rounded-lg backdrop-blur-md bg-white/20 hover:bg-white/30 border-white/40"
+            onClick={() => navigate("/company/profile")}
+          >
+            <FiUser className="mr-2" />
+            My Profile
+          </button>
+        </div>
 
-        <button
-          className="flex items-center justify-center w-40 px-6 py-3 ml-12 font-semibold text-center text-white transition-colors border rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 border-white/30"
-          onClick={()=>navigate('/company/profile')}
-        >
-          <FiUser className='mr-2'/>
-          My Profile
-        </button>
-      </div>
-
-      {/* Cards */}
-      <div className='w-full h-full p-5 bg-blue-950'>
-      <div className="flex flex-col gap-6 mt-5 ml-4 mr-4 mb-96 md:flex-row md:ml-10 md:mr-10">
-        {/* Left Column */}
-        <div className="flex flex-col gap-6 md:w-1/3">
-          <div className="p-6 text-white border shadow-md rounded-xl bg-white/10 backdrop-blur-md border-white/30 md:shadow-lg">
-            <h3 className="mb-3 text-xl font-bold">Quick Stats</h3>
-            <div className="mb-4 space-y-2">
-              <div>🚀 <strong>500+</strong> internships posted across various industries</div>
-              <div>👥 <strong>2,000+</strong> active student profiles</div>
-              <div>🌐 Companies from all across the country</div>
-              <div>⏱️ Average posting-to-hire time: <strong>3 days</strong></div>
-              <div>📈 Growing community of both fresh and experienced talent</div>
+        <div className="flex w-full h-screen ">
+          {/* Left Side - White Background */}
+          <div className="flex items-center justify-center w-1/2 p-10 bg-white">
+           
+            <div className="max-w-3xl px-6 py-20 bg-white">
+              <p className="mb-3 text-lg font-semibold tracking-wider text-blue-800 uppercase">
+                Intern Spark
+              </p>
+              <h2 className="mb-6 text-6xl font-extrabold leading-tight text-gray-900">
+                Empower your company with top student talent
+              </h2>
+              <p className="text-lg text-gray-500">
+                Discover a pool of skilled, motivated interns ready to
+                contribute to your organization. Post internships, manage
+                applications, and connect with future professionals — all from
+                one place.
+              </p>
             </div>
           </div>
 
-          <div className="p-6 text-white border shadow-md rounded-xl bg-white/10 backdrop-blur-md border-white/30 md:shadow-lg">
-                <h3 className="mb-3 text-xl font-bold">What You Can Do</h3>
-                <ul className="space-y-2 list-inside ">
-                  <li>📝 Post new internship opportunities in seconds</li>
-                  <li>🔍 Filter and search through applications easily</li>
-                  <li>📬 Receive real-time application notifications</li>
-                  <li>💬 Message applicants directly within the platform</li>
-                  <li>📊 Track performance of each internship listing</li>
-                </ul>
-
+          {/* Right Side - Image */}
+          <div className="relative w-1/2 h-full">
+            <img
+              src="https://bouqs.com/blog/wp-content/uploads/2024/10/shutterstock_2239596681.jpg"
+              alt="Team"
+              className="object-cover w-full h-full"
+            />
+            {/* Optional black overlay */}
+            <div className="absolute inset-0 bg-black opacity-20"></div>
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="flex-1 p-6 text-white border shadow-md rounded-xl bg-white/10 backdrop-blur-md border-white/30 md:shadow-lg">
-       <h2 className="mb-4 text-2xl font-bold text-center">Welcome to Your Internship Hiring Hub</h2>
-  <p className="mb-2">
-    Hiring interns shouldn't be a hassle—and with our platform, it never will be. Whether you're an innovative startup or a well-established enterprise, we offer a powerful, user-friendly environment to attract, manage, and recruit top student talent from across the country.
-  </p>
-  <p className="mb-2">
-    With hundreds of internship opportunities already posted and thousands of verified student profiles, you're joining a thriving ecosystem designed to bridge the gap between education and employment.
-  </p>
-  <h3 className="mt-6 mb-2 text-xl font-semibold">🌟 Key Features to Supercharge Your Hiring Process</h3>
-  <ul className="space-y-3 list-disc list-inside">
-    <li>
-      <span className="font-semibold">Intelligent Candidate Matching –</span> Our AI-driven algorithms analyze profiles and requirements to recommend the best-fit candidates.
-    </li>
-    <li>
-      <span className="font-semibold">Streamlined Hiring Workflow –</span> Post internships, manage applicants, and track progress with a clean and efficient interface.
-    </li>
-    <li>
-      <span className="font-semibold">Custom Company Profile –</span> Showcase your organization, values, and culture to attract ideal candidates.
-    </li>
-    <li>
-      <span className="font-semibold">Insightful Analytics & Reporting –</span> Monitor engagement, improve listings, and make data-driven hiring decisions.
-    </li>
-  </ul>
-  <p className="mt-6 italic">“Find the perfect intern. Reduce time-to-hire. Grow your team with confidence.”</p>
+        {/* for companies */}
+        <ForCompanies/>
+
+        <div className="flex w-full h-screen">
+          {/* Left Side - Image */}
+          <div className="relative w-1/2 h-full">
+            <img
+              src="https://i.pinimg.com/736x/1a/14/81/1a1481072f6dc7b125b7fa5676b1261a.jpg"
+              alt="Team"
+              className="object-cover w-full h-full"
+            />
+            {/* Optional black overlay */}
+            <div className="absolute inset-0 bg-black opacity-20"></div>
+          </div>
+
+          {/* Right Side - White Background */}
+          <div className="flex items-center justify-center w-1/2 p-10 bg-white">
+            <div class="px-6 py-16 bg-gray-50">
+              <p class="text-sm font-semibold tracking-widest text-blue-800 uppercase mb-2">
+                About
+              </p>
+              <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl leading-tight">
+                We help companies connect with <br />
+                talented and motivated interns.
+              </h1>
+              <p class="mt-6 text-lg text-gray-600 max-w-3xl">
+                Internship Hub simplifies your hiring process by providing
+                access to a pool of skilled students and recent graduates.
+                Whether you’re a startup or a large enterprise, we help you find
+                interns who are eager to contribute, learn, and grow with your
+                company. Post openings, review applications, and onboard
+                candidates — all in one platform designed to support your team's
+                growth.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-      </div>
-    
-     <div className="w-full h-screen">
-      <div className="relative w-full h-full">
-        <div className="absolute bottom-0 left-0 w-full h-screen bg-black" />
-        
-        <div className="relative z-10 flex items-center justify-center h-1/2 mt-[-40px]">
-          <img
-            src="https://media.istockphoto.com/id/1346125184/photo/group-of-successful-multiethnic-business-team.jpg?s=612x612&w=0&k=20&c=5FHgRQZSZed536rHji6w8o5Hco9JVMRe8bpgTa69hE8=" // Replace with your URL
-            alt="Centered Team"
-            className="w-[90%] max-w-6xl rounded-xl shadow-lg object-cover"
-          />
+
+        <div className="relative flex flex-col items-center justify-center h-screen mt-0 bg-transparent my-gradient-div d-bg">
+          <h1 className="text-5xl font-bold leading-tight text-center text-white">
+            Empowering Futures with Exceptional <br />
+            Internship Opportunities...
+          </h1>
+
+          <p className="absolute w-full px-4 text-xl text-center text-white bottom-24">
+            "Start your journey with us today"
+          </p>
         </div>
+           
+           {/* Talk To Us */}
+           <TalktoUs/>
       </div>
+      <Footer />
     </div>
+  );
+};
 
-      <div className='flex items-center justify-center h-screen mt-0 bg-transparent my-gradient-div d-bg'>
-  <h1 className='text-5xl font-bold text-center text-white'>
-    Empowering Futures with Exceptional <br />Internship Opportunities
-  </h1>
-</div>
-
-<div className='min-h-screen bg-teal-700'></div>
-
-    </div>
-    </div>
-  )
-}
-
-export default CompanyHome
+export default CompanyHome;

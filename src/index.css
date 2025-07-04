@@ -3,23 +3,7 @@
 @tailwind utilities;
 
 
- .all-bg {
-  min-height: 100vh;
-  background: 
-    linear-gradient(rgba(13, 27, 42, 0.7), rgba(0, 8, 20, 0.7)),
-    url('https://media.istockphoto.com/id/1365436662/photo/successful-partnership.jpg?s=612x612&w=0&k=20&c=B1xspe9Q5WMsLc7Hc9clR8MWUL4bsK1MfUdDNVNR2Xg=');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-attachment:fixed;
-}
 
 
-.image-box {
-  width: 100vh;
-  height: 100px;
-  background-image: url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y29tcGFueXxlbnwwfHwwfHx8MA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  border-radius: 8px;
-}
+
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import CompanyNavbar from "./CompanyNavbar";
 
 const PostInternshipForm = () => {
   const { id } = useParams();
@@ -36,7 +37,7 @@ const PostInternshipForm = () => {
         deadline: editingInternship.deadline || "",
         applicationLimit: editingInternship.applicationLimit || "",
       });
-
+      setIsEditable(!isViewOnlyMode)
       if (isViewOnlyMode) {
         setIsEditable(false); // force view-only mode
       }
@@ -63,11 +64,14 @@ const PostInternshipForm = () => {
     } else {
       console.log("✅ Creating new internship:", formData);
       alert("Post has been published");
+      
     }
-    navigate("/internships");
+    navigate("/company/internships");
   };
 
   return (
+     <div className="min-h-screen "> 
+     <CompanyNavbar/>
     <div className="max-w-3xl min-h-screen px-6 py-10 mx-auto my-5 text-white border border-gray-500 rounded-md">
       <h1 className="mb-6 text-3xl font-semibold text-center">
         {id ? (isEditable ? "Edit Internship" : "Internship Details") : "Post a New Internship"}
@@ -224,7 +228,7 @@ const PostInternshipForm = () => {
                 type="button"
                 onClick={() => {
                   if (isViewOnlyMode) {
-                    navigate("/dashboard");
+                    navigate("/company/dashboard");
                   } else {
                     setIsEditable(false);
                   }
@@ -243,6 +247,7 @@ const PostInternshipForm = () => {
           )}
         </div>
       </form>
+    </div>
     </div>
   );
 };

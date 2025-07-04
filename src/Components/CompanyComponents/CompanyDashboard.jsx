@@ -74,42 +74,41 @@ const CompanyDashboard = () => {
         {/* Banner Image */}
         <DashboardBannerSlider />
       </div>
-      <div className="p-6 pt-10 bg-white md:p-10">
+      <div className="p-6 pt-10 bg-sky-50 md:p-10 ">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 gap-6 px-10 mb-12 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              label: "Active Internships",
-              icon: <MdWorkOutline size={28} />,
-              value: activeInternships.length,
-            },
-            {
-              label: "New Applications",
-              icon: <MdFiberNew size={28} />,
-              value: newApplications,
-            },
-            {
-              label: "Total Applications",
-              icon: <MdAssignment size={28} />,
-              value: totalApplications,
-            },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="flex items-center p-6 transition-all shadow-md rounded-2xl bg-white/10 backdrop-blur-xl hover:shadow-xl"
-            >
-              <div className="p-3 mr-4 text-indigo-700 rounded-full bg-white/20">
-                {item.icon}
-              </div>
-              <div>
-                <p className="text-sm text-black/70">{item.label}</p>
-                <h3 className="text-2xl font-semibold text-black">
-                  {item.value}
-                </h3>
-              </div>
-            </div>
-          ))}
-        </div>
+<div className="grid grid-cols-1 gap-6 px-10 mb-12 sm:grid-cols-2 lg:grid-cols-3">
+  {[
+    {
+      label: "Active Internships",
+      icon: <MdWorkOutline size={28} />,
+      value: activeInternships.length,
+    },
+    {
+      label: "New Applications",
+      icon: <MdFiberNew size={28} />,
+      value: newApplications,
+    },
+    {
+      label: "Total Applications",
+      icon: <MdAssignment size={28} />,
+      value: totalApplications,
+    },
+  ].map((item, idx) => (
+    <div
+      key={idx}
+      className="flex items-center p-6 text-gray-800 transition-all bg-white shadow-md rounded-2xl hover:shadow-xl"
+    >
+      <div className="p-3 mr-4 text-blue-700 bg-blue-100 rounded-full">
+        {item.icon}
+      </div>
+      <div>
+        <p className="text-sm opacity-80">{item.label}</p>
+        <h3 className="text-2xl font-semibold">{item.value}</h3>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {/* Recent Applications */}
         <DashboardRecentApplications />
@@ -117,7 +116,7 @@ const CompanyDashboard = () => {
         {/* Active Internships */}
         <DashboardActiveInternships />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

@@ -16,12 +16,12 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
   if (!selected) return null;
 
   return (
-    <div className="flex-1 mt-1">
-      <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
+    <div className="flex-1 w-full mt-1">
+      <h2 className="mb-6 text-3xl font-bold text-center text-[#2128BD]">
         Application Details
       </h2>
 
-      <div className="max-h-screen p-6 overflow-y-auto border border-blue-100 rounded-lg shadow-sm bg-blue-50">
+      <div className="max-h-screen p-6 overflow-y-auto border border-blue-100 rounded-lg shadow-sm bg-sky-50">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-2xl font-semibold text-gray-800">
@@ -64,12 +64,12 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
 
         <div className="mb-4">
           <p className="font-semibold text-gray-800">References</p>
-          {selected.references && selected.references.length > 0 ? (
+          {selected.references?.length > 0 ? (
             <ul className="text-gray-700 list-disc list-inside">
-              {selected.references.map((ref, index) => (
-                <li key={index}>
-                  <span className="font-semibold">{ref.name}</span>, {ref.role} at{" "}
-                  {ref.company} — {ref.email}, {ref.phone}
+              {selected.references.map((ref, i) => (
+                <li key={i}>
+                  <strong>{ref.name}</strong>, {ref.role} at {ref.company} —{" "}
+                  {ref.email}, {ref.phone}
                 </li>
               ))}
             </ul>
@@ -86,7 +86,7 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
                 <button
                   key={status}
                   onClick={() => handleStatusUpdate(selected.id, status)}
-                  className="px-3 py-1 text-sm text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
+                  className="px-3 py-1 text-sm text-white transition-colors bg-[#2128BD] rounded-md hover:bg-[#1b1fab]"
                 >
                   {status}
                 </button>

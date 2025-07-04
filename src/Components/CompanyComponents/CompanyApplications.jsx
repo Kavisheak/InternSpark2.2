@@ -3,7 +3,6 @@ import { useParams, useLocation } from "react-router-dom";
 import CompanyNavbar from "./CompanyNavbar";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
-import "./CompanyApplication.css";
 import Footer from "./Footer";
 
 const initialApplications = [
@@ -73,7 +72,6 @@ const initialApplications = [
   },
 ];
 
-// Helper hook to parse query params
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -91,26 +89,22 @@ export default function CompanyApplications() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter by roleSlug if present
   const filteredByRole = roleSlug
     ? applications.filter((app) => slugify(app.role) === roleSlug)
     : applications;
 
-useEffect(() => {
-  if (selectedId !== null) return; // ✅ Don't auto-select if one is already selected
+  useEffect(() => {
+    if (selectedId !== null) return;
 
-  if (applicantName) {
-    const found = applications.find(
-      (app) => app.name.toLowerCase() === applicantName.toLowerCase()
-    );
-    if (found) {
-      setSelectedId(found.id);
+    if (applicantName) {
+      const found = applications.find(
+        (app) => app.name.toLowerCase() === applicantName.toLowerCase()
+      );
+      if (found) setSelectedId(found.id);
+    } else if (filteredByRole.length > 0) {
+      setSelectedId(filteredByRole[0].id);
     }
-  } else if (filteredByRole.length > 0) {
-    setSelectedId(filteredByRole[0].id);
-  }
-}, [applicantName, roleSlug, applications, filteredByRole, selectedId]);
-
+  }, [applicantName, roleSlug, applications, filteredByRole, selectedId]);
 
   const handleStatusUpdate = (id, newStatus) => {
     setApplications((apps) =>
@@ -121,11 +115,9 @@ useEffect(() => {
   const selected = applications.find((app) => app.id === selectedId);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="app-bg">
+    <div className="min-h-screen text-gray-800 bg-white">
       <CompanyNavbar />
-      </div>
-      <div className="flex items-start min-h-screen gap-6 p-6 mt-0 text-gray-200 bg-transparent">
+      <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-sky-50">
         <ApplicationSidebar
           applications={filteredByRole}
           selectedId={selectedId}
@@ -140,7 +132,7 @@ useEffect(() => {
           handleStatusUpdate={handleStatusUpdate}
         />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

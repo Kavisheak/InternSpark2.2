@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-// Light theme status badges
 function getStatusClass(status) {
   return (
     {
@@ -34,25 +33,24 @@ export default function ApplicationSidebar({
 
   useEffect(() => {
     const stillExists = fullApplications.some((app) => app.id === selectedId);
-    if (!stillExists) {
-      setSelectedId(null);
-    }
+    if (!stillExists) setSelectedId(null);
   }, [fullApplications, selectedId, setSelectedId]);
 
   return (
-    <div className="w-1/4 mr-6 flex flex-col max-h-[calc(100vh-3rem)]">
-      {/* Filter and Search */}
-      <div className="sticky top-0 z-10 pt-1 pb-4 bg-white">
+    <div className="w-full md:w-1/4 flex flex-col max-h-[calc(100vh-5rem)]">
+      {/* Filter & Search */}
+      <div className="sticky top-0 z-10 pb-4 ">
+        {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2 mb-3">
           {["All", "New", "Reviewing", "Shortlisted", "Interviewing", "Rejected"].map(
             (status) => (
               <button
                 key={status}
                 onClick={() => setActiveFilter(status)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
                   activeFilter === status
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-[#2128BD] text-white shadow"
+                    : "bg-transparent text-[#2128BD] border border-[#2128BD]/30 hover:bg-[#2128BD]/10"
                 }`}
               >
                 {status}
@@ -61,31 +59,30 @@ export default function ApplicationSidebar({
           )}
         </div>
 
+        {/* Search Bar */}
         <input
           type="text"
           placeholder="Search applications by job title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-500 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full px-3 py-2 text-sm text-gray-800 bg-transparent border border-[#2128BD]/50 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2128BD] focus:border-[#2128BD]"
         />
       </div>
 
       {/* Applications List */}
       <div className="flex-1 pr-1 mt-3 overflow-y-auto">
         {searchedApps.length === 0 && (
-          <p className="mt-4 text-center text-gray-500">
-            No applications found.
-          </p>
+          <p className="mt-4 text-center text-gray-500">No applications found.</p>
         )}
         {searchedApps.map((app) => (
           <div
             key={app.id}
             onClick={() => setSelectedId(app.id)}
-            className={`p-4 mb-3 rounded-md border transition-all duration-200 ${
+            className={`p-4 mb-3 rounded-md border cursor-pointer transition-all duration-200 ${
               selectedId === app.id
-                ? "bg-blue-50 border-blue-300 shadow-sm"
-                : "bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-200"
-            } cursor-pointer`}
+                ? "bg-sky-50 border-[#2128BD] shadow"
+                : "bg-white border-gray-200 hover:bg-sky-50 hover:border-[#2128BD]"
+            }`}
           >
             <div className="flex items-center justify-between">
               <span className="font-semibold text-gray-800">{app.name}</span>

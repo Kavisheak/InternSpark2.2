@@ -3,6 +3,8 @@ import { useParams, useLocation } from "react-router-dom";
 import CompanyNavbar from "./CompanyNavbar";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
+import "./CompanyApplication.css";
+import Footer from "./Footer";
 
 const initialApplications = [
   {
@@ -119,8 +121,10 @@ useEffect(() => {
   const selected = applications.find((app) => app.id === selectedId);
 
   return (
-    <div className="min-h-screen application-bg">
+    <div className="min-h-screen bg-white">
+      <div className="app-bg">
       <CompanyNavbar />
+      </div>
       <div className="flex items-start min-h-screen gap-6 p-6 mt-0 text-gray-200 bg-transparent">
         <ApplicationSidebar
           applications={filteredByRole}
@@ -136,6 +140,7 @@ useEffect(() => {
           handleStatusUpdate={handleStatusUpdate}
         />
       </div>
+      <Footer/>
     </div>
   );
 }

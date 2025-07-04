@@ -1,15 +1,14 @@
-// ApplicationDetailPanel.js
 import React from "react";
 
 function getStatusClass(status) {
   return (
     {
-      New: "bg-purple-900 text-purple-400",
-      Reviewing: "bg-gray-900 text-gray-400",
-      Interviewing: "bg-blue-900 text-blue-400",
-      Shortlisted: "bg-green-900 text-green-400",
-      Rejected: "bg-red-900 text-red-400",
-    }[status] || "bg-gray-900 text-gray-400"
+      New: "bg-purple-100 text-purple-800",
+      Reviewing: "bg-gray-100 text-gray-800",
+      Interviewing: "bg-blue-100 text-blue-800",
+      Shortlisted: "bg-green-100 text-green-800",
+      Rejected: "bg-red-100 text-red-800",
+    }[status] || "bg-gray-100 text-gray-800"
   );
 }
 
@@ -18,23 +17,23 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
 
   return (
     <div className="flex-1 mt-1">
-      <h2 className="mb-6 text-3xl font-bold text-center text-gray-100">
+      <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
         Application Details
       </h2>
 
-      <div className="max-h-screen p-6 overflow-y-auto border border-gray-100 rounded-md cv">
+      <div className="max-h-screen p-6 overflow-y-auto border border-blue-100 rounded-lg shadow-sm bg-blue-50">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-100">
+            <h2 className="text-2xl font-semibold text-gray-800">
               {selected.name}
             </h2>
-            <p className="text-gray-400">{selected.email}</p>
+            <p className="text-gray-600">{selected.email}</p>
             {selected.gender && (
-              <p className="text-gray-400">Gender: {selected.gender}</p>
+              <p className="text-gray-600">Gender: {selected.gender}</p>
             )}
           </div>
           <span
-            className={`px-3 py-1 font-semibold rounded-full ${getStatusClass(
+            className={`px-3 py-1 font-semibold rounded-full text-sm ${getStatusClass(
               selected.status
             )}`}
           >
@@ -43,30 +42,30 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
         </div>
 
         <div className="mb-4">
-          <p className="font-semibold text-gray-200">Application for</p>
-          <p>{selected.role}</p>
-          <p className="text-gray-400">Applied on {selected.applied}</p>
+          <p className="font-semibold text-gray-800">Application for</p>
+          <p className="text-gray-700">{selected.role}</p>
+          <p className="text-sm text-gray-600">Applied on {selected.applied}</p>
         </div>
 
         <div className="mb-4">
-          <p className="font-semibold text-gray-200">Education</p>
-          <p>{selected.education}</p>
+          <p className="font-semibold text-gray-800">Education</p>
+          <p className="text-gray-700">{selected.education}</p>
         </div>
 
         <div className="mb-4">
-          <p className="font-semibold text-gray-200">Experience</p>
-          <p>{selected.experience || " - "}</p>
+          <p className="font-semibold text-gray-800">Experience</p>
+          <p className="text-gray-700">{selected.experience || " - "}</p>
         </div>
 
         <div className="mb-4">
-          <p className="font-semibold text-gray-200">Skills</p>
-          <p>{selected.skills}</p>
+          <p className="font-semibold text-gray-800">Skills</p>
+          <p className="text-gray-700">{selected.skills}</p>
         </div>
 
         <div className="mb-4">
-          <p className="font-semibold text-gray-200">References</p>
+          <p className="font-semibold text-gray-800">References</p>
           {selected.references && selected.references.length > 0 ? (
-            <ul className="list-disc list-inside">
+            <ul className="text-gray-700 list-disc list-inside">
               {selected.references.map((ref, index) => (
                 <li key={index}>
                   <span className="font-semibold">{ref.name}</span>, {ref.role} at{" "}
@@ -75,19 +74,19 @@ export default function ApplicationDetailPanel({ selected, handleStatusUpdate })
               ))}
             </ul>
           ) : (
-            <p>Not provided</p>
+            <p className="text-gray-600">Not provided</p>
           )}
         </div>
 
         <div>
-          <p className="mb-2 font-semibold text-gray-200">Update Status</p>
+          <p className="mb-2 font-semibold text-gray-800">Update Status</p>
           <div className="flex flex-wrap gap-2">
             {["Reviewing", "Shortlisted", "Interviewing", "Rejected"].map(
               (status) => (
                 <button
                   key={status}
                   onClick={() => handleStatusUpdate(selected.id, status)}
-                  className="px-3 py-1 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700"
+                  className="px-3 py-1 text-sm text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
                 >
                   {status}
                 </button>

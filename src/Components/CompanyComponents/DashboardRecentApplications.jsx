@@ -40,7 +40,7 @@ const DashboardRecentApplications = () => {
     <div className="p-6 mb-12 text-gray-900 bg-white shadow-md md:p-8 rounded-2xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Recent Applications</h2>
+        <h2 className="text-2xl font-bold text-royalblue">Recent Applications</h2>
         <button
           onClick={() => navigate("/company/applications")}
           className="px-4 py-1 text-sm font-medium transition border border-gray-300 rounded-lg hover:bg-gray-800 hover:text-white"

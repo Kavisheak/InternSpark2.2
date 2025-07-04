@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const CompanyNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -8,11 +8,11 @@ const CompanyNavbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navItems = [
-    { name: 'Home', path: '/company/' },
-    { name: 'Dashboard', path: '/company/dashboard' },
-    { name: 'My Internships', path: '/company/internships' },
-    { name: 'Applications', path: '/company/applications' },
-    { name: 'My Profile', path: '/company/profile' },
+    { name: "Home", path: "/company/" },
+    { name: "Dashboard", path: "/company/dashboard" },
+    { name: "My Internships", path: "/company/internships" },
+    { name: "Applications", path: "/company/applications" },
+    { name: "My Profile", path: "/company/profile" },
   ];
 
   return (
@@ -29,7 +29,9 @@ const CompanyNavbar = () => {
                 <Link
                   to={item.path}
                   className={`text-sm font-medium transition ${
-                    isActive ? 'underline underline-offset-4' : 'hover:text-white/80'
+                    isActive
+                      ? "underline underline-offset-4"
+                      : "hover:text-white/80"
                   }`}
                 >
                   {item.name}
@@ -38,7 +40,7 @@ const CompanyNavbar = () => {
             );
           })}
           <li>
-            <button className="text-sm font-medium text-red-200 transition hover:text-red-300">
+            <button className="px-4 py-1 text-sm font-medium transition bg-white rounded-md text-royalblue hover:bg-red-100">
               Logout
             </button>
           </li>
@@ -49,7 +51,7 @@ const CompanyNavbar = () => {
           onClick={toggleMenu}
           className="text-2xl text-white md:hidden focus:outline-none"
         >
-          {menuOpen ? '✕' : '☰'}
+          {menuOpen ? "✕" : "☰"}
         </button>
       </div>
 
@@ -64,7 +66,9 @@ const CompanyNavbar = () => {
                   to={item.path}
                   onClick={() => setMenuOpen(false)}
                   className={`block py-2 text-sm font-medium transition ${
-                    isActive ? 'underline underline-offset-4' : 'hover:text-white/80'
+                    isActive
+                      ? "underline underline-offset-4"
+                      : "hover:text-white/80"
                   }`}
                 >
                   {item.name}
@@ -73,7 +77,7 @@ const CompanyNavbar = () => {
             );
           })}
           <li>
-            <button className="block w-full py-2 text-sm font-medium text-left text-red-200 hover:text-red-300">
+            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-red-600 transition bg-white rounded-md hover:bg-red-100">
               Logout
             </button>
           </li>

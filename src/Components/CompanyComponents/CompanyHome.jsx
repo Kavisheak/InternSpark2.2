@@ -11,11 +11,15 @@ import girlemp from "../../assets/grl.png";
 import ImageSlider from "./ImageSlider";
 
 
+
+
 const CompanyHome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen font-sans text-gray-900 bg-white">
+    <div className="relative min-h-screen font-sans text-gray-900 bg-white">
+
+    
       <CompanyNavbar />
 
       <main className="px-6 mt-44">

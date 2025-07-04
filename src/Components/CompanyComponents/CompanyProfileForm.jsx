@@ -1,4 +1,3 @@
-// CompanyProfileForm.jsx
 import React, { useState } from 'react';
 import {
   FaUsers,
@@ -38,49 +37,47 @@ const CompanyProfileForm = () => {
   ];
 
   return (
-    <div className="p-6 mt-1 profile-bg">
+    <div className="p-6 mt-1 rounded-lg shadow-sm bg-sky-50">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Profile Card */}
-        <div className="flex flex-col justify-between min-h-full p-6 overflow-hidden text-white bg-white border border-white shadow-xl bg-opacity-10 rounded-xl">
+        <div className="flex flex-col justify-between p-6 bg-white border border-gray-200 shadow-md rounded-xl">
           <div className="flex flex-col items-center mb-6">
-            <div className="flex items-center justify-center w-24 h-24 mb-4 text-white border-2 border-white rounded-full shadow-lg">
-              <BsBuildingsFill className="text-4xl animate-spin-slow" />
+            <div className="flex items-center justify-center w-24 h-24 mb-4 border-2 border-[#2128BD] rounded-full shadow-lg text-[#2128BD]">
+              <BsBuildingsFill className="text-4xl" />
             </div>
-            <h2 className="w-full max-w-full text-3xl font-bold text-center break-words">
+            <h2 className="text-2xl font-bold text-center text-[#2128BD]">
               {formData.companyName || 'Company Name'}
             </h2>
-            <p className="w-full text-xl text-center text-indigo-200 break-words">
-              {formData.industry || 'Industry'}
-            </p>
+            <p className="text-center text-gray-600">{formData.industry || 'Industry'}</p>
           </div>
 
-          <div className="w-full max-w-full space-y-4 break-words text-x">
-            <div className="flex items-center max-w-full gap-2 break-words">
-              <FaUsers className="text-indigo-300" />
+          <div className="space-y-3 text-sm text-gray-700">
+            <div className="flex items-center gap-2">
+              <FaUsers className="text-[#2128BD]" />
               <span><strong>Size:</strong> {formData.companySize}</span>
             </div>
-            <div className="flex items-center max-w-full gap-2 break-words">
-              <FaMapMarkerAlt className="text-indigo-300" />
+            <div className="flex items-center gap-2">
+              <FaMapMarkerAlt className="text-[#2128BD]" />
               <span><strong>Location:</strong> {formData.location}</span>
             </div>
-            <div className="flex items-center max-w-full gap-2 break-all">
-              <FaGlobe className="text-indigo-300" />
+            <div className="flex items-center gap-2 break-all">
+              <FaGlobe className="text-[#2128BD]" />
               <span>
                 <strong>Website:</strong>{' '}
-                <a href={formData.website} target="_blank" rel="noreferrer" className="underline">
+                <a href={formData.website} target="_blank" rel="noreferrer" className="text-blue-600 underline hover:text-blue-800">
                   {formData.website}
                 </a>
               </span>
             </div>
-            <div className="flex items-center max-w-full gap-2 break-all">
-              <FaEnvelope className="text-indigo-300" />
+            <div className="flex items-center gap-2 break-all">
+              <FaEnvelope className="text-[#2128BD]" />
               <span><strong>Email:</strong> {formData.email}</span>
             </div>
-            <div className="flex items-start max-w-full gap-2 break-words">
-              <FaInfoCircle className="mt-1 text-indigo-300" />
+            <div className="flex items-start gap-2">
+              <FaInfoCircle className="mt-1 text-[#2128BD]" />
               <div>
                 <p className="font-semibold">About:</p>
-                <p className="whitespace-pre-line">
+                <p className="text-gray-700 whitespace-pre-line">
                   {formData.about || 'No description provided.'}
                 </p>
               </div>
@@ -89,39 +86,39 @@ const CompanyProfileForm = () => {
         </div>
 
         {/* Input Form */}
-        <div className="flex flex-col justify-between h-full p-6 text-white border border-gray-300 shadow-md rounded-xl">
+        <div className="flex flex-col justify-between p-6 bg-white border border-gray-200 shadow-md rounded-xl">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {fields.map(({ label, name, type, placeholder }) => (
               <div key={name}>
-                <label className="block text-sm font-semibold">{label}</label>
+                <label className="block mb-1 text-sm font-semibold text-gray-700">{label}</label>
                 <input
                   type={type}
                   name={name}
-                 
+                  value={formData[name]}
                   onChange={handleChange}
                   placeholder={placeholder}
-                  className="w-full px-3 py-2 mt-1 placeholder-gray-400 bg-transparent border border-gray-400 rounded-md focus:ring-indigo-500 focus:ring-2 focus:outline-none"
+                  className="w-full px-3 py-2 text-sm text-gray-800 placeholder-gray-400 border border-gray-300 rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-[#2128BD]"
                 />
               </div>
             ))}
           </div>
 
           <div className="mt-4">
-            <label className="block text-sm font-semibold">About</label>
+            <label className="block mb-1 text-sm font-semibold text-gray-700">About</label>
             <textarea
               name="about"
               value={formData.about}
               onChange={handleChange}
               placeholder="Write about your company here..."
               rows="4"
-              className="w-full px-3 py-2 mt-1 bg-transparent border border-gray-400 rounded-md focus:outline-none focus:ring-indigo-500 focus:ring-2"
+              className="w-full px-3 py-2 text-sm text-gray-800 border border-gray-300 rounded-md bg-transparent placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2128BD]"
             />
           </div>
 
           <div className="flex justify-end mt-6">
             <button
               onClick={handleSave}
-              className="px-5 py-1 text-white bg-indigo-600 rounded-md shadow-md hover:bg-indigo-700"
+              className="px-6 py-2 text-sm font-semibold text-white bg-[#2128BD] rounded-md shadow hover:bg-[#1a209a]"
             >
               Save
             </button>

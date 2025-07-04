@@ -11,11 +11,11 @@ const LoginPage = ({ onNavigateToRegister }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center px-4">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border border-blue-200">
-        <div className="text-center mb-8">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-300">
+      <div className="w-full max-w-md p-10 bg-white border border-blue-200 shadow-2xl rounded-2xl">
+        <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-blue-700 p-3 rounded-full">
+            <div className="p-3 bg-blue-700 rounded-full">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -30,35 +30,35 @@ const LoginPage = ({ onNavigateToRegister }) => {
                 />
               </svg>
             </div>
-            <span className="text-blue-800 text-2xl font-semibold ml-2 tracking-wide">
+            <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">
               Internspark
             </span>
           </div>
-          <h2 className="text-3xl font-bold text-blue-800 mb-1">Welcome Back</h2>
-          <p className="text-blue-500 text-sm">Sign in to fuel your future team</p>
+          <h2 className="mb-1 text-3xl font-bold text-blue-800">Welcome Back</h2>
+          <p className="text-sm text-blue-500">Sign in to fuel your future team</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Email Address</label>
+            <label className="block mb-1 text-sm text-blue-800">Email Address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-300 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 text-blue-900 placeholder-blue-400 border border-blue-300 rounded-lg bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Password</label>
+            <label className="block mb-1 text-sm text-blue-800">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-300 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 text-blue-900 placeholder-blue-400 border border-blue-300 rounded-lg bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
@@ -71,17 +71,17 @@ const LoginPage = ({ onNavigateToRegister }) => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition duration-300"
+            className="w-full py-3 font-semibold text-white transition duration-300 bg-blue-600 rounded-lg hover:bg-blue-500"
           >
             Sign In
           </button>
         </form>
 
-        <div className="text-center mt-6">
+        <div className="mt-6 text-center">
           <span className="text-blue-700">Don't have an account? </span>
           <button
             onClick={onNavigateToRegister}
-            className="text-blue-600 hover:text-blue-800 font-medium underline"
+            className="font-medium text-blue-600 underline hover:text-blue-800"
           >
             Sign up
           </button>

@@ -40,11 +40,11 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     "w-full px-4 py-3 bg-blue-50 border border-blue-300 text-blue-900 placeholder-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center px-4 py-10">
-      <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border border-blue-200">
-        <div className="text-center mb-8">
+    <div className="flex items-center justify-center min-h-screen px-4 py-10 bg-gray-300">
+      <div className="w-full max-w-md p-10 bg-white border border-blue-200 shadow-2xl rounded-2xl">
+        <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-blue-700 p-3 rounded-full">
+            <div className="p-3 bg-blue-700 rounded-full">
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -59,17 +59,17 @@ const RegisterPage = ({ onNavigateToLogin }) => {
                 />
               </svg>
             </div>
-            <span className="text-blue-800 text-2xl font-semibold ml-2 tracking-wide">
+            <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">
               Internspark
             </span>
           </div>
-          <h2 className="text-3xl font-bold text-blue-800 mb-1">Create Account</h2>
-          <p className="text-blue-500 text-sm">Join thousands of aspiring interns</p>
+          <h2 className="mb-1 text-3xl font-bold text-blue-800">Create Account</h2>
+          <p className="text-sm text-blue-500">Join thousands of aspiring interns</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Full Name</label>
+            <label className="block mb-1 text-sm text-blue-800">Full Name</label>
             <input
               type="text"
               name="fullName"
@@ -82,7 +82,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Email Address</label>
+            <label className="block mb-1 text-sm text-blue-800">Email Address</label>
             <input
               type="email"
               name="email"
@@ -95,7 +95,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-blue-800 mb-1">I am a</label>
+            <label className="block mb-1 text-sm text-blue-800">I am a</label>
             <select
               name="userType"
               value={formData.userType}
@@ -110,7 +110,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Password</label>
+            <label className="block mb-1 text-sm text-blue-800">Password</label>
             <input
               type="password"
               name="password"
@@ -123,7 +123,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block text-sm text-blue-800 mb-1">Confirm Password</label>
+            <label className="block mb-1 text-sm text-blue-800">Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
@@ -141,15 +141,15 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               name="agreeToTerms"
               checked={formData.agreeToTerms}
               onChange={handleChange}
-              className="mr-2 mt-1"
+              className="mt-1 mr-2"
             />
             <span>
               I agree to the{' '}
-              <button type="button" className="text-blue-600 hover:text-blue-800 underline">
+              <button type="button" className="text-blue-600 underline hover:text-blue-800">
                 Terms of Service
               </button>{' '}
               and{' '}
-              <button type="button" className="text-blue-600 hover:text-blue-800 underline">
+              <button type="button" className="text-blue-600 underline hover:text-blue-800">
                 Privacy Policy
               </button>
             </span>
@@ -157,17 +157,17 @@ const RegisterPage = ({ onNavigateToLogin }) => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition duration-300"
+            className="w-full py-3 font-semibold text-white transition duration-300 bg-blue-600 rounded-lg hover:bg-blue-500"
           >
             Create Account
           </button>
         </form>
 
-        <div className="text-center mt-6">
+        <div className="mt-6 text-center">
           <span className="text-blue-700">Already have an account? </span>
           <button
             onClick={onNavigateToLogin}
-            className="text-blue-600 hover:text-blue-800 font-medium underline"
+            className="font-medium text-blue-600 underline hover:text-blue-800"
           >
             Sign in
           </button>

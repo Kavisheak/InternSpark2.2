@@ -18,27 +18,26 @@ export default function CompanyMyInternships() {
 
   return (
     <div className="min-h-screen bg-white ">
-      <div className="myinternship">
-        <CompanyNavbar />
-       <div className="flex items-center justify-center min-h-screen px-4">
-<div className="relative z-10 max-w-2xl text-center">
-  <h1 className="text-5xl font-bold text-white sm:text-6xl">Post New Internships</h1>
-  <h2 className="mt-2 text-4xl font-extrabold text-transparent sm:text-5xl bg-clip-text bg-gradient-to-r from-white via-gray-400 to-white">
-    Reach Talented Students Instantly
-  </h2>
-  <p className="mt-6 text-lg text-gray-300">
-    Share internship opportunities with thousands of students and grow your future team today.
-  </p>
-</div>
-
-</div>
-
+      <CompanyNavbar />
+      <div className="flex items-center justify-center px-4 bg-gray-100">
+        <div className="relative z-10 max-w-2xl p-10 text-center backdrop-blur-md rounded-2xl">
+          <h1 className="text-5xl font-bold sm:text-6xl text-[#2128BD]">
+            Post New Internships
+          </h1>
+          <h2 className="mt-2 text-3xl font-extrabold text-transparent sm:text-4xl bg-clip-text bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700">
+            Reach Talented Students Instantly
+          </h2>
+          <p className="mt-6 text-lg text-gray-700">
+            Share internship opportunities with thousands of students and grow
+            your future team today.
+          </p>
+        </div>
       </div>
 
       <div className="min-h-screen p-6 text-gray-900 bg-transparent md:p-10">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-9">
-          <h1 className="ml-4 text-2xl font-semibold">Manage Internships</h1>
+          <h1 className="ml-4 text-2xl font-bold text-royalblue">Manage Internships</h1>
           <div className="flex items-center mr-4 space-x-5">
             <div className="flex items-center px-2 py-2 bg-gray-100 rounded-lg w-96">
               <FiSearch className="mr-2 text-gray-900" />
@@ -52,7 +51,7 @@ export default function CompanyMyInternships() {
             </div>
 
             <button
-              className="px-4 py-1.5 font-semibold transition border rounded hover:bg-gray-100 hover:text-black"
+              className="px-4 py-1.5 font-semibold transition border rounded hover:bg-royalblue hover:text-white"
               onClick={() => navigate("/company/postinternship")}
             >
               + Post New
@@ -62,9 +61,8 @@ export default function CompanyMyInternships() {
 
         {/* List of internships */}
         <ListofInternships searchTerm={searchTerm} />
-        
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

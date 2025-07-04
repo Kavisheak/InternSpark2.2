@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
 import Index from './Components/AdminComponent/UserManagement';
-
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 
 
@@ -17,9 +20,6 @@ function App() {
       <Route path="/company/*" element={<CompanyMain />} />
         <Route path="/admin" element={<AdminMain/>} />
       <Route path="/user/*" element={<Index />} />
-      <Route path="/job/*" element={<InternshipDetails />} />
-      <Route path="/studentprofile/*" element={<StudentProfile />} />
-      <Route path="/notification/*" element={<Notifications />} />
       
     </Routes>
  </Router>

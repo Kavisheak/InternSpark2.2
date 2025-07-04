@@ -3,9 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
 import Index from './Components/AdminComponent/UserManagement';
-import InternshipDetails from "./Components/StudentComponents/InternshipDetails";
-import StudentProfile from "./Components/StudentComponents/StudentProfile";
-import Notifications from "./Components/StudentComponents/Notification";
 
 
 

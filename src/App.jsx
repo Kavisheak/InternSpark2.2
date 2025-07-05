@@ -13,6 +13,7 @@ import Notifications from "./Components/StudentComponents/Notification";
 
 
 
+
 function App() {
    return (
 
@@ -26,6 +27,7 @@ function App() {
       <Route path="/job/*" element={<InternshipDetails />} />
       <Route path="/studentprofile/*" element={<StudentProfile />} />
       <Route path="/notification/*" element={<Notifications />} />
+      
       
     </Routes>
  </Router>

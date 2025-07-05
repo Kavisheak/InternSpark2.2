@@ -10,6 +10,7 @@ import 'swiper/css/navigation';
 import InternshipDetails from "./Components/StudentComponents/InternshipDetails";
 import StudentProfile from "./Components/StudentComponents/StudentProfile";
 import Notifications from "./Components/StudentComponents/Notification";
+import StudentHomepage from "./Components/StudentComponents/StudentHomepage";
 
 
 
@@ -27,6 +28,7 @@ function App() {
       <Route path="/job/*" element={<InternshipDetails />} />
       <Route path="/studentprofile/*" element={<StudentProfile />} />
       <Route path="/notification/*" element={<Notifications />} />
+      <Route path="/student/*" element={<StudentHomepage />} />
       
       
     </Routes>

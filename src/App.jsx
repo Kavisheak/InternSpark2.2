@@ -8,6 +8,7 @@ import "swiper/css/autoplay";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import AuthPage from "./Components/Login_Register/AuthPage";
+import InternshipDetails from "./Components/StudentComponents/InternshipDetails";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
         <Route path="/company/*" element={<CompanyMain />} />
         <Route path="/admin" element={<AdminMain />} />
         <Route path="/user/*" element={<Index />} />
-        
+        <Route path="/interndetails/" element={<InternshipDetails/>}/>
       </Routes>
     </Router>
   );

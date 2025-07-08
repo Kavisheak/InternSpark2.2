@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaBell } from "react-icons/fa"; // 🔔 Notification Icon
+import { IoMdNotificationsOutline } from "react-icons/io";
 
-const CompanyNavbar = () => {
+const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navItems = [
-    { name: "Home", path: "/company/" },
-    { name: "Dashboard", path: "/company/dashboard" },
-    { name: "My Internships", path: "/company/internships" },
-    { name: "Applications", path: "/company/applications" },
-    { name: "My Profile", path: "/company/profile" },
+    { name: "Home", path: "/student/" },
+    { name: "Internships", path: "/student/internships" },
+    { name: "Applications", path: "/student/applications" },
+    { name: "Bookmarks", path: "/student/bookmarks" },
+    { name: "Profile", path: "/student/profile" },
   ];
 
   return (
@@ -40,16 +40,12 @@ const CompanyNavbar = () => {
               </li>
             );
           })}
-
-          {/* 🔔 Notification Icon */}
+          {/* Notification Icon */}
           <li>
-            <button className="relative p-1 rounded hover:text-white/80">
-              <FaBell size={18} />
- 
+            <button className="text-xl transition hover:text-white/80">
+              <IoMdNotificationsOutline />
             </button>
           </li>
-
-          {/* Logout */}
           <li>
             <button className="px-4 py-1 text-sm font-medium transition bg-white rounded-md text-royalblue hover:bg-red-100">
               Logout
@@ -87,12 +83,14 @@ const CompanyNavbar = () => {
               </li>
             );
           })}
-
-    
-
-          {/* Logout */}
           <li>
-            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-center text-red-600 transition bg-white rounded-md hover:bg-red-100">
+            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-white transition hover:text-white/80">
+              <IoMdNotificationsOutline size={20} />
+              <span className="ml-2">Notifications</span>
+            </button>
+          </li>
+          <li>
+            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-red-600 transition bg-white rounded-md hover:bg-red-100">
               Logout
             </button>
           </li>
@@ -102,4 +100,4 @@ const CompanyNavbar = () => {
   );
 };
 
-export default CompanyNavbar;
+export default StudentNavbar;

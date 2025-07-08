@@ -1,3 +1,4 @@
+
 import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CompanyMain from "./Components/CompanyComponents/CompanyMain";
@@ -19,9 +20,15 @@ function App() {
         <Route path="/company/*" element={<CompanyMain />} />
         <Route path="/admin" element={<AdminMain />} />
         <Route path="/user/*" element={<Index />} />
+           <Route path="/job/*" element={<InternshipDetails />} />
+      <Route path="/studentprofile/*" element={<StudentProfile />} />
+      <Route path="/notification/*" element={<Notifications />} />
+      <Route path="/student/*" element={<StudentHomepage />} />
+      <Route path="/studentnav/*" element={<StudentNavbar />} />
         
       </Routes>
     </Router>
+
   );
 }
 

@@ -57,7 +57,7 @@ export default function Notifications() {
       case "deadline":
         return <Clock className={`${classes} text-orange-500`} />
       case "status":
-        return <Building2 className={`${classes} text-blue-500`} />
+        return <Building2 className={`${classes} text-blue-600`} />
       case "reminder":
         return <Bell className={`${classes} text-purple-500`} />
       case "accepted":
@@ -76,15 +76,19 @@ export default function Notifications() {
   const unreadCount = notifications.filter((n) => !n.isRead).length
 
   return (
-    <div className="min-h-screen bg-white text-blue-900">
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Notifications</h1>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        {/* Title + Mark All */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-blue-900">Notifications</h1>
           <button
-            className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200"
             onClick={markAllAsRead}
             disabled={unreadCount === 0}
+            className={`text-sm font-medium px-4 py-2 rounded transition ${
+              unreadCount === 0
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
             Mark All as Read ({unreadCount})
           </button>
@@ -92,58 +96,66 @@ export default function Notifications() {
 
         {/* Tabs */}
         <div className="flex gap-4 mb-6">
-          {["all", "unread", "read"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-1.5 rounded font-medium ${
-                activeTab === tab
-                  ? "bg-blue-800 text-white"
-                  : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-              }`}
-            >
-              {tab === "all" && `All (${notifications.length})`}
-              {tab === "unread" && `Unread (${unreadCount})`}
-              {tab === "read" &&
-                `Read (${notifications.filter((n) => n.isRead).length})`}
-            </button>
-          ))}
+          {["all", "unread", "read"].map((tab) => {
+            const isActive = activeTab === tab
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                  isActive
+                    ? "bg-blue-700 text-white"
+                    : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                }`}
+              >
+                {tab === "all" && `All (${notifications.length})`}
+                {tab === "unread" && `Unread (${unreadCount})`}
+                {tab === "read" &&
+                  `Read (${notifications.filter((n) => n.isRead).length})`}
+              </button>
+            )
+          })}
         </div>
 
-        {/* Notification List */}
+        {/* Notification Cards */}
         {filterNotifications().length === 0 ? (
-          <div className="p-6 bg-blue-50 text-center rounded text-blue-600 border border-blue-200">
+          <div className="p-8 bg-blue-50 text-center rounded-lg text-blue-600 border border-blue-200">
             No notifications found.
           </div>
         ) : (
           filterNotifications().map((n) => (
             <div
               key={n.id}
-              className={`p-6 rounded border mb-4 shadow-sm ${
-                !n.isRead ? "bg-blue-50 border-blue-400" : "bg-white border-gray-200"
-              } hover:shadow-md transition`}
+              className={`p-6 rounded-xl border mb-4 shadow-sm transition hover:shadow-md ${
+                !n.isRead
+                  ? "bg-blue-50 border-blue-400"
+                  : "bg-white border-gray-200"
+              }`}
             >
               <div className="flex items-start justify-between">
+                {/* Icon + Content */}
                 <div className="flex items-start gap-4">
                   <div className="mt-1">{getIcon(n.type)}</div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-lg">{n.title}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg text-blue-900">{n.title}</h3>
                       {n.isNew && (
-                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                           New
                         </span>
                       )}
                     </div>
                     <p className="text-sm text-gray-500">{n.date}</p>
                     <p className="mt-2 text-sm text-blue-900">{n.message}</p>
-                    <button className="text-sm mt-3 text-blue-700 hover:underline">
+                    <button className="mt-3 text-sm text-blue-700 hover:underline font-medium">
                       View Details
                     </button>
                   </div>
                 </div>
+
+                {/* Read Badge */}
                 {n.isRead && (
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
                     <Check className="w-4 h-4 text-green-600" />
                   </div>
                 )}

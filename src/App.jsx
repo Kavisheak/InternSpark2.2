@@ -11,6 +11,7 @@ import InternshipDetails from "./Components/StudentComponents/InternshipDetails"
 import StudentProfile from "./Components/StudentComponents/StudentProfile";
 import Notifications from "./Components/StudentComponents/Notification";
 import StudentHomepage from "./Components/StudentComponents/StudentHomepage";
+import StudentNavbar from "./Components/StudentComponents/StudentNavbar";
 
 
 
@@ -29,6 +30,7 @@ function App() {
       <Route path="/studentprofile/*" element={<StudentProfile />} />
       <Route path="/notification/*" element={<Notifications />} />
       <Route path="/student/*" element={<StudentHomepage />} />
+      <Route path="/studentnav/*" element={<StudentNavbar />} />
       
       
     </Routes>

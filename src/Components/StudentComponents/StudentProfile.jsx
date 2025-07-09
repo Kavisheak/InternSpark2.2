@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { User, Download } from "lucide-react"
+import { User } from "lucide-react"
 import StudentNavbar from "./StudentNavbar"
 
 export default function StudentProfile() {
@@ -10,7 +10,7 @@ export default function StudentProfile() {
     lastName: "Johnson",
     email: "alex.johnson@university.edu",
     phone: "(555) 123-4567",
-    bio: "Senior Computer Science student passionate about UI/UX design and front-end development."
+    bio: "Senior Computer Science student passionate about UI/UX design and front-end development.",
   })
 
   const skills = ["JavaScript", "React", "UI/UX Design", "HTML/CSS", "Figma"]
@@ -28,79 +28,74 @@ export default function StudentProfile() {
   return (
     <div className="min-h-screen text-blue-900 bg-white">
       <StudentNavbar/>
-      <div className="p-6 mx-auto max-w-7xl">
-        <h1 className="mb-8 text-3xl font-bold">My Profile</h1>
+      <div className="max-w-6xl px-6 py-10 mx-auto">
+        <h1 className="mb-8 text-3xl font-bold text-blue-900">My Profile</h1>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Left Sidebar */}
-            <div className="p-6 border border-blue-200 shadow-sm bg-blue-50 rounded-xl">
+          {/* Profile Sidebar */}
+          <div className="p-6 border border-blue-200 shadow-md bg-blue-50 rounded-2xl">
             <div className="flex flex-col items-center mb-6">
-                <div className="flex items-center justify-center w-20 h-20 mb-4 bg-blue-200 rounded-full">
+              <div className="flex items-center justify-center w-24 h-24 mb-4 bg-blue-200 rounded-full">
                 <User className="w-10 h-10 text-blue-800" />
-                </div>
-                <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
-                <p className="text-blue-600">State University</p>
+              </div>
+              <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
+              <p className="text-sm text-blue-600">State University</p>
             </div>
 
             <div className="mb-6 space-y-4">
-                <Info label="Email" value={formData.email} />
-                <Info label="Phone" value={formData.phone} />
-                <Info label="Major" value="Computer Science" />
-                <Info label="Graduation Year" value="2026" />
+              <Info label="Email" value={formData.email} />
+              <Info label="Phone" value={formData.phone} />
+              <Info label="Major" value="Computer Science" />
+              <Info label="Graduation Year" value="2026" />
             </div>
 
-            <div className="mb-6">
-                <p className="mb-2 text-sm font-medium text-blue-700">Skills</p>
-                <p className="text-sm text-blue-800">{skills.join(" · ")}</p>
+            <div>
+              <p className="mb-2 text-sm font-medium text-blue-700">Skills</p>
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill, i) => (
+                  <span key={i} className="px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
-            </div>
+          </div>
 
-
-
-          {/* Right Panel - Only Personal Info */}
-          <div className="p-6 bg-white border border-blue-200 shadow-sm lg:col-span-2 rounded-xl">
-            <SectionHeader title="Personal Information" subtitle="Update your personal details" />
+          {/* Editable Info */}
+          <div className="p-6 bg-white border border-blue-200 shadow-md lg:col-span-2 rounded-2xl">
+            <SectionHeader
+              title="Personal Information"
+              subtitle="Update your personal details"
+            />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label htmlFor="firstName" className="block mb-1 text-sm font-medium">First Name</label>
-                <input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div>
-                <label htmlFor="lastName" className="block mb-1 text-sm font-medium">Last Name</label>
-                <input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
+              <InputField
+                label="First Name"
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Last Name"
+                id="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
-              <div>
-                <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
-                <input
-                  id="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block mb-1 text-sm font-medium">Phone</label>
-                <input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
+              <InputField
+                label="Email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Phone"
+                id="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="mt-6">
@@ -110,14 +105,14 @@ export default function StudentProfile() {
                 rows={4}
                 value={formData.bio}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="mt-1 text-xs text-gray-500">Brief description about yourself for employers</p>
             </div>
 
             <button
               onClick={handleSave}
-              className="px-6 py-2 mt-6 font-medium text-white transition bg-blue-700 rounded hover:bg-blue-800"
+              className="px-6 py-2 mt-6 font-medium text-white transition bg-blue-700 rounded-lg hover:bg-blue-800"
             >
               Save Changes
             </button>
@@ -128,7 +123,7 @@ export default function StudentProfile() {
   )
 }
 
-// Info block component
+// Info display block
 function Info({ label, value }) {
   return (
     <div>
@@ -138,11 +133,26 @@ function Info({ label, value }) {
   )
 }
 
-// Header for form sections
+// Input field component
+function InputField({ label, id, value, onChange }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block mb-1 text-sm font-medium">{label}</label>
+      <input
+        id={id}
+        value={value}
+        onChange={onChange}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  )
+}
+
+// Section header
 function SectionHeader({ title, subtitle }) {
   return (
     <div className="mb-6">
-      <h3 className="text-xl font-semibold">{title}</h3>
+      <h3 className="text-xl font-semibold text-blue-900">{title}</h3>
       <p className="text-sm text-blue-600">{subtitle}</p>
     </div>
   )

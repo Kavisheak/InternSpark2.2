@@ -92,7 +92,7 @@ const CompanyNavbar = () => {
 
           {/* Logout */}
           <li>
-            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-center text-red-600 transition bg-white rounded-md hover:bg-red-100">
+            <button className="block w-full px-4 py-2 text-sm font-medium text-center text-red-600 transition bg-white rounded-md hover:bg-red-100">
               Logout
             </button>
           </li>

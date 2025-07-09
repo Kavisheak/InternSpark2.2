@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { FaBell } from "react-icons/fa"; // 🔔 Notification Icon
 
 const CompanyNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -39,6 +40,16 @@ const CompanyNavbar = () => {
               </li>
             );
           })}
+
+          {/* 🔔 Notification Icon */}
+          <li>
+            <button className="relative p-1 rounded hover:text-white/80">
+              <FaBell size={18} />
+ 
+            </button>
+          </li>
+
+          {/* Logout */}
           <li>
             <button className="px-4 py-1 text-sm font-medium transition bg-white rounded-md text-royalblue hover:bg-red-100">
               Logout
@@ -76,8 +87,12 @@ const CompanyNavbar = () => {
               </li>
             );
           })}
+
+    
+
+          {/* Logout */}
           <li>
-            <button className="block w-full px-4 py-2 text-sm font-medium text-left text-red-600 transition bg-white rounded-md hover:bg-red-100">
+            <button className="block w-full px-4 py-2 text-sm font-medium text-center text-red-600 transition bg-white rounded-md hover:bg-red-100">
               Logout
             </button>
           </li>

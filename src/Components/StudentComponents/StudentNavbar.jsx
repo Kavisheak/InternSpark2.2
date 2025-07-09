@@ -1,120 +1,122 @@
-import { Link } from "react-router-dom"
-import { Bell, User } from "lucide-react"
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 
-export default function StudentNavbar() {
+const StudentNavbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+ const navItems = [
+  { name: "Home", path: "/student" },
+  { name: "Internships", path: "/student/internships" },
+  { name: "Applications", path: "/student/applications" },
+  { name: "Bookmarks", path: "/student/bookmarks" },
+  { name: "My Profile", path: "/student/studentprofile" },
+];
+
+
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white text-blue-600 rounded-md flex items-center justify-center font-bold text-sm">
-              I
-            </div>
-            <span className="text-[18px] font-bold text-white tracking-tight">Internspark</span>
-          </Link>
+    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-royalblue">
+      <div className="flex items-center justify-between px-4 py-2">
+        {/* Logo */}
+        <Link to="/" className="text-xl font-bold">
+          Internspark
+        </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex space-x-12 text-sm font-medium text-white">
-            <Link
-              to="/dashboard"
-              className="hover:bg-white/10 px-4 py-2 rounded-md transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/internships"
-              className="hover:bg-white/10 px-4 py-2 rounded-md transition-colors"
-            >
-              My Internships
-            </Link>
-            <Link
-              to="/applications"
-              className="bg-white/20 px-4 py-2 rounded-md font-semibold"
-            >
-              Applications
-            </Link>
-            <Link
-              to="/profile"
-              className="hover:bg-white/10 px-4 py-2 rounded-md transition-colors"
-            >
-              My Profile
-            </Link>
-          </div>
+        {/* Desktop Nav */}
+        <ul className="items-center hidden space-x-6 text-sm font-medium md:flex">
+          {navItems.map((item) => (
+            <li key={item.name}>
+              <Link
+                to={item.path}
+                className={`transition ${
+                  isActive(item.path)
+                    ? "underline underline-offset-4"
+                    : "hover:text-white/80"
+                }`}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
 
-          {/* Right Icons */}
-          <div className="flex items-center space-x-6 text-white text-sm">
+          {/* Notification */}
+          <li>
             <Link
               to="/notifications"
-              className="hover:bg-white/10 p-2 rounded-md transition-colors"
+              className="p-1 rounded hover:text-white/80"
+              aria-label="Notifications"
             >
-              <Bell className="h-5 w-5" />
+              <FaBell size={18} />
             </Link>
-            <Link
-              to="/profile"
-              className="flex items-center hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
-            >
-              <User className="h-4 w-4 mr-2" />
-              My Profile
-            </Link>
+          </li>
+
+          {/* Logout */}
+          <li>
             <Link
               to="/logout"
-              className="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-md font-medium transition-colors flex items-center"
+              className="px-4 py-1 transition bg-white rounded-md text-royalblue hover:bg-red-100"
             >
               Logout
             </Link>
-          </div>
+          </li>
+        </ul>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button className="text-white hover:bg-white/10 p-2 rounded-md">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+        {/* Mobile Menu Button */}
+        <button
+          onClick={toggleMenu}
+          className="text-2xl text-white md:hidden focus:outline-none"
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Mobile Nav */}
+      {menuOpen && (
+        <ul className="px-6 pb-4 space-y-2 bg-[#2128BD] md:hidden text-base font-medium">
+          {navItems.map((item) => (
+            <li key={item.name}>
+              <Link
+                to={item.path}
+                onClick={() => setMenuOpen(false)}
+                className={`block py-2 transition ${
+                  isActive(item.path)
+                    ? "underline underline-offset-4"
+                    : "hover:text-white/80"
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+                {item.name}
+              </Link>
+            </li>
+          ))}
 
-      {/* Mobile Navigation Menu */}
-      <div className="md:hidden bg-black/10">
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link
-            to="/dashboard"
-            className="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium text-white"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/internships"
-            className="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium text-white"
-          >
-            My Internships
-          </Link>
-          <Link
-            to="/applications"
-            className="block bg-white/20 px-3 py-2 rounded-md text-base font-medium text-white"
-          >
-            Applications
-          </Link>
-          <Link
-            to="/profile"
-            className="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium text-white"
-          >
-            My Profile
-          </Link>
-        </div>
-      </div>
+          <li>
+            <Link
+              to="/notifications"
+              onClick={() => setMenuOpen(false)}
+              className="block py-2 hover:text-white/80"
+            >
+              Notifications
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/logout"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full px-4 py-2 text-center text-red-600 bg-white rounded-md hover:bg-red-100"
+            >
+              Logout
+            </Link>
+          </li>
+        </ul>
+      )}
     </nav>
-  )
-}
+  );
+};
+
+export default StudentNavbar;

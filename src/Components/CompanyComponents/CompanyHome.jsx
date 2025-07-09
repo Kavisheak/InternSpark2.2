@@ -10,16 +10,11 @@ import emp from "../../assets/emp.png";
 import girlemp from "../../assets/grl.png";
 import ImageSlider from "./ImageSlider";
 
-
-
-
 const CompanyHome = () => {
   const navigate = useNavigate();
 
   return (
     <div className="relative min-h-screen font-sans text-gray-900 bg-white">
-
-    
       <CompanyNavbar />
 
       <main className="px-6 mt-44">
@@ -64,9 +59,7 @@ const CompanyHome = () => {
         </section>
 
         {/* Left-Right Content Block 1 */}
-        <section className="flex flex-col-reverse items-center justify-center py-20 mx-auto mb-20 bg-white md:flex-row md:px-0 max-w-7xl">
-
-
+        <section className="flex flex-col-reverse items-center justify-center py-20 mx-auto mb-10 bg-white md:flex-row md:px-0 max-w-7xl">
           {/* Right - Image */}
           <div className="relative h-full overflow-hidden md:w-1/2 group">
             <img
@@ -75,7 +68,7 @@ const CompanyHome = () => {
               className="object-cover w-full h-full transition-transform duration-500 transform "
             />
           </div>
-                    {/* Left - Text */}
+          {/* Left - Text */}
           <div className="flex flex-col justify-center p-10 bg-white md:w-1/2">
             <p className="mb-3 text-lg font-extrabold tracking-widest uppercase text-royalblue">
               | Intern Spark
@@ -94,39 +87,38 @@ const CompanyHome = () => {
         <ForCompanies />
 
         {/* Left-Right Content Block 2 */}
-        <section className="flex flex-col items-center justify-between gap-12 px-6 mx-auto mb-32 md:flex-row max-w-7xl">
-  {/* Left - Image */}
-  <div className="relative overflow-hidden shadow-xl rounded-3xl md:w-1/2 h-96 group">
-    <img
-      src="https://i.pinimg.com/736x/1a/14/81/1a1481072f6dc7b125b7fa5676b1261a.jpg"
-      alt="Team"
-      className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-    />
-    <div className="absolute inset-0 transition-opacity duration-300 bg-black/10 group-hover:bg-black/20 rounded-3xl"></div>
-  </div>
+        <section className="flex flex-col items-center justify-between gap-12 px-6 mx-auto mb-20 md:flex-row max-w-7xl">
+          {/* Left - Image */}
+          <div className="relative overflow-hidden shadow-xl rounded-3xl md:w-1/2 h-96 group">
+            <img
+              src="https://i.pinimg.com/736x/1a/14/81/1a1481072f6dc7b125b7fa5676b1261a.jpg"
+              alt="Team"
+              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 transition-opacity duration-300 bg-black/10 group-hover:bg-black/20 rounded-3xl"></div>
+          </div>
 
-  {/* Right - Text Content */}
-  <div className="flex flex-col justify-center w-full px-6 py-10 shadow-lg rounded-3xl md:px-12 md:w-1/2 bg-gradient-to-br from-sky-50 to-white">
-    <p className="mb-2 text-sm font-bold tracking-widest text-blue-800 uppercase">
-      About
-    </p>
-    <h2 className="mb-6 text-4xl font-extrabold leading-tight text-gray-900">
-      We help companies connect with talented and motivated interns.
-    </h2>
-    <p className="text-lg leading-relaxed text-gray-700">
-      Internship Hub simplifies your hiring process by providing access to a pool
-      of skilled students and recent graduates. Whether you're a startup or a
-      large enterprise, we help you find interns who are eager to contribute,
-      learn, and grow with your company. Post openings, review applications, and
-      onboard candidates — all in one platform designed to support your team's
-      growth.
-    </p>
-  </div>
-</section>
-
+          {/* Right - Text Content */}
+          <div className="flex flex-col justify-center w-full px-6 py-10 shadow-lg rounded-3xl md:px-12 md:w-1/2 bg-gradient-to-br from-sky-50 to-white">
+            <p className="mb-2 text-sm font-bold tracking-widest text-blue-800 uppercase">
+              About
+            </p>
+            <h2 className="mb-6 text-4xl font-extrabold leading-tight text-gray-900">
+              We help companies connect with talented and motivated interns.
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-700">
+              Internship Hub simplifies your hiring process by providing access
+              to a pool of skilled students and recent graduates. Whether you're
+              a startup or a large enterprise, we help you find interns who are
+              eager to contribute, learn, and grow with your company. Post
+              openings, review applications, and onboard candidates — all in one
+              platform designed to support your team's growth.
+            </p>
+          </div>
+        </section>
 
         {/* Call to Action Banner */}
-        <section className="max-w-4xl px-8 py-20 mx-auto mb-20 text-center text-white rounded-lg shadow-lg bg-gradient-to-r from-indigo-600 to-sky-600">
+        <section className="max-w-4xl px-8 py-20 mx-auto mb-10 text-center text-white rounded-lg shadow-lg bg-gradient-to-r from-indigo-600 to-sky-600">
           <h2 className="mb-4 text-4xl font-bold leading-tight">
             Empowering Futures with Exceptional <br />
             Internship Opportunities...
@@ -134,7 +126,7 @@ const CompanyHome = () => {
           <p className="text-lg italic">Start your journey with us today</p>
         </section>
 
-        <ImageSlider/>
+        <ImageSlider />
 
         {/* Talk to Us Section */}
         <TalktoUs />

@@ -1,8 +1,11 @@
 
-import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CompanyMain from "./Components/CompanyComponents/CompanyMain";
-import AdvertismentPage from "./Components/GuestComponents/AdvertismentPage";
+import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CompanyMain from './Components/CompanyComponents/CompanyMain';
+import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
+
+
+
 
 import "swiper/css";
 import "swiper/css/autoplay";
@@ -12,8 +15,12 @@ import AuthPage from "./Components/Login_Register/AuthPage";
 import StudentMain from "./Components/StudentComponents/StudentMain";
 
 
+
 function App() {
-  return (
+
+   return (
+
+
     <Router>
       <Routes>
         <Route path="/" element={<AdvertismentPage />} />
@@ -26,6 +33,7 @@ function App() {
         
       </Routes>
     </Router>
+      
 
   );
 }

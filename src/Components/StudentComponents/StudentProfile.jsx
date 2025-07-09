@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { User, Download } from "lucide-react"
+import { User } from "lucide-react"
+import StudentNavbar from "./StudentNavbar"
 
 export default function StudentProfile() {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ export default function StudentProfile() {
     lastName: "Johnson",
     email: "alex.johnson@university.edu",
     phone: "(555) 123-4567",
-    bio: "Senior Computer Science student passionate about UI/UX design and front-end development."
+    bio: "Senior Computer Science student passionate about UI/UX design and front-end development.",
   })
 
   const skills = ["JavaScript", "React", "UI/UX Design", "HTML/CSS", "Figma"]
@@ -25,97 +26,93 @@ export default function StudentProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-blue-900">
-      <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+    <div className="min-h-screen text-blue-900 bg-white">
+      <StudentNavbar/>
+      <div className="max-w-6xl px-6 py-10 mx-auto">
+        <h1 className="mb-8 text-3xl font-bold text-blue-900">My Profile</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Sidebar */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          {/* Profile Sidebar */}
+          <div className="p-6 border border-blue-200 shadow-md bg-blue-50 rounded-2xl">
             <div className="flex flex-col items-center mb-6">
-                <div className="w-20 h-20 bg-blue-200 rounded-full flex items-center justify-center mb-4">
+              <div className="flex items-center justify-center w-24 h-24 mb-4 bg-blue-200 rounded-full">
                 <User className="w-10 h-10 text-blue-800" />
-                </div>
-                <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
-                <p className="text-blue-600">State University</p>
-            </div>
-
-            <div className="space-y-4 mb-6">
-                <Info label="Email" value={formData.email} />
-                <Info label="Phone" value={formData.phone} />
-                <Info label="Major" value="Computer Science" />
-                <Info label="Graduation Year" value="2026" />
-            </div>
-
-            <div className="mb-6">
-                <p className="text-sm font-medium text-blue-700 mb-2">Skills</p>
-                <p className="text-sm text-blue-800">{skills.join(" · ")}</p>
-            </div>
-            </div>
-
-
-
-          {/* Right Panel - Only Personal Info */}
-          <div className="lg:col-span-2 bg-white border border-blue-200 rounded-xl p-6 shadow-sm">
-            <SectionHeader title="Personal Information" subtitle="Update your personal details" />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium mb-1">First Name</label>
-                <input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium mb-1">Last Name</label>
-                <input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
+              <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
+              <p className="text-sm text-blue-600">State University</p>
+            </div>
+
+            <div className="mb-6 space-y-4">
+              <Info label="Email" value={formData.email} />
+              <Info label="Phone" value={formData.phone} />
+              <Info label="Major" value="Computer Science" />
+              <Info label="Graduation Year" value="2026" />
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm font-medium text-blue-700">Skills</p>
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill, i) => (
+                  <span key={i} className="px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                    {skill}
+                  </span>
+                ))}
               </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-                <input
-                  id="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone</label>
-                <input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
-              </div>
+          {/* Editable Info */}
+          <div className="p-6 bg-white border border-blue-200 shadow-md lg:col-span-2 rounded-2xl">
+            <SectionHeader
+              title="Personal Information"
+              subtitle="Update your personal details"
+            />
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <InputField
+                label="First Name"
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Last Name"
+                id="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
+              <InputField
+                label="Email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Phone"
+                id="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="mt-6">
-              <label htmlFor="bio" className="block text-sm font-medium mb-1">Bio</label>
+              <label htmlFor="bio" className="block mb-1 text-sm font-medium">Bio</label>
               <textarea
                 id="bio"
                 rows={4}
                 value={formData.bio}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-1">Brief description about yourself for employers</p>
+              <p className="mt-1 text-xs text-gray-500">Brief description about yourself for employers</p>
             </div>
 
             <button
               onClick={handleSave}
-              className="mt-6 bg-blue-700 hover:bg-blue-800 text-white font-medium px-6 py-2 rounded transition"
+              className="px-6 py-2 mt-6 font-medium text-white transition bg-blue-700 rounded-lg hover:bg-blue-800"
             >
               Save Changes
             </button>
@@ -126,22 +123,37 @@ export default function StudentProfile() {
   )
 }
 
-// Info block component
+// Info display block
 function Info({ label, value }) {
   return (
     <div>
-      <p className="text-sm font-medium text-blue-700 mb-1">{label}</p>
-      <p className="text-blue-600 text-sm">{value}</p>
+      <p className="mb-1 text-sm font-medium text-blue-700">{label}</p>
+      <p className="text-sm text-blue-600">{value}</p>
     </div>
   )
 }
 
-// Header for form sections
+// Input field component
+function InputField({ label, id, value, onChange }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block mb-1 text-sm font-medium">{label}</label>
+      <input
+        id={id}
+        value={value}
+        onChange={onChange}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  )
+}
+
+// Section header
 function SectionHeader({ title, subtitle }) {
   return (
     <div className="mb-6">
-      <h3 className="text-xl font-semibold">{title}</h3>
-      <p className="text-blue-600 text-sm">{subtitle}</p>
+      <h3 className="text-xl font-semibold text-blue-900">{title}</h3>
+      <p className="text-sm text-blue-600">{subtitle}</p>
     </div>
   )
 }

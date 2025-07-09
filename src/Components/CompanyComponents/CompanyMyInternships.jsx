@@ -36,28 +36,30 @@ export default function CompanyMyInternships() {
 
       <div className="min-h-screen p-6 text-gray-900 bg-transparent md:p-10">
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-9">
-          <h1 className="ml-4 text-2xl font-bold text-royalblue">Manage Internships</h1>
-          <div className="flex items-center mr-4 space-x-5">
-            <div className="flex items-center px-2 py-2 bg-gray-100 rounded-lg w-96">
-              <FiSearch className="mr-2 text-gray-900" />
-              <input
-                type="text"
-                placeholder="Search by title or internship name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full text-gray-800 placeholder-gray-500 bg-transparent focus:outline-none"
-              />
-            </div>
+<div className="flex flex-col items-start justify-between gap-4 mb-9 md:flex-row md:items-center md:gap-0">
+  <h1 className="ml-1 text-2xl font-bold text-royalblue">Manage Internships</h1>
 
-            <button
-              className="px-4 py-1.5 font-semibold transition border rounded hover:bg-royalblue hover:text-white"
-              onClick={() => navigate("/company/postinternship")}
-            >
-              + Post New
-            </button>
-          </div>
-        </div>
+  <div className="flex flex-col items-stretch w-full gap-3 sm:flex-row sm:items-center sm:justify-end md:mr-4">
+    <div className="flex items-center w-full px-2 py-2 bg-gray-100 rounded-lg sm:w-96">
+      <FiSearch className="mr-2 text-gray-900" />
+      <input
+        type="text"
+        placeholder="Search by title or internship name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full text-gray-800 placeholder-gray-500 bg-transparent focus:outline-none"
+      />
+    </div>
+
+    <button
+      className="px-4 py-2 font-semibold transition border rounded text-royalblue hover:bg-royalblue hover:text-white"
+      onClick={() => navigate("/company/postinternship")}
+    >
+      + Post New
+    </button>
+  </div>
+</div>
+
 
         {/* List of internships */}
         <ListofInternships searchTerm={searchTerm} />

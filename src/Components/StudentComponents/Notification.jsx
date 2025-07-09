@@ -1,4 +1,4 @@
-"use client"
+
 
 import { useState } from "react"
 import { Clock, Building2, Bell, Check } from "lucide-react"
@@ -77,7 +77,7 @@ export default function Notifications() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl px-6 py-10 mx-auto">
         {/* Title + Mark All */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-blue-900">Notifications</h1>
@@ -119,7 +119,7 @@ export default function Notifications() {
 
         {/* Notification Cards */}
         {filterNotifications().length === 0 ? (
-          <div className="p-8 bg-blue-50 text-center rounded-lg text-blue-600 border border-blue-200">
+          <div className="p-8 text-center text-blue-600 border border-blue-200 rounded-lg bg-blue-50">
             No notifications found.
           </div>
         ) : (
@@ -138,7 +138,7 @@ export default function Notifications() {
                   <div className="mt-1">{getIcon(n.type)}</div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-lg text-blue-900">{n.title}</h3>
+                      <h3 className="text-lg font-semibold text-blue-900">{n.title}</h3>
                       {n.isNew && (
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                           New
@@ -147,7 +147,7 @@ export default function Notifications() {
                     </div>
                     <p className="text-sm text-gray-500">{n.date}</p>
                     <p className="mt-2 text-sm text-blue-900">{n.message}</p>
-                    <button className="mt-3 text-sm text-blue-700 hover:underline font-medium">
+                    <button className="mt-3 text-sm font-medium text-blue-700 hover:underline">
                       View Details
                     </button>
                   </div>
@@ -155,7 +155,7 @@ export default function Notifications() {
 
                 {/* Read Badge */}
                 {n.isRead && (
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                  <div className="flex items-center justify-center w-6 h-6 mt-1 bg-green-100 rounded-full">
                     <Check className="w-4 h-4 text-green-600" />
                   </div>
                 )}

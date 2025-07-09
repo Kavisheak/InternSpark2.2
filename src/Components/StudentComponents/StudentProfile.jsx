@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { User } from "lucide-react"
+import StudentNavbar from "./StudentNavbar"
 
 export default function StudentProfile() {
   const [formData, setFormData] = useState({
@@ -25,22 +26,23 @@ export default function StudentProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-blue-900">
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold mb-8 text-blue-900">My Profile</h1>
+    <div className="min-h-screen text-blue-900 bg-white">
+      <StudentNavbar/>
+      <div className="max-w-6xl px-6 py-10 mx-auto">
+        <h1 className="mb-8 text-3xl font-bold text-blue-900">My Profile</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Profile Sidebar */}
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 shadow-md">
+          <div className="p-6 border border-blue-200 shadow-md bg-blue-50 rounded-2xl">
             <div className="flex flex-col items-center mb-6">
-              <div className="w-24 h-24 bg-blue-200 rounded-full flex items-center justify-center mb-4">
+              <div className="flex items-center justify-center w-24 h-24 mb-4 bg-blue-200 rounded-full">
                 <User className="w-10 h-10 text-blue-800" />
               </div>
               <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
               <p className="text-sm text-blue-600">State University</p>
             </div>
 
-            <div className="space-y-4 mb-6">
+            <div className="mb-6 space-y-4">
               <Info label="Email" value={formData.email} />
               <Info label="Phone" value={formData.phone} />
               <Info label="Major" value="Computer Science" />
@@ -48,10 +50,10 @@ export default function StudentProfile() {
             </div>
 
             <div>
-              <p className="text-sm font-medium text-blue-700 mb-2">Skills</p>
+              <p className="mb-2 text-sm font-medium text-blue-700">Skills</p>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, i) => (
-                  <span key={i} className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
+                  <span key={i} className="px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
                     {skill}
                   </span>
                 ))}
@@ -60,13 +62,13 @@ export default function StudentProfile() {
           </div>
 
           {/* Editable Info */}
-          <div className="lg:col-span-2 bg-white border border-blue-200 rounded-2xl p-6 shadow-md">
+          <div className="p-6 bg-white border border-blue-200 shadow-md lg:col-span-2 rounded-2xl">
             <SectionHeader
               title="Personal Information"
               subtitle="Update your personal details"
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <InputField
                 label="First Name"
                 id="firstName"
@@ -81,7 +83,7 @@ export default function StudentProfile() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
               <InputField
                 label="Email"
                 id="email"
@@ -97,20 +99,20 @@ export default function StudentProfile() {
             </div>
 
             <div className="mt-6">
-              <label htmlFor="bio" className="block text-sm font-medium mb-1">Bio</label>
+              <label htmlFor="bio" className="block mb-1 text-sm font-medium">Bio</label>
               <textarea
                 id="bio"
                 rows={4}
                 value={formData.bio}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-1">Brief description about yourself for employers</p>
+              <p className="mt-1 text-xs text-gray-500">Brief description about yourself for employers</p>
             </div>
 
             <button
               onClick={handleSave}
-              className="mt-6 bg-blue-700 hover:bg-blue-800 text-white font-medium px-6 py-2 rounded-lg transition"
+              className="px-6 py-2 mt-6 font-medium text-white transition bg-blue-700 rounded-lg hover:bg-blue-800"
             >
               Save Changes
             </button>
@@ -125,7 +127,7 @@ export default function StudentProfile() {
 function Info({ label, value }) {
   return (
     <div>
-      <p className="text-sm font-medium text-blue-700 mb-1">{label}</p>
+      <p className="mb-1 text-sm font-medium text-blue-700">{label}</p>
       <p className="text-sm text-blue-600">{value}</p>
     </div>
   )
@@ -135,12 +137,12 @@ function Info({ label, value }) {
 function InputField({ label, id, value, onChange }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium mb-1">{label}</label>
+      <label htmlFor={id} className="block mb-1 text-sm font-medium">{label}</label>
       <input
         id={id}
         value={value}
         onChange={onChange}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   )

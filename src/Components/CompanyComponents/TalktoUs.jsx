@@ -13,7 +13,7 @@ const TalktoUs = () => {
           </div>
 
           {/* Right Side - Blue Background with Content */}
-          <div className="flex flex-col justify-center w-1/2 h-full px-10 bg-blue-950">
+          <div className="flex flex-col justify-center w-1/2 h-full px-10 bg-slate-900">
             <h1 className="mb-6 text-4xl font-extrabold leading-tight text-white">
               What can we help you
               <br />

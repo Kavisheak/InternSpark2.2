@@ -3,12 +3,12 @@ import { useEffect } from "react";
 function getStatusClass(status) {
   return (
     {
-      New: "bg-purple-900 text-purple-400",
-      Reviewing: "bg-gray-900 text-gray-400",
-      Interviewing: "bg-blue-900 text-blue-400",
-      Shortlisted: "bg-green-900 text-green-400",
-      Rejected: "bg-red-900 text-red-400",
-    }[status] || "bg-gray-900 text-gray-400"
+      New: "bg-purple-100 text-purple-800",
+      Reviewing: "bg-gray-100 text-gray-800",
+      Interviewing: "bg-blue-100 text-blue-800",
+      Shortlisted: "bg-green-100 text-green-800",
+      Rejected: "bg-red-100 text-red-800",
+    }[status] || "bg-gray-100 text-gray-800"
   );
 }
 
@@ -20,7 +20,7 @@ export default function ApplicationSidebar({
   setActiveFilter,
   searchTerm,
   setSearchTerm,
-  fullApplications = applications, // 👈 fallback to filtered if full list not passed
+  fullApplications = applications,
 }) {
   const filteredApps =
     activeFilter === "All"
@@ -31,28 +31,26 @@ export default function ApplicationSidebar({
     app.role.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
 
-  // ✅ Use fullApplications to avoid deselecting due to filter
   useEffect(() => {
     const stillExists = fullApplications.some((app) => app.id === selectedId);
-    if (!stillExists) {
-      setSelectedId(null);
-    }
+    if (!stillExists) setSelectedId(null);
   }, [fullApplications, selectedId, setSelectedId]);
 
   return (
-    <div className="w-1/4 mr-6 flex flex-col max-h-[calc(100vh-3rem)]">
-      {/* Filter and Search */}
-      <div className="sticky top-0 z-10 pt-1 pb-4 bg-transparent">
+    <div className="w-full md:w-1/4 flex flex-col max-h-[calc(100vh-5rem)]">
+      {/* Filter & Search */}
+      <div className="sticky top-0 z-10 pb-4 ">
+        {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2 mb-3">
           {["All", "New", "Reviewing", "Shortlisted", "Interviewing", "Rejected"].map(
             (status) => (
               <button
                 key={status}
                 onClick={() => setActiveFilter(status)}
-                className={`px-3 py-1 rounded-md ${
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
                   activeFilter === status
-                    ? "bg-gray-700 text-gray-100"
-                    : "bg-gray-800 text-gray-400"
+                    ? "bg-[#2128BD] text-white shadow"
+                    : "bg-transparent text-[#2128BD] border border-[#2128BD]/30 hover:bg-[#2128BD]/10"
                 }`}
               >
                 {status}
@@ -61,32 +59,33 @@ export default function ApplicationSidebar({
           )}
         </div>
 
+        {/* Search Bar */}
         <input
           type="text"
           placeholder="Search applications by job title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 text-sm text-white placeholder-gray-400 bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+          className="w-full px-3 py-2 text-sm text-gray-800 bg-transparent border border-[#2128BD]/50 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2128BD] focus:border-[#2128BD]"
         />
       </div>
 
       {/* Applications List */}
       <div className="flex-1 pr-1 mt-3 overflow-y-auto">
         {searchedApps.length === 0 && (
-          <p className="mt-4 text-center text-gray-400">
-            No applications found.
-          </p>
+          <p className="mt-4 text-center text-gray-500">No applications found.</p>
         )}
         {searchedApps.map((app) => (
           <div
             key={app.id}
             onClick={() => setSelectedId(app.id)}
-            className={`p-4 mb-3 rounded-md border ${
-              selectedId === app.id ? "border-gray-500 bg-gray-800" : "border-gray-300"
-            } cursor-pointer hover:shadow-md hover:bg-gray-800`}
+            className={`p-4 mb-3 rounded-md border cursor-pointer transition-all duration-200 ${
+              selectedId === app.id
+                ? "bg-sky-50 border-[#2128BD] shadow"
+                : "bg-white border-gray-200 hover:bg-sky-50 hover:border-[#2128BD]"
+            }`}
           >
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-gray-100">{app.name}</span>
+              <span className="font-semibold text-gray-800">{app.name}</span>
               <span
                 className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusClass(
                   app.status
@@ -95,7 +94,7 @@ export default function ApplicationSidebar({
                 {app.status}
               </span>
             </div>
-            <div className="mt-1 text-gray-400">
+            <div className="mt-1 text-sm text-gray-600">
               Applied for {app.role}
               <br />
               {app.applied}

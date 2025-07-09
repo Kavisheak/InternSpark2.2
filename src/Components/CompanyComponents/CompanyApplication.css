@@ -1,0 +1,9 @@
+  .app-bg {
+  min-height: 100vh;
+  background:  linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.05)),
+    url("https://i.pinimg.com/736x/14/c1/8c/14c18c26374d456ad15c4d1a45d1f8a1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}

@@ -59,7 +59,7 @@ const DashboardActiveInternships = () => {
 
             <div className="flex flex-wrap items-center gap-3">
               {/* Applications badge */}
-              <span className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-full">
+              <span className="px-3 py-1 text-sm font-medium text-white rounded-full bg-royalblue">
                 {job.applications} Applications
               </span>
 

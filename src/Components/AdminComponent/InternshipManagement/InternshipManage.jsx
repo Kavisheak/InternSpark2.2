@@ -92,12 +92,6 @@ export default function InternshipManagement() {
       <div className="relative z-10 p-6 max-w-6xl mx-auto">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Internship Management</h1>
-          <button
-            onClick={handleExport}
-            className="bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 hover:bg-gray-600"
-          >
-            Export Listings
-          </button>
         </div>
 
         <div className="mb-4 text-gray-300">

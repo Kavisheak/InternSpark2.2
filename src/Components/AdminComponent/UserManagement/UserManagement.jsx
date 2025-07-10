@@ -1,33 +1,39 @@
-import { useState } from "react"
-import { Search, Eye, AlertTriangle, User, Building2 } from "lucide-react"
+import { useState } from "react";
+import {
+  Search,
+  Eye,
+  AlertTriangle,
+  User,
+  Building2,
+} from "lucide-react";
 
-// Minimal reusable UI components
+// 🧩 Reusable UI Components
 const Input = ({ className = "", ...props }) => (
   <input className={`border rounded px-3 py-2 w-full ${className}`} {...props} />
-)
+);
 
 const Button = ({ children, className = "", ...props }) => (
   <button className={`px-3 py-2 rounded font-medium ${className}`} {...props}>
     {children}
   </button>
-)
+);
 
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white shadow rounded ${className}`}>{children}</div>
-)
+);
 
 const CardContent = ({ children, className = "" }) => (
   <div className={`p-4 ${className}`}>{children}</div>
-)
+);
 
 const Badge = ({ children, className = "" }) => (
   <span className={`px-2 py-1 text-sm rounded ${className}`}>{children}</span>
-)
+);
 
-// Main Component
-export default function UserSuspensionManagement() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+// 🧩 Main Component
+export default function UserManagement() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   const users = [
     {
@@ -37,7 +43,7 @@ export default function UserSuspensionManagement() {
       type: "Student",
       joined: "1/15/2024",
       lastActive: "6/6/2024",
-      reports: 8,
+      reports: 10,
       applications: 5,
       status: "active",
     },
@@ -48,7 +54,7 @@ export default function UserSuspensionManagement() {
       type: "Company",
       joined: "2/20/2024",
       lastActive: "6/5/2024",
-      reports: 2,
+      reports: 12,
       internships: 12,
       status: "active",
     },
@@ -63,45 +69,48 @@ export default function UserSuspensionManagement() {
       applications: 1,
       status: "active",
     },
-  ]
+  ];
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
 
     switch (activeTab) {
       case "students":
-        return matchesSearch && user.type === "Student"
+        return matchesSearch && user.type === "Student";
       case "companies":
-        return matchesSearch && user.type === "Company"
-      case "high-reports":
-        return matchesSearch && user.reports >= 8
+        return matchesSearch && user.type === "Company";
+      
       default:
-        return matchesSearch
+        return matchesSearch;
     }
-  })
+  });
 
   const counts = {
     all: users.length,
     students: users.filter((u) => u.type === "Student").length,
     companies: users.filter((u) => u.type === "Company").length,
-    highReports: users.filter((u) => u.reports >= 8).length,
-  }
+    
+  };
 
   const handleSuspendAccount = (id) => {
-    alert(`Suspending account for user ${id}`)
-  }
+    alert(`Suspending account for user ${id}`);
+  };
 
   const handleViewReports = (id) => {
-    alert(`Viewing reports for user ${id}`)
-  }
+    alert(`Viewing reports for user ${id}`);
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-blue-600 mb-2">User Suspension Management</h1>
-        <p className="text-gray-600">Monitor and manage users based on report counts (auto-suspend at 10 reports)</p>
+        <h1 className="text-2xl font-semibold text-blue-600 mb-2">
+          User Suspension Management
+        </h1>
+        <p className="text-gray-600">
+          Monitor and manage users based on report counts (auto-suspend at 10 reports)
+        </p>
       </div>
 
       <div className="mb-6 flex justify-end">
@@ -116,17 +125,17 @@ export default function UserSuspensionManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-6">
         {[
           { label: "All Users", key: "all", count: counts.all },
           { label: "Students", key: "students", count: counts.students },
           { label: "Companies", key: "companies", count: counts.companies },
-          { label: "High Reports", key: "high-reports", count: counts.highReports },
+          
         ].map((tab) => (
           <Button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`${
+            className={`w-full ${
               activeTab === tab.key
                 ? "bg-blue-600 text-white"
                 : "bg-white text-blue-600 border border-blue-600"
@@ -157,7 +166,7 @@ export default function UserSuspensionManagement() {
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <Badge className="bg-blue-100 text-blue-800">active</Badge>
+                  <Badge className="bg-blue-100 text-blue-800">{user.status}</Badge>
                   <Badge
                     className={
                       user.reports >= 10
@@ -172,7 +181,7 @@ export default function UserSuspensionManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-6 mt-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4 text-sm">
                 <div>
                   <span className="text-gray-500">Type:</span>
                   <p className="font-medium text-blue-600">{user.type}</p>
@@ -190,12 +199,14 @@ export default function UserSuspensionManagement() {
                     {user.type === "Student" ? "Applications:" : "Internships:"}
                   </span>
                   <p className="font-medium">
-                    {user.type === "Student" ? user.applications : user.internships}
+                    {user.type === "Student"
+                      ? user.applications ?? 0
+                      : user.internships ?? 0}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 mt-4">
+              <div className="flex items-center flex-wrap gap-3 mt-4">
                 {user.reports >= 8 && user.reports < 10 && (
                   <Button className="text-orange-600 border border-orange-300 bg-orange-50">
                     <AlertTriangle className="h-4 w-4 mr-2" />
@@ -223,5 +234,5 @@ export default function UserSuspensionManagement() {
         ))}
       </div>
     </div>
-  )
+  );
 }

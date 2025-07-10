@@ -9,11 +9,16 @@ export default function StudentProfile() {
     firstName: "Alex",
     lastName: "Johnson",
     email: "alex.johnson@university.edu",
+    gender: "Male",
+    education: "BSc in Computer Science",
+    experience: "Intern at TechCorp (2024)",
+    skills: "JavaScript, React, UI/UX Design",
+    references: "Prof. Smith – smith@university.edu",
     phone: "(555) 123-4567",
     bio: "Senior Computer Science student passionate about UI/UX design and front-end development.",
   })
 
-  const skills = ["JavaScript", "React", "UI/UX Design", "HTML/CSS", "Figma"]
+  const skillsList = ["JavaScript", "React", "UI/UX Design", "HTML/CSS", "Figma"]
 
   const handleChange = (e) => {
     const { id, value } = e.target
@@ -27,7 +32,7 @@ export default function StudentProfile() {
 
   return (
     <div className="min-h-screen text-blue-900 bg-white">
-      
+
       <div className="max-w-6xl px-6 py-10 mx-auto">
         <h1 className="mb-8 text-3xl font-bold text-blue-900">My Profile</h1>
 
@@ -38,21 +43,24 @@ export default function StudentProfile() {
               <div className="flex items-center justify-center w-24 h-24 mb-4 bg-blue-200 rounded-full">
                 <User className="w-10 h-10 text-blue-800" />
               </div>
-              <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
+              <h2 className="text-xl font-semibold">
+                {formData.firstName} {formData.lastName}
+              </h2>
               <p className="text-sm text-blue-600">State University</p>
             </div>
 
             <div className="mb-6 space-y-4">
               <Info label="Email" value={formData.email} />
               <Info label="Phone" value={formData.phone} />
-              <Info label="Major" value="Computer Science" />
-              <Info label="Graduation Year" value="2026" />
+              <Info label="Gender" value={formData.gender} />
+              <Info label="Education" value={formData.education} />
+              <Info label="Experience" value={formData.experience} />
             </div>
 
             <div>
               <p className="mb-2 text-sm font-medium text-blue-700">Skills</p>
               <div className="flex flex-wrap gap-2">
-                {skills.map((skill, i) => (
+                {skillsList.map((skill, i) => (
                   <span key={i} className="px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
                     {skill}
                   </span>
@@ -61,7 +69,7 @@ export default function StudentProfile() {
             </div>
           </div>
 
-          {/* Editable Info */}
+          {/* Editable Info Section */}
           <div className="p-6 bg-white border border-blue-200 shadow-md lg:col-span-2 rounded-2xl">
             <SectionHeader
               title="Personal Information"
@@ -81,9 +89,6 @@ export default function StudentProfile() {
                 value={formData.lastName}
                 onChange={handleChange}
               />
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
               <InputField
                 label="Email"
                 id="email"
@@ -91,10 +96,49 @@ export default function StudentProfile() {
                 onChange={handleChange}
               />
               <InputField
-                label="Phone"
-                id="phone"
-                value={formData.phone}
+                label="Gender"
+                id="gender"
+                value={formData.gender}
                 onChange={handleChange}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
+              <InputField
+                label="Education"
+                id="education"
+                value={formData.education}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Experience"
+                id="experience"
+                value={formData.experience}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mt-6">
+              <label htmlFor="skills" className="block mb-1 text-sm font-medium">Skills</label>
+              <textarea
+                id="skills"
+                rows={2}
+                value={formData.skills}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="E.g. JavaScript, React, Figma"
+              />
+            </div>
+
+            <div className="mt-6">
+              <label htmlFor="references" className="block mb-1 text-sm font-medium">References</label>
+              <textarea
+                id="references"
+                rows={2}
+                value={formData.references}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="E.g. Prof. John Doe - johndoe@email.com"
               />
             </div>
 

@@ -2,14 +2,14 @@
 
 import {  Search, User, Building2 } from "lucide-react"
 import { Link } from "react-router-dom"
-import StudentNavbar from "./StudentNavbar"
+
 
 export default function StudentHomepage() {
   return (
     <div className="min-h-screen text-blue-900 bg-gray-50">
       {/* Header */}
      
-     <StudentNavbar/>
+     
       {/* Hero Section */}
       <section className="px-4 py-24 text-white bg-royalblue">
         <div className="max-w-4xl mx-auto text-center">

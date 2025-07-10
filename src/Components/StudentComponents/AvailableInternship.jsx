@@ -1,81 +1,12 @@
-import React, { useState } from 'react';
-import { Search, MapPin, Clock, Bookmark } from 'lucide-react';
+// AvailableInternship.jsx
+import React, { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import InternshipCard from './InternshipCard';
 
-// Individual internship card component
-const InternshipCard = ({ internship }) => {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-  const getWorkTypeStyle = (type) => {
-    switch (type.toLowerCase()) {
-      case 'hybrid':
-        return 'bg-gray-100 text-gray-800';
-      case 'on-site':
-        return 'bg-blue-100 text-blue-800';
-      case 'remote':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">
-              {internship.company.charAt(0)}
-            </span>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 text-lg">{internship.title}</h3>
-            <p className="text-gray-600">{internship.company}</p>
-          </div>
-        </div>
-        <button
-          onClick={() => setIsBookmarked(!isBookmarked)}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current text-blue-600' : ''}`} />
-        </button>
-      </div>
-
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center text-gray-600">
-          <MapPin className="w-4 h-4 mr-2" />
-          <span className="text-sm">{internship.location}</span>
-        </div>
-        <div className="flex items-center text-gray-600">
-          <Clock className="w-4 h-4 mr-2" />
-          <span className="text-sm">{internship.duration}</span>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-3 mb-4">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getWorkTypeStyle(internship.workType)}`}>
-          {internship.workType}
-        </span>
-        <span className="text-green-600 font-medium">{internship.pay}</span>
-      </div>
-
-      <p className="text-gray-700 text-sm mb-4 line-clamp-3">{internship.description}</p>
-
-      <div className="flex items-center justify-between">
-        <span className="text-red-500 text-sm">
-          {internship.status === 'closed' ? '🔒 Application closed' : '🔒 Application closes'}
-        </span>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
-          View Details
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Main component
-const InternshipListings = () => {
+const AvailableInternship = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [bookmarkedInternships, setBookmarkedInternships] = useState([]);
 
   const filters = ['All', 'Remote', 'On-site', 'Hybrid'];
 
@@ -84,7 +15,7 @@ const InternshipListings = () => {
       id: 1,
       title: 'Frontend Developer Intern',
       company: 'TechCorp Solutions',
-      location: 'San Francisco, CA',
+      location: 'Colombo 05, Sri Lanka',
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$25/hour',
@@ -95,7 +26,7 @@ const InternshipListings = () => {
       id: 2,
       title: 'UX Design Intern',
       company: 'CreativeMinds Agency',
-      location: 'New York, NY',
+      location: 'Kandy',
       duration: '6 months',
       workType: 'On-site',
       pay: '$22/hour',
@@ -117,7 +48,7 @@ const InternshipListings = () => {
       id: 4,
       title: 'Marketing Intern',
       company: 'BrandBoost',
-      location: 'Chicago, IL',
+      location: 'Colombo , Sri lanka',
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$20/hour',
@@ -125,6 +56,29 @@ const InternshipListings = () => {
       status: 'open'
     }
   ];
+
+  // Load bookmarked internships from localStorage on component mount
+  useEffect(() => {
+    const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
+    setBookmarkedInternships(savedBookmarks);
+  }, []);
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = (internship) => {
+    const isCurrentlyBookmarked = bookmarkedInternships.some(item => item.id === internship.id);
+    let updatedBookmarks;
+
+    if (isCurrentlyBookmarked) {
+      // Remove from bookmarks
+      updatedBookmarks = bookmarkedInternships.filter(item => item.id !== internship.id);
+    } else {
+      // Add to bookmarks
+      updatedBookmarks = [...bookmarkedInternships, internship];
+    }
+
+    setBookmarkedInternships(updatedBookmarks);
+    localStorage.setItem('bookmarkedInternships', JSON.stringify(updatedBookmarks));
+  };
 
   const filteredInternships = internships.filter(internship => {
     const matchesFilter = activeFilter === 'All' || internship.workType === activeFilter;
@@ -136,7 +90,6 @@ const InternshipListings = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Available Internships</h1>
           <div className="relative">
@@ -151,7 +104,6 @@ const InternshipListings = () => {
           </div>
         </div>
 
-        {/* Filter Buttons */}
         <div className="flex space-x-4 mb-6">
           {filters.map((filter) => (
             <button
@@ -168,19 +120,21 @@ const InternshipListings = () => {
           ))}
         </div>
 
-        {/* Results Count */}
         <p className="text-gray-600 mb-6">
           Showing {filteredInternships.length} internships
         </p>
 
-        {/* Internship Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredInternships.map((internship) => (
-            <InternshipCard key={internship.id} internship={internship} />
+            <InternshipCard 
+              key={internship.id} 
+              internship={internship}
+              isBookmarked={bookmarkedInternships.some(item => item.id === internship.id)}
+              onBookmarkToggle={handleBookmarkToggle}
+            />
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredInternships.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🔍</div>
@@ -193,4 +147,4 @@ const InternshipListings = () => {
   );
 };
 
-export default InternshipListings;
+export default AvailableInternship;

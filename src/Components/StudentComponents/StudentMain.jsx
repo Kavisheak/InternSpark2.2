@@ -4,18 +4,26 @@ import StudentProfile from "./StudentProfile";
 
 import StudentHomepage from "./StudentHomepage";
 import Notifications from "./Notification";
+import AvailableInternship from "./AvailableInternship";
+import MyApplications from "./Applications";
+import StudentNavbar from "./StudentNavbar";
+import Bookmarks from "./Bookmarks";
 
 
 const StudentMain = () => {
   return (
+    <div>
+      <StudentNavbar/>
     <Routes>
      <Route path="job" element={<InternshipDetails />} />
       <Route path="studentprofile" element={<StudentProfile />} />
       <Route path="notifications" element={<Notifications />} /> {/* fixed */}
       <Route path="internships" element={<AvailableInternship/>}/>
       <Route path="" element={<StudentHomepage />} />
-      <Route path="application" element={<Applications/>}/>
+      <Route path="applications" element={<MyApplications/>}/>
+      <Route path="bookmarks" element={<Bookmarks />} />
     </Routes>
+    </div>
   );
 };
 

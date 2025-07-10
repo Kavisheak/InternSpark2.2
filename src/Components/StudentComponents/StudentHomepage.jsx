@@ -41,8 +41,8 @@ export default function StudentHomepage() {
           <div className="grid max-w-4xl grid-cols-1 gap-12 mx-auto md:grid-cols-3">
             {/* Feature: Smart Search */}
             <Link to="/smart-search" className="flex flex-col items-center px-4 text-center transition hover:scale-105">
-              <div className="flex items-center justify-center w-20 h-20 mb-6 bg-purple-100 rounded-full">
-                <Search className="w-10 h-10 text-purple-600" />
+              <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full bg-sky-100">
+                <Search className="w-10 h-10 text-royalblue" />
               </div>
               <h3 className="mb-3 text-xl font-semibold text-gray-900">Smart Search</h3>
               <p className="text-gray-600">Find internships that match your skills, interests, and career goals with our intelligent search system.</p>
@@ -50,8 +50,8 @@ export default function StudentHomepage() {
 
             {/* Feature: Profile Matching */}
             <Link to="/profile-matching" className="flex flex-col items-center px-4 text-center transition hover:scale-105">
-              <div className="flex items-center justify-center w-20 h-20 mb-6 bg-purple-100 rounded-full">
-                <User className="w-10 h-10 text-purple-600" />
+              <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full bg-sky-100">
+                <User className="w-10 h-10 text-royalblue" />
               </div>
               <h3 className="mb-3 text-xl font-semibold text-gray-900">Profile Matching</h3>
               <p className="text-gray-600">Get personalized recommendations based on your profile, experience, and preferences.</p>
@@ -59,8 +59,8 @@ export default function StudentHomepage() {
 
             {/* Feature: Top Companies */}
             <Link to="/top-companies" className="flex flex-col items-center px-4 text-center transition hover:scale-105">
-              <div className="flex items-center justify-center w-20 h-20 mb-6 bg-purple-100 rounded-full">
-                <Building2 className="w-10 h-10 text-purple-600" />
+              <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full bg-sky-100">
+                <Building2 className="w-10 h-10 text-royalblue" />
               </div>
               <h3 className="mb-3 text-xl font-semibold text-gray-900">Top Companies</h3>
               <p className="text-gray-600">Connect with leading companies and startups offering exciting internship opportunities.</p>

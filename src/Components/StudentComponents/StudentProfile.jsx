@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { User } from "lucide-react"
-import StudentNavbar from "./StudentNavbar"
+
 
 export default function StudentProfile() {
   const [formData, setFormData] = useState({
@@ -32,7 +32,7 @@ export default function StudentProfile() {
 
   return (
     <div className="min-h-screen text-blue-900 bg-white">
-      <StudentNavbar />
+
       <div className="max-w-6xl px-6 py-10 mx-auto">
         <h1 className="mb-8 text-3xl font-bold text-blue-900">My Profile</h1>
 

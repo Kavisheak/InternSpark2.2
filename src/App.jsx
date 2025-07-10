@@ -1,8 +1,15 @@
 
-import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain"
+// import AdminMain from "./Components/AdminComponent/Dashboard/AdminMain";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
+
+
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
 
 
 
@@ -16,9 +23,11 @@ import StudentMain from "./Components/StudentComponents/StudentMain";
 
 
 
+
 function App() {
 
    return (
+
 
 
     <Router>
@@ -27,7 +36,7 @@ function App() {
         <Route path="/login" element={<AuthPage initialIsLogin={true} />} />
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
         <Route path="/company/*" element={<CompanyMain />} />
-        <Route path="/admin" element={<AdminMain />} />
+        {/* <Route path="/admin" element={<AdminMain />} /> */}
         
         <Route path="/student/*" element={<StudentMain />} />
         

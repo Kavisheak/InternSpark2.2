@@ -1,8 +1,23 @@
-import React, { useEffect } from 'react';
+import { useEffect } from "react";
 
-const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFA500', '#800080', '#00CED1', '#FFC0CB'];
+const colors = [
+  "#FF0000",
+  "#00FF00",
+  "#0000FF",
+  "#FFA500",
+  "#800080",
+  "#00CED1",
+  "#FFC0CB",
+];
 
-const shapes = ['circle', 'square', 'triangle', 'hexagon', 'pentagon', 'diamond'];
+const shapes = [
+  "circle",
+  "square",
+  "triangle",
+  "hexagon",
+  "pentagon",
+  "diamond",
+];
 
 const generateRandom = () => ({
   top: `${Math.random() * 100}%`,
@@ -16,7 +31,7 @@ const generateRandom = () => ({
 
 const AnimatedShapes = () => {
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.innerHTML = `
       @keyframes drift {
         0% { transform: translate(0, 0) rotate(0deg); opacity: 0.7; }
@@ -101,7 +116,7 @@ const AnimatedShapes = () => {
   const shapeElements = Array.from({ length: 40 }).map((_, i) => {
     const { top, left, size, color, shape, duration, delay } = generateRandom();
 
-    if (shape === 'triangle') {
+    if (shape === "triangle") {
       return (
         <span
           key={i}
@@ -117,7 +132,7 @@ const AnimatedShapes = () => {
       );
     }
 
-    if (shape === 'hexagon') {
+    if (shape === "hexagon") {
       return (
         <div
           key={i}
@@ -134,7 +149,7 @@ const AnimatedShapes = () => {
       );
     }
 
-    if (shape === 'pentagon') {
+    if (shape === "pentagon") {
       return (
         <div
           key={i}
@@ -149,7 +164,7 @@ const AnimatedShapes = () => {
       );
     }
 
-    if (shape === 'diamond') {
+    if (shape === "diamond") {
       return (
         <span
           key={i}

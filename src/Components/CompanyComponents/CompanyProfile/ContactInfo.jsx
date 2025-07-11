@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ContactInfo = () => {
   const [formData, setFormData] = useState({
-    primaryName: 'Alex Morgan',
-    primaryEmail: 'alex.morgan@techcorpsolutions.example',
-    primaryPhone: '555-123-4567',
-    secondaryName: 'Jordan Taylor',
-    secondaryEmail: 'jordan.taylor@techcorpsolutions.example',
-    secondaryPhone: '555-987-6543',
+    primaryName: "Alex Morgan",
+    primaryEmail: "alex.morgan@techcorpsolutions.example",
+    primaryPhone: "555-123-4567",
+    secondaryName: "Jordan Taylor",
+    secondaryEmail: "jordan.taylor@techcorpsolutions.example",
+    secondaryPhone: "555-987-6543",
   });
 
   const handleChange = (e) => {
@@ -15,8 +15,8 @@ const ContactInfo = () => {
   };
 
   const handleSave = () => {
-    console.log('Saved Contact Info!', formData);
-    alert('Contact information saved successfully!');
+    console.log("Saved Contact Info!", formData);
+    alert("Contact information saved successfully!");
   };
 
   return (
@@ -24,10 +24,14 @@ const ContactInfo = () => {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Primary Contact */}
         <div className="p-6 bg-white border border-gray-200 shadow-md rounded-xl">
-          <h2 className="mb-4 text-xl font-bold text-[#2128BD]">Primary Contact</h2>
+          <h2 className="mb-4 text-xl font-bold text-[#2128BD]">
+            Primary Contact
+          </h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Contact Name</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Contact Name
+            </label>
             <input
               type="text"
               name="primaryName"
@@ -39,7 +43,9 @@ const ContactInfo = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Email</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="primaryEmail"
@@ -51,7 +57,9 @@ const ContactInfo = () => {
           </div>
 
           <div className="mb-2">
-            <label className="block text-sm font-semibold text-gray-700">Phone Number</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Phone Number
+            </label>
             <input
               type="tel"
               name="primaryPhone"
@@ -65,10 +73,14 @@ const ContactInfo = () => {
 
         {/* Secondary Contact */}
         <div className="p-6 bg-white border border-gray-200 shadow-md rounded-xl">
-          <h2 className="mb-4 text-xl font-bold text-[#2128BD]">Secondary Contact (Optional)</h2>
+          <h2 className="mb-4 text-xl font-bold text-[#2128BD]">
+            Secondary Contact (Optional)
+          </h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Contact Name</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Contact Name
+            </label>
             <input
               type="text"
               name="secondaryName"
@@ -80,7 +92,9 @@ const ContactInfo = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Email</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="secondaryEmail"
@@ -92,7 +106,9 @@ const ContactInfo = () => {
           </div>
 
           <div className="mb-2">
-            <label className="block text-sm font-semibold text-gray-700">Phone Number</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Phone Number
+            </label>
             <input
               type="tel"
               name="secondaryPhone"

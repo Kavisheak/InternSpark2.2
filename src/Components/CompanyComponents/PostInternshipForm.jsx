@@ -82,7 +82,9 @@ const PostInternshipForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Internship Title</label>
+            <label className="block mb-1 font-semibold text-[#2128BD]">
+              Internship Title
+            </label>
             <input
               type="text"
               name="title"
@@ -96,7 +98,9 @@ const PostInternshipForm = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Location</label>
+              <label className="block mb-1 font-semibold text-[#2128BD]">
+                Location
+              </label>
               <input
                 type="text"
                 name="location"
@@ -109,7 +113,9 @@ const PostInternshipForm = () => {
             </div>
 
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Internship Type</label>
+              <label className="block mb-1 font-semibold text-[#2128BD]">
+                Internship Type
+              </label>
               <div className="flex space-x-2">
                 {["On-site", "Remote", "Hybrid"].map((type) => (
                   <button
@@ -146,7 +152,9 @@ const PostInternshipForm = () => {
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Duration</label>
+              <label className="block mb-1 font-semibold text-[#2128BD]">
+                Duration
+              </label>
               <input
                 type="text"
                 name="duration"
@@ -160,7 +168,9 @@ const PostInternshipForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Description</label>
+            <label className="block mb-1 font-semibold text-[#2128BD]">
+              Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
@@ -173,7 +183,9 @@ const PostInternshipForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Requirements</label>
+            <label className="block mb-1 font-semibold text-[#2128BD]">
+              Requirements
+            </label>
             <textarea
               name="requirements"
               value={formData.requirements}
@@ -187,7 +199,9 @@ const PostInternshipForm = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Application Deadline</label>
+              <label className="block mb-1 font-semibold text-[#2128BD]">
+                Application Deadline
+              </label>
               <input
                 type="date"
                 name="deadline"
@@ -198,7 +212,9 @@ const PostInternshipForm = () => {
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Application Limit</label>
+              <label className="block mb-1 font-semibold text-[#2128BD]">
+                Application Limit
+              </label>
               <input
                 type="number"
                 name="applicationLimit"

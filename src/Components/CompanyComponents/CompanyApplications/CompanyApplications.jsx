@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import CompanyNavbar from "./CompanyNavbar";
+import Footer from "../Footer";
+import CompanyNavbar from "../CompanyNavbar";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
-import Footer from "./Footer";
 
 const initialApplications = [
   {
@@ -77,7 +77,10 @@ function useQuery() {
 }
 
 const slugify = (text) =>
-  text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+  text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
 
 export default function CompanyApplications() {
   const { roleSlug } = useParams();

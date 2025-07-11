@@ -24,7 +24,7 @@ const ImageSlider = () => {
         }}
         breakpoints={{
           0: {
-            slidesPerView: 1, // ✅ Show only ONE image on mobile
+            slidesPerView: 1, //  Show only 1 image on mobile
           },
           768: {
             slidesPerView: 2,

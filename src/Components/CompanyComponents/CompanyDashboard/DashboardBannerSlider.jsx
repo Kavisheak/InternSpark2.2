@@ -9,7 +9,8 @@ const DashboardBannerSlider = () => {
           Manage Internships & Applications
         </h2>
         <p className="mt-6 text-lg text-gray-700">
-          Track posted internships, monitor application status, and engage with your future team — all in one place.
+          Track posted internships, monitor application status, and engage with
+          your future team — all in one place.
         </p>
       </div>
     </div>

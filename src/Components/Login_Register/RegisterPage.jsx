@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 
 const RegisterPage = ({ onNavigateToLogin }) => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    username: '',
     email: '',
-    userType: 'Student looking for internships',
+    role: 'student', // match your DB roles: 'student' or 'company'
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
   });
+
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -18,22 +20,43 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setMessage('Passwords do not match!');
       return;
     }
 
     if (!formData.agreeToTerms) {
-      alert('Please agree to the Terms of Service and Privacy Policy');
+      setMessage('Please agree to the Terms of Service and Privacy Policy');
       return;
     }
 
-    console.log('Registration attempt:', formData);
-    alert('Account created successfully! Please sign in.');
-    onNavigateToLogin();
+    try {
+      const response = await fetch('http://localhost/InternBackend/api/register.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          role: formData.role,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('Account created successfully! Please sign in.');
+        onNavigateToLogin();
+      } else {
+        setMessage(data.message || 'Registration failed.');
+      }
+    } catch (error) {
+      setMessage('Server error. Please try again later.');
+    }
   };
 
   const inputClass =
@@ -67,15 +90,15 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <p className="text-sm text-blue-500">Join thousands of aspiring interns</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div>
-            <label className="block mb-1 text-sm text-blue-800">Full Name</label>
+            <label className="block mb-1 text-sm text-blue-800">Username</label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your full name"
+              placeholder="Enter your username"
               className={inputClass}
               required
             />
@@ -95,17 +118,15 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm text-blue-800">I am a</label>
+            <label className="block mb-1 text-sm text-blue-800">Role</label>
             <select
-              name="userType"
-              value={formData.userType}
+              name="role"
+              value={formData.role}
               onChange={handleChange}
               className={inputClass}
             >
-              <option value="Student looking for internships">
-                Student looking for internships
-              </option>
-              <option value="Company hiring interns">Company hiring interns</option>
+              <option value="student">Student</option>
+              <option value="company">Company</option>
             </select>
           </div>
 
@@ -142,6 +163,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               checked={formData.agreeToTerms}
               onChange={handleChange}
               className="mt-1 mr-2"
+              required
             />
             <span>
               I agree to the{' '}
@@ -154,6 +176,8 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               </button>
             </span>
           </div>
+
+          {message && <p className="text-sm text-red-600">{message}</p>}
 
           <button
             type="submit"

@@ -3,7 +3,7 @@ import { FaUserShield } from "react-icons/fa";
 
 const SystemStatus = () => {
   return (
-    <div className="bg-gray-800 p-4 rounded-lg">
+    <div className="bg-red-200  p-4 rounded-lg">
       <div className="flex items-center text-green-400 font-semibold mb-3">
         <FaUserShield className="mr-2" />
         System Status

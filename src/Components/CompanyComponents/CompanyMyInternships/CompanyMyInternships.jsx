@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import {
-  FiCalendar,
-  FiEdit,
-  FiTrash,
-  FiSearch,
-  FiMapPin,
-  FiUsers,
-} from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import CompanyNavbar from "./CompanyNavbar";
+
+import Footer from "../Footer";
+import CompanyNavbar from "../CompanyNavbar";
 import ListofInternships from "./ListofInternships";
-import Footer from "./Footer";
 
 export default function CompanyMyInternships() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,30 +30,31 @@ export default function CompanyMyInternships() {
 
       <div className="min-h-screen p-6 text-gray-900 bg-transparent md:p-10">
         {/* Header Section */}
-<div className="flex flex-col items-start justify-between gap-4 mb-9 md:flex-row md:items-center md:gap-0">
-  <h1 className="ml-1 text-2xl font-bold text-royalblue">Manage Internships</h1>
+        <div className="flex flex-col items-start justify-between gap-4 mb-9 md:flex-row md:items-center md:gap-0">
+          <h1 className="ml-1 text-2xl font-bold text-royalblue">
+            Manage Internships
+          </h1>
 
-  <div className="flex flex-col items-stretch w-full gap-3 sm:flex-row sm:items-center sm:justify-end md:mr-4">
-    <div className="flex items-center w-full px-2 py-2 bg-gray-100 rounded-lg sm:w-96">
-      <FiSearch className="mr-2 text-gray-900" />
-      <input
-        type="text"
-        placeholder="Search by title or internship name..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full text-gray-800 placeholder-gray-500 bg-transparent focus:outline-none"
-      />
-    </div>
+          <div className="flex flex-col items-stretch w-full gap-3 sm:flex-row sm:items-center sm:justify-end md:mr-4">
+            <div className="flex items-center w-full px-2 py-2 bg-gray-100 rounded-lg sm:w-96">
+              <FiSearch className="mr-2 text-gray-900" />
+              <input
+                type="text"
+                placeholder="Search by title or internship name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full text-gray-800 placeholder-gray-500 bg-transparent focus:outline-none"
+              />
+            </div>
 
-    <button
-      className="px-4 py-2 font-semibold transition border rounded text-royalblue hover:bg-royalblue hover:text-white"
-      onClick={() => navigate("/company/postinternship")}
-    >
-      + Post New
-    </button>
-  </div>
-</div>
-
+            <button
+              className="px-4 py-2 font-semibold transition border rounded text-royalblue hover:bg-royalblue hover:text-white"
+              onClick={() => navigate("/company/postinternship")}
+            >
+              + Post New
+            </button>
+          </div>
+        </div>
 
         {/* List of internships */}
         <ListofInternships searchTerm={searchTerm} />

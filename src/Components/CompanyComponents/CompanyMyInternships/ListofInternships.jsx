@@ -26,7 +26,7 @@ const internships = [
     mode: "Remote",
     status: "Active",
   },
-    {
+  {
     id: 4,
     title: "Frontend Developer Intern",
     location: "San Francisco, CA",
@@ -50,7 +50,7 @@ const internships = [
     mode: "Remote",
     status: "Active",
   },
-    {
+  {
     id: 7,
     title: "Frontend Developer Intern",
     location: "San Francisco, CA",
@@ -85,7 +85,7 @@ const ListofInternships = ({ searchTerm }) => {
         .filter((job) =>
           job.title.toLowerCase().startsWith(searchTerm.toLowerCase())
         )
-        
+
         .map((job) => (
           <div
             key={job.id}

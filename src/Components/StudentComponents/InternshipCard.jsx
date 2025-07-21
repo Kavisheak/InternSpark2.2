@@ -20,16 +20,16 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+    <div className="p-6 transition-shadow duration-200 bg-white rounded-lg shadow-md hover:shadow-lg">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">
+          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+            <span className="text-lg font-bold text-white">
               {internship.company.charAt(0)}
             </span>
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-lg">{internship.title}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{internship.title}</h3>
             <p className="text-gray-600">{internship.company}</p>
           </div>
         </div>
@@ -45,7 +45,7 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
         </button>
       </div>
 
-      <div className="space-y-2 mb-4">
+      <div className="mb-4 space-y-2">
         <div className="flex items-center text-gray-600">
           <MapPin className="w-4 h-4 mr-2" />
           <span className="text-sm">{internship.location}</span>
@@ -56,20 +56,20 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
         </div>
       </div>
 
-      <div className="flex items-center space-x-3 mb-4">
+      <div className="flex items-center mb-4 space-x-3">
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getWorkTypeStyle(internship.workType)}`}>
           {internship.workType}
         </span>
-        <span className="text-green-600 font-medium">{internship.pay}</span>
+        <span className="font-medium text-green-600">{internship.pay}</span>
       </div>
 
-      <p className="text-gray-700 text-sm mb-4 line-clamp-3">{internship.description}</p>
+      <p className="mb-4 text-sm text-gray-700 line-clamp-3">{internship.description}</p>
 
       <div className="flex items-center justify-between">
-        <span className="text-red-500 text-sm">
+        <span className="text-sm text-red-500">
           {internship.status === 'closed' ? '🔒 Application closed' : '🔒 Application closes'}
         </span>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+        <button className="px-4 py-2 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700">
           View Details
         </button>
       </div>

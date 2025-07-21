@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { FiUser } from "react-icons/fi";
 
 const DashboardRecentApplications = () => {
   const navigate = useNavigate();
@@ -31,66 +32,52 @@ const DashboardRecentApplications = () => {
   ];
 
   const statusColors = {
-    New: "bg-purple-600 text-white",
-    Reviewing: "bg-yellow-400 text-black",
-    Interviewing: "bg-green-400 text-black",
+    New: "bg-[#ED6A2C] text-white",
+    Reviewing: "bg-yellow-300 text-black",
+    Interviewing: "bg-green-300 text-black",
   };
 
   return (
-    <div className="p-6 mb-12 text-gray-900 bg-white shadow-md md:p-8 rounded-2xl">
-      {/* Header */}
+    <div className="p-6 mb-12 bg-white border border-[#01165A]/10 rounded-2xl shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-royalblue">
-          Recent Applications
-        </h2>
+        <h2 className="text-2xl font-bold text-[#01165A]">Recent Applications</h2>
         <button
           onClick={() => navigate("/company/applications")}
-          className="px-4 py-1 text-sm font-medium transition border border-gray-300 rounded-lg hover:bg-gray-800 hover:text-white"
+          className="px-4 py-1 text-sm font-medium border border-[#01165A] text-[#01165A] rounded-md hover:bg-[#01165A] hover:text-white transition"
         >
           View All
         </button>
       </div>
 
-      {/* Applications List */}
-      <div className="space-y-4">
-        {recentApplications.slice(0, 4).map((app, idx) => (
+      <div className="grid gap-6 md:grid-cols-2">
+        {recentApplications.map((app, idx) => (
           <div
             key={idx}
-            className="flex flex-col p-4 transition border border-blue-100 shadow sm:flex-row sm:items-center sm:justify-between rounded-xl bg-gradient-to-br from-white via-blue-50 to-blue-100 hover:shadow-md"
+            className="flex items-start gap-4 p-5 bg-gray-100 border border-gray-300 rounded-xl shadow hover:shadow-md transition text-[#01165A]"
           >
-            {/* Info Section */}
-            <div className="mb-2 sm:mb-0">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {app.name}
-              </h3>
-              <p className="text-sm text-gray-600">
-                Applied for{" "}
-                <span className="font-medium text-gray-800">{app.role}</span> ·{" "}
-                {app.time}
-              </p>
+            <div className="p-3 bg-[#01165A] text-white rounded-full">
+              <FiUser size={24} />
             </div>
-
-            {/* Status + Action */}
-            <div className="flex items-center space-x-3">
-              <span
-                className={`text-sm px-3 py-1 rounded-full font-semibold ${
-                  statusColors[app.status]
-                }`}
-              >
-                {app.status}
-              </span>
-              <button
-                onClick={() =>
-                  navigate(
-                    `/company/applications?applicantName=${encodeURIComponent(
-                      app.name
-                    )}`
-                  )
-                }
-                className="text-sm font-medium text-blue-600 underline hover:text-blue-800"
-              >
-                View
-              </button>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold">{app.name}</h3>
+              <p className="mt-1 text-sm text-gray-600">
+                Applied for <span className="font-semibold text-[#01165A]">{app.role}</span> · {app.time}
+              </p>
+              <div className="flex items-center justify-between mt-3">
+                <span
+                  className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColors[app.status] ?? "bg-gray-300 text-black"}`}
+                >
+                  {app.status}
+                </span>
+                <button
+                  onClick={() =>
+                    navigate(`/company/applications?applicantName=${encodeURIComponent(app.name)}`)
+                  }
+                  className="text-sm font-medium text-[#ED6A2C] underline hover:text-[#01165A]"
+                >
+                  View
+                </button>
+              </div>
             </div>
           </div>
         ))}

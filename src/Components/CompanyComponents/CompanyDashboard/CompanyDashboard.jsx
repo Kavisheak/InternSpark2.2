@@ -1,4 +1,8 @@
-import { MdWorkOutline, MdFiberNew, MdAssignment } from "react-icons/md";
+import {
+  MdBusinessCenter,
+  MdNotificationsActive,
+  MdDescription,
+} from "react-icons/md";
 import Footer from "../Footer";
 import CompanyNavbar from "../CompanyNavbar";
 import DashboardBannerSlider from "./DashboardBannerSlider";
@@ -66,42 +70,48 @@ const CompanyDashboard = () => {
   ).length;
 
   return (
-    <div className="min-h-screen text-white bg-black ">
-      
-        <CompanyNavbar />
+    <div className="min-h-screen text-white ">
+      <CompanyNavbar />
+      <div className="fade-in-up">
+      <DashboardBannerSlider />
 
-       <DashboardBannerSlider/>
-      
-      <div className="p-6 pt-10 bg-sky-50 md:p-10 ">
+      <div className="p-6 pt-10 bg-white md:p-10 ">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 gap-6 px-10 mb-12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 px-6 md:mb-10 sm:grid-cols-2 lg:grid-cols-3">
           {[
             {
               label: "Active Internships",
-              icon: <MdWorkOutline size={28} />,
+              icon: <MdBusinessCenter size={28} className="text-white" />,
               value: activeInternships.length,
+              bg: "bg-orange-500",
             },
             {
               label: "New Applications",
-              icon: <MdFiberNew size={28} />,
+              icon: (
+                <MdNotificationsActive size={28} className="text-teal-600" />
+              ),
               value: newApplications,
+              bg: "bg-oxfordblue",
             },
             {
               label: "Total Applications",
-              icon: <MdAssignment size={28} />,
+              icon: <MdDescription size={28} className="text-pink-600" />,
               value: totalApplications,
+              bg: "bg-oxfordblue",
             },
           ].map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center p-6 text-gray-800 transition-all bg-white shadow-md rounded-2xl hover:shadow-xl"
+              className={`flex items-center p-6 transition-all duration-300 rounded-2xl shadow hover:shadow-lg ${item.bg}`}
             >
-              <div className="p-3 mr-4 text-blue-700 bg-blue-100 rounded-full">
+              <div className="p-4 mr-4 rounded-full shadow-sm">
                 {item.icon}
               </div>
               <div>
-                <p className="text-sm opacity-80">{item.label}</p>
-                <h3 className="text-2xl font-semibold">{item.value}</h3>
+                <h3 className="text-3xl font-bold text-white">
+                  {item.value}
+                </h3>
+                <p className="text-sm text-gray-200">{item.label}</p>
               </div>
             </div>
           ))}
@@ -114,6 +124,7 @@ const CompanyDashboard = () => {
         <DashboardActiveInternships />
       </div>
       <Footer />
+      </div>
     </div>
   );
 };

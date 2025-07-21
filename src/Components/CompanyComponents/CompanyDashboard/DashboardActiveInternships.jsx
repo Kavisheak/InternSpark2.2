@@ -1,95 +1,107 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCalendar } from "react-icons/fi";
+import axios from "axios";
 
 const DashboardActiveInternships = () => {
   const navigate = useNavigate();
+  const [internships, setInternships] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const activeInternships = [
-    {
-      id: 1,
-      title: "Frontend Developer Intern",
-      deadline: "May 20, 2025",
-      applications: 9,
-      filled: 60,
-    },
-    {
-      id: 2,
-      title: "UI/UX Intern",
-      deadline: "May 30, 2025",
-      applications: 3,
-      filled: 25,
-    },
-    {
-      id: 3,
-      title: "Data Analyst Intern",
-      deadline: "June 10, 2025",
-      applications: 6,
-      filled: 40,
-    },
-  ];
+  // Fetch internships from backend
+  useEffect(() => {
+    const fetchInternships = async () => {
+      try {
+        const response = await axios.get("http://localhost/InternBackend/api/Dashboardget_active_internships.php", {
+          withCredentials: true, // important for session handling
+        });
+
+        if (response.data.success) {
+          setInternships(response.data.internships);
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Failed to fetch internships", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInternships();
+  }, []);
 
   return (
-    <div className="p-6 mb-12 text-gray-900 bg-white shadow-md md:p-8 rounded-2xl">
-      {/* Header */}
+    <div className="p-6 mb-12 bg-white border border-[#01165A]/10 rounded-2xl shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Your Active Internships</h2>
+        <h2 className="text-2xl font-bold text-[#01165A]">Your Active Internships</h2>
         <button
           onClick={() => navigate("/company/internships")}
-          className="px-4 py-1 text-sm font-medium transition border border-gray-300 rounded-lg hover:bg-gray-800 hover:text-white"
+          className="px-4 py-1 text-sm font-medium border border-[#01165A] text-[#01165A] rounded-md hover:bg-[#01165A] hover:text-white transition"
         >
           Manage All
         </button>
       </div>
 
-      {/* Internships */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {activeInternships.slice(0, 6).map((job, idx) => (
-          <div
-            key={idx}
-            className="p-6 transition border border-blue-100 shadow rounded-xl bg-gradient-to-br from-white via-blue-50 to-blue-100 hover:shadow-md"
-          >
-            <h3 className="mb-2 text-xl font-semibold text-gray-900">
-              {job.title}
-            </h3>
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : internships.length === 0 ? (
+        <p className="text-gray-500">No active internships found.</p>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2">
+          {internships.map((job) => (
+            <div
+              key={job.id}
+              className="p-6 bg-gray-100 border border-gray-300 rounded-xl shadow hover:shadow-md transition text-[#01165A]"
+            >
+              <h3 className="mb-2 text-xl font-bold">{job.title}</h3>
 
-            <div className="flex items-center mb-4 text-sm text-gray-600">
-              <FiCalendar className="mr-2 text-base text-blue-600" />
-              <span>Deadline: {job.deadline}</span>
+              <div className="flex items-center mb-3 text-sm text-gray-600">
+                <FiCalendar className="mr-2" />
+                <span>Deadline: {job.deadline}</span>
+              </div>
+
+              <div className="mb-4">
+                <div className="w-full h-2 overflow-hidden bg-gray-300 rounded-full">
+                  <div
+                    className="h-full bg-[#ED6A2C]"
+                    style={{ width: `40%` }} // dummy progress (optional)
+                  ></div>
+                </div>
+                <p className="mt-1 text-xs text-gray-600">40% filled</p> {/* dummy text */}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="px-3 py-1 text-sm font-medium bg-[#ED6A2C] text-white rounded-full">
+                  5 Applications {/* dummy */}
+                </span>
+
+                <button
+                  onClick={() =>
+                    navigate(`/company/postinternship/${job.id}`, {
+                      state: { internship: job, viewOnly: false },
+                    })
+                  }
+                  className="px-3 py-1 text-sm font-medium border border-[#01165A] text-[#01165A] rounded-md hover:bg-[#01165A] hover:text-white transition"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() =>
+                    navigate(`/company/postinternship/${job.id}`, {
+                      state: { internship: job, viewOnly: true },
+                    })
+                  }
+                  className="px-3 py-1 text-sm font-medium text-orange-400 transition border border-orange-400 rounded-md hover:bg-orange-400 hover:text-white"
+                >
+                  View
+                </button>
+              </div>
             </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Applications badge */}
-              <span className="px-3 py-1 text-sm font-medium text-white rounded-full bg-royalblue">
-                {job.applications} Applications
-              </span>
-
-              {/* Edit button */}
-              <button
-                onClick={() =>
-                  navigate(`/company/postinternship/${job.id}`, {
-                    state: { internship: job, viewOnly: false },
-                  })
-                }
-                className="px-3 py-1 text-sm font-medium text-blue-700 transition border border-blue-300 rounded-md hover:bg-blue-600 hover:text-white"
-              >
-                Edit
-              </button>
-
-              {/* View button */}
-              <button
-                onClick={() =>
-                  navigate(`/company/postinternship/${job.id}`, {
-                    state: { internship: job, viewOnly: true },
-                  })
-                }
-                className="px-3 py-1 text-sm font-medium text-blue-700 transition border border-blue-300 rounded-md hover:bg-blue-600 hover:text-white"
-              >
-                View
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

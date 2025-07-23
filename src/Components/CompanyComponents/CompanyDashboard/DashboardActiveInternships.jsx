@@ -73,7 +73,7 @@ const DashboardActiveInternships = () => {
 
               <div className="flex flex-wrap items-center gap-3">
                 <span className="px-3 py-1 text-sm font-medium bg-[#ED6A2C] text-white rounded-full">
-                  5 Applications {/* dummy */}
+                  20 Applications {/* dummy */}
                 </span>
 
                 <button

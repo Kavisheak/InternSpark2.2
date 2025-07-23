@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { FiArrowRight, FiUser } from "react-icons/fi";
-import "./CompanyHome.css";
 import emp1 from "../../../assets/emp1.png";
 import girlemp from "../../../assets/grl.png";
 import CompanyNavbar from "../CompanyNavbar";

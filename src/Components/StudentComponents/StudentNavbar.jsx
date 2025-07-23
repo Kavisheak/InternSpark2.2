@@ -8,22 +8,21 @@ const StudentNavbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
- const navItems = [
-  { name: "Home", path: "/student" },
-  { name: "Internships", path: "/student/internships" },
-  { name: "Applications", path: "/student/applications" },
-  { name: "Bookmarks", path: "/student/bookmarks" },
-  { name: "My Profile", path: "/student/studentprofile" },
-];
-
+  const navItems = [
+    { name: "Home", path: "/student" },
+    { name: "Internships", path: "/student/Internshipdetails" },
+    { name: "Applications", path: "/student/applications" },
+    { name: "Bookmarks", path: "/student/bookmarks" },
+    { name: "My Profile", path: "/student/studentprofile" },
+  ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-royalblue">
+    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md" style={{ backgroundColor: "#031B4E" }}>
       <div className="flex items-center justify-between px-4 py-2">
         {/* Logo */}
-        <Link to="/" className="text-xl font-bold">
+        <Link to="/" className="text-xl font-bold text-white">
           Internspark
         </Link>
 
@@ -59,7 +58,7 @@ const StudentNavbar = () => {
           <li>
             <Link
               to="/logout"
-              className="px-4 py-1 transition bg-white rounded-md text-royalblue hover:bg-red-100"
+              className="px-4 py-1 transition bg-white rounded-md text-[#031B4E] hover:bg-red-100"
             >
               Logout
             </Link>
@@ -77,7 +76,7 @@ const StudentNavbar = () => {
 
       {/* Mobile Nav */}
       {menuOpen && (
-        <ul className="px-6 pb-4 space-y-2 bg-[#2128BD] md:hidden text-base font-medium">
+        <ul className="px-6 pb-4 space-y-2 text-base font-medium md:hidden" style={{ backgroundColor: "#031B4E" }}>
           {navItems.map((item) => (
             <li key={item.name}>
               <Link
@@ -108,7 +107,7 @@ const StudentNavbar = () => {
             <Link
               to="/logout"
               onClick={() => setMenuOpen(false)}
-              className="block w-full px-4 py-2 text-center text-red-600 bg-white rounded-md hover:bg-red-100"
+              className="block w-full px-4 py-2 text-center text-[#031B4E] bg-white rounded-md hover:bg-red-100"
             >
               Logout
             </Link>
@@ -119,4 +118,4 @@ const StudentNavbar = () => {
   );
 };
 
-export default StudentNavbar;
+export default StudentNavbar;

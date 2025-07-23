@@ -1,7 +1,10 @@
 import React from 'react';
 import { MapPin, Clock, Bookmark } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
+  const navigate = useNavigate();
+
   const getWorkTypeStyle = (type) => {
     switch (type.toLowerCase()) {
       case 'hybrid':
@@ -9,7 +12,7 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
       case 'on-site':
         return 'bg-blue-100 text-blue-800';
       case 'remote':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -17,6 +20,18 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
 
   const handleBookmarkClick = () => {
     onBookmarkToggle(internship);
+  };
+
+  const handleViewDetails = () => {
+    // Fix 1: Proper path with forward slash
+    navigate(`/student/internships/${internship.id}`, { state: { internship } });
+    
+    // Fix 2: Also store in sessionStorage as backup (matching your InternshipDetails component)
+    const existingData = JSON.parse(sessionStorage.getItem('internshipsData') || '[]');
+    const updatedData = existingData.find(item => item.id === internship.id) 
+      ? existingData 
+      : [...existingData, internship];
+    sessionStorage.setItem('internshipsData', JSON.stringify(updatedData));
   };
 
   return (
@@ -36,8 +51,8 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
         <button
           onClick={handleBookmarkClick}
           className={`transition-colors duration-200 ${
-            isBookmarked 
-              ? 'text-blue-600 hover:text-blue-700' 
+            isBookmarked
+              ? 'text-blue-600 hover:text-blue-700'
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -66,10 +81,13 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
       <p className="text-gray-700 text-sm mb-4 line-clamp-3">{internship.description}</p>
 
       <div className="flex items-center justify-between">
-        <span className="text-red-500 text-sm">
-          {internship.status === 'closed' ? '🔒 Application closed' : '🔒 Application closes'}
+        <span className={`text-sm ${internship.status === 'closed' ? 'text-red-500' : 'text-orange-500'}`}>
+          {internship.status === 'closed' ? '🔒 Application closed' : '⏰ Application open'}
         </span>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+        <button
+          onClick={handleViewDetails}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        >
           View Details
         </button>
       </div>

@@ -7,7 +7,7 @@ import {
   Building2,
 } from "lucide-react";
 
-// 🧩 Reusable UI Components
+//  UI Components
 const Input = ({ className = "", ...props }) => (
   <input className={`border rounded px-3 py-2 w-full ${className}`} {...props} />
 );
@@ -19,7 +19,7 @@ const Button = ({ children, className = "", ...props }) => (
 );
 
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white shadow rounded ${className}`}>{children}</div>
+  <div className={`bg-white shadow rounded  ${className}`}>{children}</div>
 );
 
 const CardContent = ({ children, className = "" }) => (
@@ -30,7 +30,7 @@ const Badge = ({ children, className = "" }) => (
   <span className={`px-2 py-1 text-sm rounded ${className}`}>{children}</span>
 );
 
-// 🧩 Main Component
+//  Main Component
 export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
@@ -105,22 +105,24 @@ export default function UserManagement() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-blue-600 mb-2">
+        <h1 className="text-2xl font-semibold text-orange-600 mb-2">
           User Suspension Management
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-800">
           Monitor and manage users based on report counts (auto-suspend at 10 reports)
         </p>
       </div>
 
-      <div className="mb-6 flex justify-end">
-        <div className="relative w-80">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      <div className="mb-6 flex justify-end ">
+        <div className="relative w-80 ">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 h-4 w-4" />
           <Input
+          
             placeholder="Search users..."
+  
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 border border-orange-600 "
           />
         </div>
       </div>
@@ -137,8 +139,8 @@ export default function UserManagement() {
             onClick={() => setActiveTab(tab.key)}
             className={`w-full ${
               activeTab === tab.key
-                ? "bg-blue-600 text-white"
-                : "bg-white text-blue-600 border border-blue-600"
+                ? "bg-orange-600 text-white"
+                : "bg-white text-orange-600 border border-orange-600"
             }`}
           >
             {tab.label} ({tab.count})
@@ -148,32 +150,32 @@ export default function UserManagement() {
 
       <div className="space-y-4">
         {filteredUsers.map((user) => (
-          <Card key={user.id} className="border border-gray-200">
+          <Card key={user.id} className="border border-orange-300">
             <CardContent>
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-blue-50 rounded-full">
+                  <div className="p-2 bg-orange-50 rounded-full">
                     {user.type === "Student" ? (
-                      <User className="h-5 w-5 text-blue-600" />
+                      <User className="h-5 w-5 text-orange-600" />
                     ) : (
-                      <Building2 className="h-5 w-5 text-blue-600" />
+                      <Building2 className="h-5 w-5 text-orange-600" />
                     )}
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">{user.name}</h3>
-                    <p className="text-gray-600 text-sm">{user.email}</p>
+                    <p className="text-gray-800 text-sm">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <Badge className="bg-blue-100 text-blue-800">{user.status}</Badge>
+                  <Badge className="bg-orange-100 text-orange-800">{user.status}</Badge>
                   <Badge
                     className={
                       user.reports >= 10
                         ? "bg-red-100 text-red-800"
                         : user.reports >= 8
                         ? "bg-orange-100 text-orange-800"
-                        : "bg-gray-100 text-gray-800"
+                        : "bg-orange-100 text-gray-800"
                     }
                   >
                     {user.reports} reports
@@ -183,19 +185,19 @@ export default function UserManagement() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Type:</span>
-                  <p className="font-medium text-blue-600">{user.type}</p>
+                  <span className="text-gray-800">Type:</span>
+                  <p className="font-medium text-orange-600">{user.type}</p>
                 </div>
                 <div>
-                  <span className="text-gray-500">Joined:</span>
+                  <span className="text-gray-800">Joined:</span>
                   <p className="font-medium">{user.joined}</p>
                 </div>
                 <div>
-                  <span className="text-gray-500">Last Active:</span>
+                  <span className="text-gray-800">Last Active:</span>
                   <p className="font-medium">{user.lastActive}</p>
                 </div>
                 <div>
-                  <span className="text-gray-500">
+                  <span className="text-gray-800">
                     {user.type === "Student" ? "Applications:" : "Internships:"}
                   </span>
                   <p className="font-medium">
@@ -223,7 +225,7 @@ export default function UserManagement() {
                 )}
                 <Button
                   onClick={() => handleViewReports(user.id)}
-                  className="text-blue-600 border border-blue-300 bg-blue-50"
+                  className="text-orange-600 border border-orange-300 bg-orange-50"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   View Reports

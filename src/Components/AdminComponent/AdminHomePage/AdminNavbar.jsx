@@ -21,7 +21,7 @@ const AdminNavbar = () => {
   ];
 
   return (
-    <nav className="bg-red-700 w-full mb-10 sticky top-0 z-50">
+    <nav className=" bg-orange-500 w-full mb-10 sticky top-0 z-50">
       <header className="flex justify-between items-center px-6 py-4 text-white">
         <div className="text-2xl font-bold">
           <span className="text-black">Intern</span>Spark Admin

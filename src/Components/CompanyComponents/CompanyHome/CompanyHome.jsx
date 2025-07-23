@@ -9,22 +9,22 @@ import ImageSlider from "./ImageSlider";
 import TalktoUs from "./TalktoUs";
 import Footer from "../Footer";
 
-
-
 const CompanyHome = () => {
   const navigate = useNavigate();
 
   return (
     <div className="relative min-h-screen font-sans text-gray-900 bg-white ">
       <CompanyNavbar />
-     
+
       <main className="px-4 md:px-0 mt-44 fade-in-up ">
         {/* Title Section */}
-        
-        <section className="relative px-4 mx-auto mb-16 md:mb-36 max-w-7xl sm:px-0">
+
+        <section className="relative px-4 mx-auto mb-20 -mt-16 md:mb-20 max-w-7xl sm:px-0">
           {/* Image */}
-          <div className="absolute top-0 right-0 hidden -mt-40 translate-x-10 md:block">
-            <div className="overflow-hidden w-fit h-fit ">
+          <div className="absolute right-0 hidden -mt-20 translate-x-10 md:block">
+            
+            
+            <div className="overflow-hidden w-fit h-fit">
               <img
                 src={emp1}
                 alt="Team"
@@ -34,11 +34,14 @@ const CompanyHome = () => {
           </div>
 
           {/* Title and Subtitle */}
-          <div className="max-w-2xl pt-10 -mt-20 md:pt-0 md:mt-0">
+          <div className="max-w-2xl pt-0 -mt-32 md:mt-0">
+            
+            <div className="inline-block px-4 py-1 mb-3 text-sm font-semibold text-orange-500 bg-orange-100 rounded-full">
+              #1 Internship Platform
+            </div>
             <p className="mb-3 text-lg font-medium text-gray-600">
               Your growth partner
             </p>
-
             <h1 className="mb-4 text-5xl font-extrabold leading-tight text-[#01165A] md:text-6xl">
               Build Powerful Teams,
               <br />
@@ -46,12 +49,10 @@ const CompanyHome = () => {
                 Drive Real Impact.
               </span>
             </h1>
-
             <p className="mb-10 text-lg text-gray-700">
               Discover and manage top internship candidates that fit your
               company’s mission and culture.
             </p>
-
             {/* Buttons */}
             <div className="flex flex-wrap gap-4">
               <button
@@ -68,11 +69,26 @@ const CompanyHome = () => {
                 My Profile
               </button>
             </div>
+            {/* Stats Row */}
+            <div className="flex flex-wrap gap-8 mt-10">
+              <div>
+                <h3 className="text-2xl font-bold text-[#01165A]">50K+</h3>
+                <p className="text-gray-600">Active Students</p>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-[#01165A]">2K+</h3>
+                <p className="text-gray-600">Partner Companies</p>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-[#01165A]">95%</h3>
+                <p className="text-gray-600">Success Rate</p>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Left-Right Content Block 1 */}
-        <section className="flex flex-col-reverse items-center justify-center py-20 mx-auto mb-10 bg-white md:flex-row md:px-0 max-w-7xl">
+        <section className="flex flex-col-reverse items-center justify-center py-20 mx-auto -mb-2 bg-white md:flex-row md:px-0 max-w-7xl">
           {/* Right - Image */}
           <div className="relative h-full overflow-hidden md:w-1/2 group">
             <img

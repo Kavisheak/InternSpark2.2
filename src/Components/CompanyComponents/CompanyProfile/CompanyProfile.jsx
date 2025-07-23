@@ -17,7 +17,7 @@ const CompanyProfile = () => {
 
         {/* Tab Switcher */}
         <div className="max-w-md ml-6">
-          <div className="flex border border-[#2128BD] rounded-md overflow-hidden">
+          <div className="flex overflow-hidden border rounded-md border-oxfordblue">
             <OutlineButton
               text="Company Profile"
               active={activeTab === "Company Profile"}
@@ -50,7 +50,7 @@ const OutlineButton = ({ text, active, onClick }) => (
     className={`flex-1 px-4 py-2 text-sm font-semibold transition duration-300 focus:outline-none ${
       active
         ? "bg-oxfordblue text-white"
-        : "bg-transparent text-[#2128BD] hover:bg-[#2128BD]/10"
+        : "bg-transparent text-oxfordblue hover:bg-orange-100"
     }`}
   >
     {text}

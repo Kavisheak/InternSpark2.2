@@ -8,7 +8,7 @@ import SystemSettings from "./SystemSettings/Database";
 
 
 
-// Dummy components for missing routes
+
 
 
 const AdminMain = () => {

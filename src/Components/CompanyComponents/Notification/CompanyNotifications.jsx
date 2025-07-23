@@ -24,10 +24,7 @@ const CompanyNotifications = ({ notifications, setNotifications }) => {
           >
             Mark all as read
           </button>
-          <button
-            onClick={clearAll}
-            className="text-red-500 hover:underline"
-          >
+          <button onClick={clearAll} className="text-red-500 hover:underline">
             Clear all
           </button>
         </div>

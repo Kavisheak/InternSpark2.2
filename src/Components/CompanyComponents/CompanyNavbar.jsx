@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
-import CompanyNotifications from "./CompanyNotifications"; // Make sure this component exists
+import CompanyNotifications from "./Notification/CompanyNotifications"; // Make sure this component exists
 
 const CompanyNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -131,7 +131,6 @@ const CompanyNavbar = () => {
           })}
 
           {/* Notifications (Mobile) */}
-
 
           {/* Logout Button */}
           <button className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-600 transition bg-white rounded-md hover:bg-red-100">

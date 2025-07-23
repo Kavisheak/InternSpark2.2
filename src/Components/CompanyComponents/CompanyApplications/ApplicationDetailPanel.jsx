@@ -12,7 +12,10 @@ function getStatusClass(status) {
   );
 }
 
-export default function ApplicationDetailPanel({ selected, handleStatusUpdate }) {
+export default function ApplicationDetailPanel({
+  selected,
+  handleStatusUpdate,
+}) {
   if (!selected) return null;
 
   return (

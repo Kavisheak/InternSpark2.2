@@ -1,39 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   FaUsers,
   FaMapMarkerAlt,
   FaGlobe,
   FaEnvelope,
   FaInfoCircle,
-} from 'react-icons/fa';
-import { BsBuildingsFill } from 'react-icons/bs';
+} from "react-icons/fa";
+import { BsBuildingsFill } from "react-icons/bs";
 
 const CompanyProfileForm = () => {
   const [formData, setFormData] = useState({
-    companyName: 'TechCorp Solutions',
-    industry: 'Information Technology',
-    companySize: '50-200',
-    location: 'San Francisco, CA',
-    website: 'https://techcorpsolutions.example',
-    email: 'careers@techcorpsolutions.example',
-    about: '',
+    companyName: "TechCorp Solutions",
+    industry: "Information Technology",
+    companySize: "50-200",
+    location: "San Francisco, CA",
+    website: "https://techcorpsolutions.example",
+    email: "careers@techcorpsolutions.example",
+    about: "",
   });
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSave = () => {
-    console.log('Saved Company Profile!', formData);
-    alert('Company profile saved successfully!');
+    console.log("Saved Company Profile!", formData);
+    alert("Company profile saved successfully!");
   };
 
   const fields = [
-    { label: 'Company Name', name: 'companyName', type: 'text', placeholder: 'e.g. TechCorp Solutions' },
-    { label: 'Industry', name: 'industry', type: 'text', placeholder: 'e.g. Information Technology' },
-    { label: 'Company Size', name: 'companySize', type: 'text', placeholder: 'e.g. 50-200' },
-    { label: 'Location', name: 'location', type: 'text', placeholder: 'e.g. San Francisco, CA' },
-    { label: 'Website', name: 'website', type: 'text', placeholder: 'e.g. https://techcorpsolutions.example' },
-    { label: 'Company Email', name: 'email', type: 'email', placeholder: 'e.g. careers@techcorpsolutions.example' },
+    {
+      label: "Company Name",
+      name: "companyName",
+      type: "text",
+      placeholder: "e.g. TechCorp Solutions",
+    },
+    {
+      label: "Industry",
+      name: "industry",
+      type: "text",
+      placeholder: "e.g. Information Technology",
+    },
+    {
+      label: "Company Size",
+      name: "companySize",
+      type: "text",
+      placeholder: "e.g. 50-200",
+    },
+    {
+      label: "Location",
+      name: "location",
+      type: "text",
+      placeholder: "e.g. San Francisco, CA",
+    },
+    {
+      label: "Website",
+      name: "website",
+      type: "text",
+      placeholder: "e.g. https://techcorpsolutions.example",
+    },
+    {
+      label: "Company Email",
+      name: "email",
+      type: "email",
+      placeholder: "e.g. careers@techcorpsolutions.example",
+    },
   ];
 
   return (
@@ -46,39 +76,52 @@ const CompanyProfileForm = () => {
               <BsBuildingsFill className="text-4xl" />
             </div>
             <h2 className="text-2xl font-bold text-center text-[#2128BD]">
-              {formData.companyName || 'Company Name'}
+              {formData.companyName || "Company Name"}
             </h2>
-            <p className="text-center text-gray-600">{formData.industry || 'Industry'}</p>
+            <p className="text-center text-gray-600">
+              {formData.industry || "Industry"}
+            </p>
           </div>
 
           <div className="space-y-3 text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <FaUsers className="text-[#2128BD]" />
-              <span><strong>Size:</strong> {formData.companySize}</span>
+              <span>
+                <strong>Size:</strong> {formData.companySize}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-[#2128BD]" />
-              <span><strong>Location:</strong> {formData.location}</span>
+              <span>
+                <strong>Location:</strong> {formData.location}
+              </span>
             </div>
             <div className="flex items-center gap-2 break-all">
               <FaGlobe className="text-[#2128BD]" />
               <span>
-                <strong>Website:</strong>{' '}
-                <a href={formData.website} target="_blank" rel="noreferrer" className="text-blue-600 underline hover:text-blue-800">
+                <strong>Website:</strong>{" "}
+                <a
+                  href={formData.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
                   {formData.website}
                 </a>
               </span>
             </div>
             <div className="flex items-center gap-2 break-all">
               <FaEnvelope className="text-[#2128BD]" />
-              <span><strong>Email:</strong> {formData.email}</span>
+              <span>
+                <strong>Email:</strong> {formData.email}
+              </span>
             </div>
             <div className="flex items-start gap-2">
               <FaInfoCircle className="mt-1 text-[#2128BD]" />
               <div>
                 <p className="font-semibold">About:</p>
                 <p className="text-gray-700 whitespace-pre-line">
-                  {formData.about || 'No description provided.'}
+                  {formData.about || "No description provided."}
                 </p>
               </div>
             </div>
@@ -90,7 +133,9 @@ const CompanyProfileForm = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {fields.map(({ label, name, type, placeholder }) => (
               <div key={name}>
-                <label className="block mb-1 text-sm font-semibold text-gray-700">{label}</label>
+                <label className="block mb-1 text-sm font-semibold text-gray-700">
+                  {label}
+                </label>
                 <input
                   type={type}
                   name={name}
@@ -104,7 +149,9 @@ const CompanyProfileForm = () => {
           </div>
 
           <div className="mt-4">
-            <label className="block mb-1 text-sm font-semibold text-gray-700">About</label>
+            <label className="block mb-1 text-sm font-semibold text-gray-700">
+              About
+            </label>
             <textarea
               name="about"
               value={formData.about}

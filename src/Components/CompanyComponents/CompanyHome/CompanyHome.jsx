@@ -1,14 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { FiArrowRight, FiUser } from "react-icons/fi";
-import CompanyNavbar from "./CompanyNavbar";
-import "./Company.css";
 import "./CompanyHome.css";
-import Footer from "./Footer";
+import emp from "../../../assets/emp.png";
+import girlemp from "../../../assets/grl.png";
+import CompanyNavbar from "../CompanyNavbar";
 import ForCompanies from "./ForCompanies";
-import TalktoUs from "./TalktoUs";
-import emp from "../../assets/emp.png";
-import girlemp from "../../assets/grl.png";
 import ImageSlider from "./ImageSlider";
+import TalktoUs from "./TalktoUs";
+import Footer from "../Footer";
 
 const CompanyHome = () => {
   const navigate = useNavigate();
@@ -17,9 +16,10 @@ const CompanyHome = () => {
     <div className="relative min-h-screen font-sans text-gray-900 bg-white">
       <CompanyNavbar />
 
-      <main className="px-6 mt-44">
+      <main className="px-4  md:px-0 mt-44">
         {/* Title Section */}
-        <section className="relative mx-auto mb-36 max-w-7xl">
+        <section className="relative mx-auto mb-16 md:mb-36 max-w-7xl">
+
           {/* Image */}
           <div className="absolute top-0 right-0 hidden -mt-40 translate-x-10 md:block">
             <div className="overflow-hidden w-fit h-fit animate-float">

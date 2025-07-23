@@ -1,10 +1,9 @@
 import { MdWorkOutline, MdFiberNew, MdAssignment } from "react-icons/md";
-import "./Company.css";
-import CompanyNavbar from "./CompanyNavbar";
+import Footer from "../Footer";
+import CompanyNavbar from "../CompanyNavbar";
+import DashboardBannerSlider from "./DashboardBannerSlider";
 import DashboardRecentApplications from "./DashboardRecentApplications";
 import DashboardActiveInternships from "./DashboardActiveInternships";
-import DashboardBannerSlider from "./DashboardBannerSlider";
-import Footer from "./Footer";
 
 const CompanyDashboard = () => {
   const recentApplications = [

@@ -1,12 +1,11 @@
-import React from "react";
 import { FiPlusCircle, FiFileText, FiUser } from "react-icons/fi";
 
 const ForCompanies = () => {
   return (
     <div className="w-screen -mx-6">
-      <div className="flex items-center justify-center w-full pt-10 mb-24 pb-14 bg-royalblue">
+      <div className="flex items-center justify-center w-full pt-10 mb-24 pb-14 bg-oxfordblue">
         <div className="w-full px-6 mx-auto max-w-7xl">
-          <h2 className="mb-16 text-4xl font-bold text-center text-white underline decoration-white">
+          <h2 className="mb-16 text-4xl font-bold text-center text-white ">
             For Companies
           </h2>
           <div className="grid gap-12 text-center md:grid-cols-3">

@@ -4,7 +4,7 @@ function getStatusClass(status) {
   return (
     {
       New: "bg-purple-100 text-purple-800",
-      Reviewing: "bg-gray-100 text-gray-800",
+      Reviewing: "bg-yellow-500 text-gray-800",
       Interviewing: "bg-blue-100 text-blue-800",
       Shortlisted: "bg-green-100 text-green-800",
       Rejected: "bg-red-100 text-red-800",
@@ -39,7 +39,7 @@ export default function ApplicationSidebar({
   return (
     <div className="w-full md:w-1/4 flex flex-col max-h-[calc(100vh-5rem)]">
       {/* Filter & Search */}
-      <div className="sticky top-0 z-10 pb-4 ">
+      <div className="top-0 z-10 pb-4 ">
         {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2 mb-3">
           {[
@@ -55,8 +55,8 @@ export default function ApplicationSidebar({
               onClick={() => setActiveFilter(status)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeFilter === status
-                  ? "bg-[#2128BD] text-white shadow"
-                  : "bg-transparent text-[#2128BD] border border-[#2128BD]/30 hover:bg-[#2128BD]/10"
+                  ? "bg-oxfordblue text-white shadow"
+                  : "bg-transparent text-oxfordblue border border-[#2128BD]/30 hover:bg-[#2128BD]/10"
               }`}
             >
               {status}

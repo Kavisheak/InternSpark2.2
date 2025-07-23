@@ -89,22 +89,22 @@ const AvailableInternship = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="px-4 py-8 mx-auto max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Available Internships</h1>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
             <input
               type="text"
               placeholder="Search by title, company"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+              className="py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
             />
           </div>
         </div>
 
-        <div className="flex space-x-4 mb-6">
+        <div className="flex mb-6 space-x-4">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -120,11 +120,11 @@ const AvailableInternship = () => {
           ))}
         </div>
 
-        <p className="text-gray-600 mb-6">
+        <p className="mb-6 text-gray-600">
           Showing {filteredInternships.length} internships
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {filteredInternships.map((internship) => (
             <InternshipCard 
               key={internship.id} 
@@ -136,9 +136,9 @@ const AvailableInternship = () => {
         </div>
 
         {filteredInternships.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No internships found</h3>
+          <div className="py-12 text-center">
+            <div className="mb-4 text-6xl text-gray-400">🔍</div>
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">No internships found</h3>
             <p className="text-gray-600">Try adjusting your search or filters</p>
           </div>
         )}

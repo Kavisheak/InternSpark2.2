@@ -17,7 +17,7 @@ export default function StudentHomepage() {
           <p className="max-w-3xl mx-auto mb-12 text-xl opacity-90">Start your professional journey with opportunities that match your skills and aspirations.</p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link
-              to="/internships"
+              to="internships"
               className="px-8 py-3 text-lg font-medium text-white transition border-2 border-white rounded hover:bg-white hover:text-royalblue"
             >
               Browse Internships

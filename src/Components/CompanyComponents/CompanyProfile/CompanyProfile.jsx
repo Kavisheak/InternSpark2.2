@@ -8,10 +8,10 @@ const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState("Company Profile");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-sky-100">
+    <div className="min-h-screen bg-white">
       <CompanyNavbar />
-      <div className="flex flex-col p-4 text-gray-800">
-        <h1 className="mb-6 ml-6 text-3xl font-bold text-[#2128BD]">
+      <div className="flex flex-col p-4 text-gray-800 fade-in-up">
+        <h1 className="mb-6 ml-6 text-3xl font-extrabold text-oxfordblue">
           Company Profile
         </h1>
 
@@ -49,7 +49,7 @@ const OutlineButton = ({ text, active, onClick }) => (
     onClick={onClick}
     className={`flex-1 px-4 py-2 text-sm font-semibold transition duration-300 focus:outline-none ${
       active
-        ? "bg-[#2128BD] text-white"
+        ? "bg-oxfordblue text-white"
         : "bg-transparent text-[#2128BD] hover:bg-[#2128BD]/10"
     }`}
   >

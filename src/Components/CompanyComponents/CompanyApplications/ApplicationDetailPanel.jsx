@@ -86,29 +86,42 @@ export default function ApplicationDetailPanel({
         </div>
 
         {/* Update Status */}
+        {/* Update Status */}
         <div>
           <p className="mb-2 font-semibold text-[#01165A]">Update Status</p>
-          <div className="flex flex-wrap gap-2">
-            {["Reviewing", "Shortlisted", "Interviewing", "Rejected"].map(
-              (status) => {
-                const statusColors = {
-                  Reviewing: "bg-orange-500 hover:bg-orange-600",
-                  Shortlisted: "bg-green-600 hover:bg-green-700",
-                  Interviewing: "bg-[#01165A] hover:bg-[#01165A]/90",
-                  Rejected: "bg-red-500 hover:bg-red-600",
-                };
-
-                return (
-                  <button
-                    key={status}
-                    onClick={() => handleStatusUpdate(selected.id, status)}
-                    className={`px-3 py-1 text-sm text-white font-medium rounded-md transition-colors ${statusColors[status]}`}
-                  >
-                    {status}
-                  </button>
-                );
-              }
-            )}
+          <div className="flex flex-wrap gap-3">
+            {[
+              {
+                status: "Reviewing",
+                bg: "bg-orange-500",
+                hover: "hover:bg-orange-600",
+              },
+              {
+                status: "Shortlisted",
+                bg: "bg-emerald-600",
+                hover: "hover:bg-emerald-700",
+              },
+              {
+                status: "Interviewing",
+                bg: "bg-[#1D4ED8]",
+                hover: "hover:bg-[#1E40AF]",
+              },
+              {
+                status: "Rejected",
+                bg: "bg-rose-500",
+                hover: "hover:bg-rose-600",
+              },
+            ].map(({ status, bg, hover }) => (
+              <button
+                key={status}
+                onClick={() => handleStatusUpdate(selected.id, status)}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm border border-white/10 transition duration-200 ${bg} ${hover} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${
+                  bg.split("-")[1]
+                }-400`}
+              >
+                {status}
+              </button>
+            ))}
           </div>
         </div>
       </div>

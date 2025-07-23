@@ -1,4 +1,3 @@
-// AvailableInternship.jsx
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import InternshipCard from './InternshipCard';
@@ -19,7 +18,7 @@ const AvailableInternship = () => {
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$25/hour',
-      description: 'Join our team to develop modern web applications using React and TypeScript. You\'ll work alongside senior developers on real-world projects.',
+      description: "Join our team to develop modern web applications using React and TypeScript. You'll work alongside senior developers on real-world projects.",
       status: 'closed'
     },
     {
@@ -57,22 +56,18 @@ const AvailableInternship = () => {
     }
   ];
 
-  // Load bookmarked internships from localStorage on component mount
   useEffect(() => {
     const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
     setBookmarkedInternships(savedBookmarks);
   }, []);
 
-  // Handle bookmark toggle
   const handleBookmarkToggle = (internship) => {
     const isCurrentlyBookmarked = bookmarkedInternships.some(item => item.id === internship.id);
     let updatedBookmarks;
 
     if (isCurrentlyBookmarked) {
-      // Remove from bookmarks
       updatedBookmarks = bookmarkedInternships.filter(item => item.id !== internship.id);
     } else {
-      // Add to bookmarks
       updatedBookmarks = [...bookmarkedInternships, internship];
     }
 
@@ -83,15 +78,15 @@ const AvailableInternship = () => {
   const filteredInternships = internships.filter(internship => {
     const matchesFilter = activeFilter === 'All' || internship.workType === activeFilter;
     const matchesSearch = internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         internship.company.toLowerCase().includes(searchTerm.toLowerCase());
+                          internship.company.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="px-4 py-8 mx-auto max-w-7xl">
+    <div className="min-h-screen bg-white">
+      <div className="px-4 py-8 mx-auto max-w-7xl fade-in-up">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Available Internships</h1>
+          <h1 className="text-3xl font-bold text-oxfordblue">Available Internships</h1>
           <div className="relative">
             <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
             <input
@@ -99,7 +94,7 @@ const AvailableInternship = () => {
               placeholder="Search by title, company"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+              className="py-2 pl-10 pr-4 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -111,8 +106,8 @@ const AvailableInternship = () => {
               onClick={() => setActiveFilter(filter)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
                 activeFilter === filter
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
               {filter}
@@ -120,7 +115,7 @@ const AvailableInternship = () => {
           ))}
         </div>
 
-        <p className="mb-6 text-gray-600">
+        <p className="mb-6 text-white">
           Showing {filteredInternships.length} internships
         </p>
 
@@ -136,10 +131,10 @@ const AvailableInternship = () => {
         </div>
 
         {filteredInternships.length === 0 && (
-          <div className="py-12 text-center">
-            <div className="mb-4 text-6xl text-gray-400">🔍</div>
-            <h3 className="mb-2 text-xl font-semibold text-gray-900">No internships found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
+          <div className="py-12 text-center text-white">
+            <div className="mb-4 text-6xl">🔍</div>
+            <h3 className="mb-2 text-xl font-semibold">No internships found</h3>
+            <p>Try adjusting your search or filters</p>
           </div>
         )}
       </div>

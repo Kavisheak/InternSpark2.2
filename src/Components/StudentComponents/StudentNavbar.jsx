@@ -20,7 +20,7 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-royalblue">
+    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-oxfordblue">
       <div className="flex items-center justify-between px-4 py-2">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold">
@@ -77,7 +77,7 @@ const StudentNavbar = () => {
 
       {/* Mobile Nav */}
       {menuOpen && (
-        <ul className="px-6 pb-4 space-y-2 bg-[#2128BD] md:hidden text-base font-medium">
+        <ul className="px-6 pb-4 space-y-2 text-base font-medium bg-oxfordblue md:hidden">
           {navItems.map((item) => (
             <li key={item.name}>
               <Link

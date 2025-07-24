@@ -15,7 +15,11 @@ const StudentMain = () => {
     <div>
       <StudentNavbar/>
     <Routes>
+
      <Route path="/internship/:id" element={<InternshipDetails />} />
+
+     <Route path="job/:id" element={<InternshipDetails />} />
+
       <Route path="studentprofile" element={<StudentProfile />} />
       <Route path="notifications" element={<Notifications />} /> {/* fixed */}
       <Route path="internships" element={<AvailableInternship/>}/>

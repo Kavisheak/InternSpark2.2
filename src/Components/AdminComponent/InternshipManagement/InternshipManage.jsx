@@ -68,41 +68,33 @@ export default function InternshipManagement() {
   const getWorkTypeBadgeColor = (workType) => {
     switch (workType) {
       case "Remote":
-        return "bg-green-500/20 text-green-300 border-green-500/30"
+        return "bg-green-500/20 text-green-500 border-green-500/30"
       case "Hybrid":
-        return "bg-purple-500/20 text-purple-300 border-purple-500/30"
+        return "bg-purple-500/20 text-purple-500 border-purple-500/30"
       case "On-site":
-        return "bg-blue-500/20 text-blue-300 border-blue-500/30"
+        return "bg-blue-500/20 text-blue-500 border-blue-500/30"
       default:
-        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
+        return "bg-gray-500/20 text-gray-500 border-gray-500/30"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center blur-sm opacity-30"
-        style={{
-          backgroundImage:
-            "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-07-09%20at%2019.47.25_b461fcab.jpg-0nKfnjqyd0HLXrS15DZGpvRQhchYPL.jpeg')",
-        }}
-      />
-      <div className="absolute inset-0 bg-black/70" />
+    <div className="bg-white">
+      <div className="absolute inset-0" />
       <div className="relative z-10 p-6 max-w-6xl mx-auto">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Internship Management</h1>
         </div>
 
-        <div className="mb-4 text-gray-300">
+        <div className="mb-4 text-orange-600 font-bold">
           View and manage all internship postings (read-only with removal option)
         </div>
 
         <div className="flex justify-end mb-6">
           <div className="relative w-80">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
             <input
-              className="pl-10 pr-3 py-2 w-full rounded bg-gray-800 text-white border border-gray-600 placeholder-gray-400"
+              className="pl-10 pr-3 py-2 w-full rounded bg-orange-100 text-gray-800 border border-orange-600 placeholder-orange-500"
               placeholder="Search internships..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -117,8 +109,8 @@ export default function InternshipManagement() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded border ${
                 activeTab === tab
-                  ? "bg-gray-700 border-gray-500"
-                  : "bg-gray-800 border-gray-700 text-gray-300"
+                  ? "bg-orange-500 text-white"
+                  : "bg-orange-500 text-black"
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)} ({stats[tab]})
@@ -128,15 +120,18 @@ export default function InternshipManagement() {
 
         <div className="space-y-6">
           {filtered.map((item) => (
-            <div key={item.id} className="bg-gray-800 border border-gray-700 rounded p-6">
+            <div
+              key={item.id}
+              className="border border-orange-500 bg-white rounded p-6 shadow-sm"
+            >
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
-                  <div className="p-2 bg-gray-700 rounded">
+                  <div className="p-2 bg-orange-500 rounded">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="text-gray-300 flex items-center">
+                    <p className="text-black flex items-center">
                       <Building2 className="h-4 w-4 mr-1" />
                       {item.company}
                     </p>
@@ -146,54 +141,56 @@ export default function InternshipManagement() {
                   <span
                     className={`text-sm px-2 py-1 rounded border ${
                       item.status === "active"
-                        ? "bg-green-500/20 text-green-300 border-green-500/30"
-                        : "bg-red-500/20 text-red-300 border-red-500/30"
+                        ? "bg-orange-500 text-white"
+                        : "bg-red-400 text-white"
                     }`}
                   >
                     {item.status}
                   </span>
-                  <span className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(item.workType)}`}>
+                  <span
+                    className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(item.workType)}`}
+                  >
                     {item.workType}
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-4">
+              <div className="grid grid-cols-4 gap-4 text-sm text-gray-800 mb-4">
                 <div>
                   <span className="flex items-center mb-1">
-                    <MapPin className="h-4 w-4 mr-1" /> Location:
+                    <MapPin className="text-gray-800 h-4 w-4 mr-1" /> Location:
                   </span>
-                  <p className="text-white">{item.location}</p>
+                  <p className="text-orange-600">{item.location}</p>
                 </div>
                 <div>
                   <span className="flex items-center mb-1">
                     <Calendar className="h-4 w-4 mr-1" /> Duration:
                   </span>
-                  <p className="text-white">{item.duration}</p>
+                  <p className="text-orange-600">{item.duration}</p>
                 </div>
                 <div>
                   <span className="block mb-1">Posted:</span>
-                  <p className="text-white">{item.posted}</p>
+                  <p className="text-orange-600">{item.posted}</p>
                 </div>
                 <div>
                   <span className="block mb-1">Applications:</span>
-                  <p className="text-white">{item.applications}</p>
+                  <p className="text-orange-600">{item.applications}</p>
                 </div>
               </div>
 
-              <p className="text-gray-400 mb-4">{item.description}</p>
+              <p className="text-gray-800 mb-4">{item.description}</p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => handleView(item.id)}
-                  className="flex items-center px-4 py-2 rounded border border-gray-600 bg-gray-700 hover:bg-gray-600"
+                  className="flex items-center px-4 py-2 rounded border bg-orange-500 hover:bg-gray-400 text-white"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   View Details
                 </button>
                 <button
                   onClick={() => handleRemove(item.id)}
-                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Remove Listing

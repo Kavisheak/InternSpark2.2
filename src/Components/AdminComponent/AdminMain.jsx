@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Routes, Route } from "react-router-dom";
 import AdminDashboard from "./AdminHomePage/AdminDashboard";
 import UserManagement from "./UserManagement/UserManagement";
@@ -8,7 +8,7 @@ import SystemSettings from "./SystemSettings/Database";
 
 
 
-// Dummy components for missing routes
+
 
 
 const AdminMain = () => {

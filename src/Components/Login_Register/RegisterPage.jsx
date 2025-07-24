@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const RegisterPage = ({ onNavigateToLogin }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    role: 'student', // match your DB roles: 'student' or 'company'
+    role: 'student',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
@@ -35,18 +36,14 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     }
 
     try {
-      const response = await fetch('http://localhost/InternBackend/api/register.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          role: formData.role,
-          password: formData.password,
-        }),
+      const response = await axios.post('http://localhost/InternBackend/api/register.php', {
+        username: formData.username,
+        email: formData.email,
+        role: formData.role,
+        password: formData.password,
       });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         alert('Account created successfully! Please sign in.');
@@ -55,7 +52,11 @@ const RegisterPage = ({ onNavigateToLogin }) => {
         setMessage(data.message || 'Registration failed.');
       }
     } catch (error) {
-      setMessage('Server error. Please try again later.');
+      if (error.response) {
+        setMessage(error.response.data.message || 'Registration error.');
+      } else {
+        setMessage('Server error. Please try again later.');
+      }
     }
   };
 
@@ -68,18 +69,8 @@ const RegisterPage = ({ onNavigateToLogin }) => {
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-blue-700 rounded-full">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 12H8m8 4H8m4 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4"
-                />
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12H8m8 4H8m4 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4" />
               </svg>
             </div>
             <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">

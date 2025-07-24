@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   FaUsers,
   FaMapMarkerAlt,
@@ -10,21 +11,68 @@ import { BsBuildingsFill } from "react-icons/bs";
 
 const CompanyProfileForm = () => {
   const [formData, setFormData] = useState({
-    companyName: "TechCorp Solutions",
-    industry: "Information Technology",
-    companySize: "50-200",
-    location: "San Francisco, CA",
-    website: "https://techcorpsolutions.example",
-    email: "careers@techcorpsolutions.example",
+    companyName: "",
+    industry: "",
+    companySize: "",
+    location: "",
+    website: "",
+    email: "",
     about: "",
   });
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handleSave = () => {
-    console.log("Saved Company Profile!", formData);
-    alert("Company profile saved successfully!");
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await axios.post(
+          "http://localhost/InternBackend/api/get_company_profile.php",
+          {},
+          { withCredentials: true }
+        );
+        if (res.data.success && res.data.company) {
+          setFormData({
+            companyName: res.data.company.company_name || "",
+            industry: res.data.company.industry || "",
+            companySize: res.data.company.company_size || "",
+            location: res.data.company.location || "",
+            website: res.data.company.website || "",
+            email: res.data.company.email || "",
+            about: res.data.company.about || "",
+          });
+        } else {
+          setMessage("No company profile found.");
+        }
+      } catch (err) {
+        setMessage("Failed to load company profile.");
+        console.error(err);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  const handleChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleSave = async () => {
+    setLoading(true);
+    setMessage("");
+    try {
+      const response = await axios.post(
+        "http://localhost/InternBackend/api/save_company_profile.php",
+        formData,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setMessage("Company profile saved successfully!");
+      } else {
+        setMessage("Error: " + response.data.message);
+      }
+    } catch (error) {
+      setMessage("Server error: " + error.message);
+    }
+    setLoading(false);
   };
 
   const fields = [
@@ -56,26 +104,27 @@ const CompanyProfileForm = () => {
       label: "Website",
       name: "website",
       type: "text",
-      placeholder: "e.g. https://techcorpsolutions.example",
+      placeholder: "e.g. https://techcorp.example",
     },
     {
       label: "Company Email",
       name: "email",
       type: "email",
-      placeholder: "e.g. careers@techcorpsolutions.example",
+      placeholder: "e.g. contact@techcorp.example",
+      disabled: true,
     },
   ];
 
   return (
-    <div className="p-6 mt-1 rounded-lg shadow-sm bg-sky-50">
+    <div className="max-w-5xl p-6 mx-auto mt-1 bg-white rounded-lg shadow-sm">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Profile Card */}
         <div className="flex flex-col justify-between p-6 bg-white border border-gray-200 shadow-md rounded-xl">
           <div className="flex flex-col items-center mb-6">
-            <div className="flex items-center justify-center w-24 h-24 mb-4 border-2 border-[#2128BD] rounded-full shadow-lg text-[#2128BD]">
+            <div className="flex items-center justify-center w-24 h-24 mb-4 border-2 rounded-full shadow-lg border-oxfordblue text-oxfordblue">
               <BsBuildingsFill className="text-4xl" />
             </div>
-            <h2 className="text-2xl font-bold text-center text-[#2128BD]">
+            <h2 className="text-2xl font-bold text-center text-oxfordblue">
               {formData.companyName || "Company Name"}
             </h2>
             <p className="text-center text-gray-600">
@@ -85,39 +134,43 @@ const CompanyProfileForm = () => {
 
           <div className="space-y-3 text-sm text-gray-700">
             <div className="flex items-center gap-2">
-              <FaUsers className="text-[#2128BD]" />
+              <FaUsers className="text-oxfordblue" />
               <span>
-                <strong>Size:</strong> {formData.companySize}
+                <strong>Size:</strong> {formData.companySize || "N/A"}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-[#2128BD]" />
+              <FaMapMarkerAlt className="text-oxfordblue" />
               <span>
-                <strong>Location:</strong> {formData.location}
+                <strong>Location:</strong> {formData.location || "N/A"}
               </span>
             </div>
             <div className="flex items-center gap-2 break-all">
-              <FaGlobe className="text-[#2128BD]" />
+              <FaGlobe className="text-oxfordblue" />
               <span>
                 <strong>Website:</strong>{" "}
-                <a
-                  href={formData.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 underline hover:text-blue-800"
-                >
-                  {formData.website}
-                </a>
+                {formData.website ? (
+                  <a
+                    href={formData.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline text-oxfordblue hover:text-orange-500"
+                  >
+                    {formData.website}
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </span>
             </div>
             <div className="flex items-center gap-2 break-all">
-              <FaEnvelope className="text-[#2128BD]" />
+              <FaEnvelope className="text-oxfordblue" />
               <span>
-                <strong>Email:</strong> {formData.email}
+                <strong>Email:</strong> {formData.email || "N/A"}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <FaInfoCircle className="mt-1 text-[#2128BD]" />
+              <FaInfoCircle className="mt-1 text-oxfordblue" />
               <div>
                 <p className="font-semibold">About:</p>
                 <p className="text-gray-700 whitespace-pre-line">
@@ -131,7 +184,7 @@ const CompanyProfileForm = () => {
         {/* Input Form */}
         <div className="flex flex-col justify-between p-6 bg-white border border-gray-200 shadow-md rounded-xl">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {fields.map(({ label, name, type, placeholder }) => (
+            {fields.map(({ label, name, type, placeholder, disabled }) => (
               <div key={name}>
                 <label className="block mb-1 text-sm font-semibold text-gray-700">
                   {label}
@@ -142,7 +195,8 @@ const CompanyProfileForm = () => {
                   value={formData[name]}
                   onChange={handleChange}
                   placeholder={placeholder}
-                  className="w-full px-3 py-2 text-sm text-gray-800 placeholder-gray-400 border border-gray-300 rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-[#2128BD]"
+                  disabled={disabled}
+                  className="w-full px-3 py-2 text-sm text-gray-800 placeholder-gray-400 bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-oxfordblue"
                 />
               </div>
             ))}
@@ -158,18 +212,31 @@ const CompanyProfileForm = () => {
               onChange={handleChange}
               placeholder="Write about your company here..."
               rows="4"
-              className="w-full px-3 py-2 text-sm text-gray-800 border border-gray-300 rounded-md bg-transparent placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2128BD]"
+              className="w-full px-3 py-2 text-sm text-gray-800 placeholder-gray-400 bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-oxfordblue"
             />
           </div>
 
           <div className="flex justify-end mt-6">
             <button
               onClick={handleSave}
-              className="px-6 py-2 text-sm font-semibold text-white bg-[#2128BD] rounded-md shadow hover:bg-[#1a209a]"
+              disabled={loading}
+              className="px-6 py-2 text-sm font-semibold text-white bg-orange-500 rounded-md shadow hover:bg-orange-600 disabled:opacity-50"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
+
+          {message && (
+            <p
+              className={`mt-4 text-center font-semibold ${
+                message.startsWith("Error") || message.startsWith("Failed")
+                  ? "text-red-600"
+                  : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
         </div>
       </div>
     </div>

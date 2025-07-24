@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage = ({ onNavigateToRegister }) => {
   const [email, setEmail] = useState('');
@@ -12,21 +13,19 @@ const LoginPage = ({ onNavigateToRegister }) => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost/InternBackend/api/login.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post('http://localhost/InternBackend/api/login.php', {
+        email,
+        password
+      },
+    { withCredentials: true }
+    );
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         const { role, user_id, username } = data;
-
-        // Save user info if needed (optional)
         localStorage.setItem('user', JSON.stringify({ username, role, user_id }));
 
-        // Redirect based on role
         if (role === 'student') {
           navigate('/student');
         } else if (role === 'company') {
@@ -40,7 +39,11 @@ const LoginPage = ({ onNavigateToRegister }) => {
         setMessage(data.message || 'Login failed.');
       }
     } catch (error) {
-      setMessage('Server error. Please try again later.');
+      if (error.response) {
+        setMessage(error.response.data.message || 'Login error.');
+      } else {
+        setMessage('Server error. Please try again later.');
+      }
     }
   };
 

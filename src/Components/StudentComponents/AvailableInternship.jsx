@@ -22,6 +22,7 @@ const AvailableInternships = () => {
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$25/hour',
+
       description: 'Join our team to develop modern web applications using React and TypeScript. You\'ll work alongside senior developers on real-world projects.',
       status: 'closed',
       deadline: 'May 15, 2025',
@@ -32,6 +33,10 @@ const AvailableInternships = () => {
         'Currently enrolled in Computer Science or related field'
       ],
       aboutInternship: 'Join our team to develop modern web applications using React and TypeScript. You\'ll work alongside senior developers on real-world projects, contributing to applications used by thousands of users daily.'
+=======
+      description: "Join our team to develop modern web applications using React and TypeScript. You'll work alongside senior developers on real-world projects.",
+      status: 'closed'
+>>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
     },
     {
       id: 2,
@@ -92,7 +97,9 @@ const AvailableInternships = () => {
     }
   ];
 
+
   // Store internships in memory (instead of localStorage)
+
   useEffect(() => {
     // Initialize bookmarks from memory or empty array
     const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
@@ -100,16 +107,13 @@ const AvailableInternships = () => {
     
   }, []);
 
-  // Handle bookmark toggle
   const handleBookmarkToggle = (internship) => {
     const isCurrentlyBookmarked = bookmarkedInternships.some(item => item.id === internship.id);
     let updatedBookmarks;
 
     if (isCurrentlyBookmarked) {
-      // Remove from bookmarks
       updatedBookmarks = bookmarkedInternships.filter(item => item.id !== internship.id);
     } else {
-      // Add to bookmarks
       updatedBookmarks = [...bookmarkedInternships, internship];
     }
 
@@ -120,36 +124,36 @@ const AvailableInternships = () => {
   const filteredInternships = internships.filter(internship => {
     const matchesFilter = activeFilter === 'All' || internship.workType === activeFilter;
     const matchesSearch = internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         internship.company.toLowerCase().includes(searchTerm.toLowerCase());
+                          internship.company.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-white">
+      <div className="px-4 py-8 mx-auto max-w-7xl fade-in-up">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Available Internships</h1>
+          <h1 className="text-3xl font-bold text-oxfordblue">Available Internships</h1>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
             <input
               type="text"
               placeholder="Search by title, company"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+              className="py-2 pl-10 pr-4 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
         </div>
 
-        <div className="flex space-x-4 mb-6">
+        <div className="flex mb-6 space-x-4">
           {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
                 activeFilter === filter
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
               {filter}
@@ -157,11 +161,11 @@ const AvailableInternships = () => {
           ))}
         </div>
 
-        <p className="text-gray-600 mb-6">
+        <p className="mb-6 text-white">
           Showing {filteredInternships.length} internships
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {filteredInternships.map((internship) => (
             <InternshipCard 
               key={internship.id} 
@@ -174,10 +178,10 @@ const AvailableInternships = () => {
         </div>
 
         {filteredInternships.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No internships found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
+          <div className="py-12 text-center text-white">
+            <div className="mb-4 text-6xl">🔍</div>
+            <h3 className="mb-2 text-xl font-semibold">No internships found</h3>
+            <p>Try adjusting your search or filters</p>
           </div>
         )}
       </div>

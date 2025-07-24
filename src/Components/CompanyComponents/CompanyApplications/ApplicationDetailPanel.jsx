@@ -1,10 +1,8 @@
-import React from "react";
-
 function getStatusClass(status) {
   return (
     {
       New: "bg-purple-100 text-purple-800",
-      Reviewing: "bg-gray-100 text-gray-800",
+      Reviewing: "bg-orange-100 text-orange-700",
       Interviewing: "bg-blue-100 text-blue-800",
       Shortlisted: "bg-green-100 text-green-800",
       Rejected: "bg-red-100 text-red-800",
@@ -20,17 +18,18 @@ export default function ApplicationDetailPanel({
 
   return (
     <div className="flex-1 w-full mt-1">
-      <h2 className="mb-6 text-3xl font-bold text-center text-[#2128BD]">
+      <h2 className="mb-6 text-3xl font-bold text-center text-[#01165A]">
         Application Details
       </h2>
 
-      <div className="max-h-screen p-6 overflow-y-auto border border-blue-100 rounded-lg shadow-sm bg-sky-50">
+      <div className="max-h-screen p-6 overflow-y-auto border border-[#01165A]/20 rounded-lg shadow-sm bg-white">
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">
+            <h2 className="text-2xl font-semibold text-[#01165A]">
               {selected.name}
             </h2>
-            <p className="text-gray-600">{selected.email}</p>
+            <p className="text-gray-700">{selected.email}</p>
             {selected.gender && (
               <p className="text-gray-600">Gender: {selected.gender}</p>
             )}
@@ -44,29 +43,34 @@ export default function ApplicationDetailPanel({
           </span>
         </div>
 
+        {/* Role */}
         <div className="mb-4">
-          <p className="font-semibold text-gray-800">Application for</p>
+          <p className="font-semibold text-[#01165A]">Application for</p>
           <p className="text-gray-700">{selected.role}</p>
           <p className="text-sm text-gray-600">Applied on {selected.applied}</p>
         </div>
 
+        {/* Education */}
         <div className="mb-4">
-          <p className="font-semibold text-gray-800">Education</p>
+          <p className="font-semibold text-[#01165A]">Education</p>
           <p className="text-gray-700">{selected.education}</p>
         </div>
 
+        {/* Experience */}
         <div className="mb-4">
-          <p className="font-semibold text-gray-800">Experience</p>
+          <p className="font-semibold text-[#01165A]">Experience</p>
           <p className="text-gray-700">{selected.experience || " - "}</p>
         </div>
 
+        {/* Skills */}
         <div className="mb-4">
-          <p className="font-semibold text-gray-800">Skills</p>
+          <p className="font-semibold text-[#01165A]">Skills</p>
           <p className="text-gray-700">{selected.skills}</p>
         </div>
 
-        <div className="mb-4">
-          <p className="font-semibold text-gray-800">References</p>
+        {/* References */}
+        <div className="mb-6">
+          <p className="font-semibold text-[#01165A]">References</p>
           {selected.references?.length > 0 ? (
             <ul className="text-gray-700 list-disc list-inside">
               {selected.references.map((ref, i) => (
@@ -81,20 +85,43 @@ export default function ApplicationDetailPanel({
           )}
         </div>
 
+        {/* Update Status */}
+        {/* Update Status */}
         <div>
-          <p className="mb-2 font-semibold text-gray-800">Update Status</p>
-          <div className="flex flex-wrap gap-2">
-            {["Reviewing", "Shortlisted", "Interviewing", "Rejected"].map(
-              (status) => (
-                <button
-                  key={status}
-                  onClick={() => handleStatusUpdate(selected.id, status)}
-                  className="px-3 py-1 text-sm text-white transition-colors bg-[#2128BD] rounded-md hover:bg-[#1b1fab]"
-                >
-                  {status}
-                </button>
-              )
-            )}
+          <p className="mb-2 font-semibold text-[#01165A]">Update Status</p>
+          <div className="flex flex-wrap gap-3">
+            {[
+              {
+                status: "Reviewing",
+                bg: "bg-orange-500",
+                hover: "hover:bg-orange-600",
+              },
+              {
+                status: "Shortlisted",
+                bg: "bg-emerald-600",
+                hover: "hover:bg-emerald-700",
+              },
+              {
+                status: "Interviewing",
+                bg: "bg-[#1D4ED8]",
+                hover: "hover:bg-[#1E40AF]",
+              },
+              {
+                status: "Rejected",
+                bg: "bg-rose-500",
+                hover: "hover:bg-rose-600",
+              },
+            ].map(({ status, bg, hover }) => (
+              <button
+                key={status}
+                onClick={() => handleStatusUpdate(selected.id, status)}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm border border-white/10 transition duration-200 ${bg} ${hover} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${
+                  bg.split("-")[1]
+                }-400`}
+              >
+                {status}
+              </button>
+            ))}
           </div>
         </div>
       </div>

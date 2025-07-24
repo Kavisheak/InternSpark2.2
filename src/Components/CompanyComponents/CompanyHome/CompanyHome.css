@@ -1,14 +1,1 @@
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) scale(0.9);
-  }
-  50% {
-    transform: translateY(-10px) scale(0.9);
-  }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}

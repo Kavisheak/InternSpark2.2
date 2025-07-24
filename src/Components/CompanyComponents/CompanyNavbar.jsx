@@ -49,7 +49,7 @@ const CompanyNavbar = () => {
   ];
 
   return (
-    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-royalblue">
+    <nav className="sticky top-0 left-0 z-50 w-full text-white bg-[#01165A] shadow-md">
       <div className="flex items-center justify-between px-6 py-4">
         <h1 className="text-2xl font-bold">Internspark</h1>
 
@@ -111,7 +111,7 @@ const CompanyNavbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="px-6 pb-4 space-y-2 text-white bg-royalblue md:hidden">
+        <div className="px-6 pb-4 space-y-2 text-white bg-oxfordblue md:hidden">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -133,7 +133,7 @@ const CompanyNavbar = () => {
           {/* Notifications (Mobile) */}
 
           {/* Logout Button */}
-          <button className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-600 transition bg-white rounded-md hover:bg-red-100">
+          <button className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-900 transition bg-white rounded-md hover:bg-blue-50">
             Logout
           </button>
         </div>

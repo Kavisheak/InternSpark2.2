@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { User } from "lucide-react"
+import Footer from "../CompanyComponents/Footer"
 
 export default function StudentProfile() {
   const [formData, setFormData] = useState({
@@ -135,6 +136,7 @@ export default function StudentProfile() {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   )
 }

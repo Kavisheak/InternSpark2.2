@@ -3,6 +3,7 @@ import { useState } from "react";
 import CompanyNavbar from "../CompanyNavbar";
 import CompanyProfileForm from "./CompanyProfileForm";
 import ContactInfo from "./ContactInfo";
+import Footer from "../Footer";
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState("Company Profile");
@@ -39,7 +40,9 @@ const CompanyProfile = () => {
             <ContactInfo />
           )}
         </div>
+        
       </div>
+      <Footer/>
     </div>
   );
 };

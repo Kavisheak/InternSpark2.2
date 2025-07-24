@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../CompanyComponents/Footer";
 const applications = [
   {
     title: "Frontend Developer Intern",
@@ -65,6 +66,7 @@ export default function MyApplications() {
   const navigate = useNavigate();
 
   return (
+    <div>
     <div className="max-w-5xl p-6 mx-auto fade-in-up">
       <h1 className="mb-6 text-3xl font-bold text-gray-800">My Applications</h1>
 
@@ -131,6 +133,8 @@ export default function MyApplications() {
           ))
         )}
       </div>
+    </div>
+    <Footer/>
     </div>
   );
 }

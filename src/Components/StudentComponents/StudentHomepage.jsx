@@ -2,6 +2,7 @@
 
 import { Search, User, Building2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import Footer from "../CompanyComponents/Footer"
 
 
 
@@ -83,6 +84,7 @@ export default function StudentHomepage() {
           </div>
         </div>
       </section>
+      <Footer/>
     </div>
   )
 }

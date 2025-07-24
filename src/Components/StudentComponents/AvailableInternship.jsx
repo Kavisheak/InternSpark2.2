@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import InternshipCard from './InternshipCard';
+import Footer from '../CompanyComponents/Footer';
 
 const AvailableInternship = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -138,6 +139,7 @@ const AvailableInternship = () => {
           </div>
         )}
       </div>
+      <Footer/>
     </div>
   );
 };

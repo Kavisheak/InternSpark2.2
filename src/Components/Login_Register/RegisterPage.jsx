@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const RegisterPage = ({ onNavigateToLogin }) => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    username: '',
     email: '',
-    userType: 'Student looking for internships',
+    role: 'student',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
   });
+
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -18,22 +21,43 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setMessage('Passwords do not match!');
       return;
     }
 
     if (!formData.agreeToTerms) {
-      alert('Please agree to the Terms of Service and Privacy Policy');
+      setMessage('Please agree to the Terms of Service and Privacy Policy');
       return;
     }
 
-    console.log('Registration attempt:', formData);
-    alert('Account created successfully! Please sign in.');
-    onNavigateToLogin();
+    try {
+      const response = await axios.post('http://localhost/InternBackend/api/register.php', {
+        username: formData.username,
+        email: formData.email,
+        role: formData.role,
+        password: formData.password,
+      });
+
+      const data = response.data;
+
+      if (data.success) {
+        alert('Account created successfully! Please sign in.');
+        onNavigateToLogin();
+      } else {
+        setMessage(data.message || 'Registration failed.');
+      }
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data.message || 'Registration error.');
+      } else {
+        setMessage('Server error. Please try again later.');
+      }
+    }
   };
 
   const inputClass =
@@ -45,18 +69,8 @@ const RegisterPage = ({ onNavigateToLogin }) => {
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-blue-700 rounded-full">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 12H8m8 4H8m4 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4"
-                />
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12H8m8 4H8m4 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4" />
               </svg>
             </div>
             <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">
@@ -67,15 +81,15 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <p className="text-sm text-blue-500">Join thousands of aspiring interns</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div>
-            <label className="block mb-1 text-sm text-blue-800">Full Name</label>
+            <label className="block mb-1 text-sm text-blue-800">Username</label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your full name"
+              placeholder="Enter your username"
               className={inputClass}
               required
             />
@@ -95,17 +109,15 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           </div>
 
           <div>
-            <label className="block mb-1 text-sm text-blue-800">I am a</label>
+            <label className="block mb-1 text-sm text-blue-800">Role</label>
             <select
-              name="userType"
-              value={formData.userType}
+              name="role"
+              value={formData.role}
               onChange={handleChange}
               className={inputClass}
             >
-              <option value="Student looking for internships">
-                Student looking for internships
-              </option>
-              <option value="Company hiring interns">Company hiring interns</option>
+              <option value="student">Student</option>
+              <option value="company">Company</option>
             </select>
           </div>
 
@@ -142,6 +154,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               checked={formData.agreeToTerms}
               onChange={handleChange}
               className="mt-1 mr-2"
+              required
             />
             <span>
               I agree to the{' '}
@@ -154,6 +167,8 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               </button>
             </span>
           </div>
+
+          {message && <p className="text-sm text-red-600">{message}</p>}
 
           <button
             type="submit"

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -14,7 +14,7 @@ const images = [
 
 const ImageSlider = () => {
   return (
-    <div className="w-full px-4 py-12 mx-auto mb-20 max-w-7xl">
+    <div className="w-full px-4 py-12 mx-auto mb-10 max-w-7xl ">
       <Swiper
         loop={true}
         spaceBetween={30}
@@ -24,7 +24,7 @@ const ImageSlider = () => {
         }}
         breakpoints={{
           0: {
-            slidesPerView: 1, // ✅ Show only ONE image on mobile
+            slidesPerView: 1, //  Show only 1 image on mobile
           },
           768: {
             slidesPerView: 2,

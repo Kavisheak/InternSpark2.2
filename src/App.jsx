@@ -1,9 +1,6 @@
-
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CompanyMain from './Components/CompanyComponents/CompanyMain';
 import AdvertismentPage from './Components/GuestComponents/AdvertismentPage';
-
 
 
 
@@ -13,6 +10,10 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import AuthPage from "./Components/Login_Register/AuthPage";
 import StudentMain from "./Components/StudentComponents/StudentMain";
+import AdminMain from './Components/AdminComponent/AdminMain';
+import ScrollToTop from './Components/ScrollToTop';
+
+
 
 
 
@@ -21,13 +22,15 @@ function App() {
    return (
 
 
+
     <Router>
+      <ScrollToTop/>
       <Routes>
         <Route path="/" element={<AdvertismentPage />} />
         <Route path="/login" element={<AuthPage initialIsLogin={true} />} />
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
         <Route path="/company/*" element={<CompanyMain />} />
-        
+        <Route path="/admin/*" element={<AdminMain />} />
         
         <Route path="/student/*" element={<StudentMain />} />
         

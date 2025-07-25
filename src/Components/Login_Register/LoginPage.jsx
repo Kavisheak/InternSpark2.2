@@ -1,13 +1,50 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage = ({ onNavigateToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // Add your login logic here
+    setMessage('');
+
+    try {
+      const response = await axios.post('http://localhost/InternBackend/api/login.php', {
+        email,
+        password
+      },
+    { withCredentials: true }
+    );
+
+      const data = response.data;
+
+      if (data.success) {
+        const { role, user_id, username } = data;
+        localStorage.setItem('user', JSON.stringify({ username, role, user_id }));
+
+        if (role === 'student') {
+          navigate('/student');
+        } else if (role === 'company') {
+          navigate('/company');
+        } else if (role === 'admin') {
+          navigate('/admin');
+        } else {
+          setMessage('Unknown user role.');
+        }
+      } else {
+        setMessage(data.message || 'Login failed.');
+      }
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data.message || 'Login error.');
+      } else {
+        setMessage('Server error. Please try again later.');
+      }
+    }
   };
 
   return (
@@ -16,18 +53,8 @@ const LoginPage = ({ onNavigateToRegister }) => {
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-blue-700 rounded-full">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">
@@ -63,11 +90,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
             />
           </div>
 
-          <div className="text-right">
-            <button type="button" className="text-sm text-blue-600 hover:underline">
-              Forgot your password?
-            </button>
-          </div>
+          {message && <p className="text-sm text-red-600">{message}</p>}
 
           <button
             type="submit"

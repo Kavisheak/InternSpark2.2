@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CompanyNavbar from "./CompanyNavbar";
+import axios from "axios";
 
 const PostInternshipForm = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // internship id from URL
   const location = useLocation();
   const navigate = useNavigate();
 
-  const editingInternship = location.state?.internship;
   const isViewOnlyMode = location.state?.viewOnly === true;
 
   const [formData, setFormData] = useState({
@@ -22,57 +22,113 @@ const PostInternshipForm = () => {
     applicationLimit: "",
   });
 
-  const [isEditable, setIsEditable] = useState(!id);
+  const [isEditable, setIsEditable] = useState(!isViewOnlyMode && !id);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (editingInternship) {
-      setFormData({
-        title: editingInternship.title || "",
-        location: editingInternship.location || "",
-        internshipType: editingInternship.mode || "",
-        salary: editingInternship.salary || "",
-        duration: editingInternship.duration || "",
-        description: editingInternship.description || "",
-        requirements: editingInternship.requirements || "",
-        deadline: editingInternship.deadline || "",
-        applicationLimit: editingInternship.applicationLimit || "",
-      });
-      setIsEditable(!isViewOnlyMode);
-      if (isViewOnlyMode) {
-        setIsEditable(false);
-      }
+    if (id) {
+      setLoading(true);
+      axios.get(`http://localhost/InternBackend/api/get_internship_details.php?id=${id}`, { withCredentials: true })
+        .then(res => {
+          if (res.data.success) {
+            const internship = res.data.internship;
+
+            const capitalize = (str) =>
+              str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "On-site";
+
+            setFormData({
+              title: internship.title || "",
+              location: internship.location || "",
+              internshipType: capitalize(internship.internship_type),
+              salary: internship.salary || "",
+              duration: internship.duration || "",
+              description: internship.description || "",
+              requirements: internship.requirements || "",
+              deadline: internship.deadline || "",
+              applicationLimit: internship.application_limit || "",
+            });
+
+            setIsEditable(!isViewOnlyMode);
+          } else {
+            alert("Failed to load internship details: " + res.data.message);
+            navigate("/company/internships");
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching internship details", err);
+          alert("Server error fetching internship details");
+          navigate("/company/internships");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-  }, [editingInternship, isViewOnlyMode]);
+  }, [id, isViewOnlyMode, navigate]);
 
   const handleChange = (e) => {
+    if (!isEditable) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleTypeChange = (type) => {
-    if (isEditable) {
-      setFormData({ ...formData, internshipType: type });
-    }
+    if (!isEditable) return;
+    setFormData({ ...formData, internshipType: type });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isEditable) return;
 
-    if (id) {
-      console.log("✅ Updating internship:", formData);
-      alert("Changes Updated");
-    } else {
-      console.log("✅ Creating new internship:", formData);
-      alert("Post has been published");
+    try {
+      const payload = {
+        ...formData,
+        id: id || null,
+      };
+
+      const res = await axios.post(
+        "http://localhost/InternBackend/api/post_internship.php",
+        payload,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        alert(id ? "Changes Updated" : "Internship posted successfully!");
+        if (!id) {
+          setFormData({
+            title: "",
+            location: "",
+            internshipType: "On-site",
+            salary: "",
+            duration: "",
+            description: "",
+            requirements: "",
+            deadline: "",
+            applicationLimit: "",
+          });
+        }
+        navigate("/company/internships");
+      } else {
+        alert("❌ Failed: " + res.data.message);
+      }
+    } catch (error) {
+      console.error("Error submitting internship:", error);
+      alert("Server error. Please try again later.");
     }
-    navigate("/company/internships");
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Loading internship details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
       <CompanyNavbar />
       <div className="max-w-3xl px-6 py-10 mx-auto my-10 bg-white border border-gray-300 rounded-lg shadow-lg">
-        <h1 className="mb-6 text-3xl font-bold text-center text-[#2128BD]">
+        <h1 className="mb-6 text-3xl font-bold text-center text-oxfordblue">
           {id
             ? isEditable
               ? "Edit Internship"
@@ -82,13 +138,16 @@ const PostInternshipForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Internship Title</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Internship Title
+            </label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
               disabled={!isEditable}
+              required
               placeholder="e.g., Frontend Developer Intern"
               className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
             />
@@ -96,7 +155,9 @@ const PostInternshipForm = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Location</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Location
+              </label>
               <input
                 type="text"
                 name="location"
@@ -109,7 +170,9 @@ const PostInternshipForm = () => {
             </div>
 
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Internship Type</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Internship Type
+              </label>
               <div className="flex space-x-2">
                 {["On-site", "Remote", "Hybrid"].map((type) => (
                   <button
@@ -119,8 +182,8 @@ const PostInternshipForm = () => {
                     disabled={!isEditable}
                     className={`px-4 py-2 border rounded-full ${
                       formData.internshipType === type
-                        ? "bg-[#2128BD] text-white"
-                        : "bg-white text-[#2128BD] border-[#2128BD]"
+                        ? "bg-oxfordblue text-white"
+                        : "bg-white text-oxfordblue border-[#2128BD]"
                     } ${!isEditable ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {type}
@@ -132,8 +195,8 @@ const PostInternshipForm = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">
-                Salary/Stipend (Optional)
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Salary
               </label>
               <input
                 type="text"
@@ -146,13 +209,16 @@ const PostInternshipForm = () => {
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Duration</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Duration
+              </label>
               <input
                 type="text"
                 name="duration"
                 value={formData.duration}
                 onChange={handleChange}
                 disabled={!isEditable}
+                required
                 placeholder="e.g., 3 months"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               />
@@ -160,12 +226,15 @@ const PostInternshipForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Description</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               disabled={!isEditable}
+              required
               rows="4"
               placeholder="Describe the internship..."
               className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
@@ -173,12 +242,15 @@ const PostInternshipForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold text-[#2128BD]">Requirements</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Requirements
+            </label>
             <textarea
               name="requirements"
               value={formData.requirements}
               onChange={handleChange}
               disabled={!isEditable}
+              required
               rows="4"
               placeholder="Skills and qualifications..."
               className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
@@ -187,24 +259,30 @@ const PostInternshipForm = () => {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Application Deadline</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Deadline
+              </label>
               <input
                 type="date"
                 name="deadline"
                 value={formData.deadline}
                 onChange={handleChange}
                 disabled={!isEditable}
+                required
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-[#2128BD]">Application Limit</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Limit
+              </label>
               <input
                 type="number"
                 name="applicationLimit"
                 value={formData.applicationLimit}
                 onChange={handleChange}
                 disabled={!isEditable}
+                required
                 placeholder="e.g., 100"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               />

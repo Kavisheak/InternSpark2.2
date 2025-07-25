@@ -1,20 +1,30 @@
-// import { Routes, Route } from "react-router-dom";
-// import InternshipDetails from "./InternshipDetails";
-// import StudentProfile from "./StudentProfile";
+import { Routes, Route } from "react-router-dom";
+import InternshipDetails from "./InternshipDetails";
+import StudentProfile from "./StudentProfile";
+import StudentNavbar from "./StudentNavbar";
+import StudentHomepage from "./StudentHomepage";
+import Notifications from "./Notification";
+import AvailableInternship from "./AvailableInternship";
+import MyApplications from "./Applications";
+import Bookmarks from "./Bookmarks";
 
-// import StudentHomepage from "./StudentHomepage";
-// import Notifications from "./Notification";
 
 
-// const StudentMain = () => {
-//   return (
-//     <Routes>
-//      <Route path="job" element={<InternshipDetails />} />
-//       <Route path="studentprofile" element={<StudentProfile />} />
-//       <Route path="notifications" element={<Notifications />} /> {/* fixed */}
-//       <Route path="" element={<StudentHomepage />} />
-//     </Routes>
-//   );
-// };
+const StudentMain = () => {
+  return (
+    <div>
+      <StudentNavbar/>
+    <Routes>
+     <Route path="job/:id" element={<InternshipDetails />} />
+      <Route path="studentprofile" element={<StudentProfile />} />
+      <Route path="notifications" element={<Notifications />} /> {/* fixed */}
+      <Route path="internships" element={<AvailableInternship/>}/>
+      <Route path="" element={<StudentHomepage />} />
+      <Route path="applications" element={<MyApplications/>}/>
+      <Route path="bookmarks" element={<Bookmarks />} />
+    </Routes>
+    </div>
+  );
+};
 
-// export default StudentMain;
+export default StudentMain;

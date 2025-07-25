@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import CompanyNavbar from "./CompanyNavbar";
+import Footer from "../Footer";
+import CompanyNavbar from "../CompanyNavbar";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
-import Footer from "./Footer";
 
 const initialApplications = [
   {
@@ -77,7 +77,10 @@ function useQuery() {
 }
 
 const slugify = (text) =>
-  text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+  text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
 
 export default function CompanyApplications() {
   const { roleSlug } = useParams();
@@ -115,9 +118,10 @@ export default function CompanyApplications() {
   const selected = applications.find((app) => app.id === selectedId);
 
   return (
-    <div className="min-h-screen text-gray-800 bg-white">
+    <div className="min-h-screen bg-[#01165A] text-gray-100">
       <CompanyNavbar />
-      <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-sky-50">
+         <div className="fade-in-up">
+      <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white  shadow-lg">
         <ApplicationSidebar
           applications={filteredByRole}
           selectedId={selectedId}
@@ -126,13 +130,19 @@ export default function CompanyApplications() {
           setActiveFilter={setActiveFilter}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
+          primaryColor="#01165A"
+          accentColor="#F97316"
         />
         <ApplicationDetailPanel
           selected={selected}
           handleStatusUpdate={handleStatusUpdate}
+          primaryColor="#01165A"
+          accentColor="#F97316"
         />
       </div>
+
       <Footer />
+      </div>
     </div>
   );
 }

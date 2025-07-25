@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 
 const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navItems = [
     { name: "Home", path: "/student" },
-    { name: "Internships", path: "/student/Internshipdetails" },
+    { name: "Internships", path: "/student/internships" },
     { name: "Applications", path: "/student/applications" },
     { name: "Bookmarks", path: "/student/bookmarks" },
     { name: "My Profile", path: "/student/studentprofile" },
@@ -18,11 +19,24 @@ const StudentNavbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (!confirmed) return;
+
+    // Clear storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("notifications");
+
+    // Redirect to login
+    navigate("/");
+  };
+
   return (
-    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md" style={{ backgroundColor: "#031B4E" }}>
+    <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-oxfordblue">
       <div className="flex items-center justify-between px-4 py-2">
         {/* Logo */}
-        <Link to="/" className="text-xl font-bold text-white">
+        <Link to="/" className="text-xl font-bold">
           Internspark
         </Link>
 
@@ -56,12 +70,12 @@ const StudentNavbar = () => {
 
           {/* Logout */}
           <li>
-            <Link
-              to="/logout"
-              className="px-4 py-1 transition bg-white rounded-md text-[#031B4E] hover:bg-red-100"
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1 transition bg-white rounded-md text-royalblue hover:bg-blue-100"
             >
               Logout
-            </Link>
+            </button>
           </li>
         </ul>
 
@@ -76,7 +90,7 @@ const StudentNavbar = () => {
 
       {/* Mobile Nav */}
       {menuOpen && (
-        <ul className="px-6 pb-4 space-y-2 text-base font-medium md:hidden" style={{ backgroundColor: "#031B4E" }}>
+        <ul className="px-6 pb-4 space-y-2 text-base font-medium bg-oxfordblue md:hidden">
           {navItems.map((item) => (
             <li key={item.name}>
               <Link
@@ -104,13 +118,15 @@ const StudentNavbar = () => {
           </li>
 
           <li>
-            <Link
-              to="/logout"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full px-4 py-2 text-center text-[#031B4E] bg-white rounded-md hover:bg-red-100"
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleLogout();
+              }}
+              className="block w-full px-4 py-2 text-center text-red-600 bg-white rounded-md hover:bg-blue-100"
             >
               Logout
-            </Link>
+            </button>
           </li>
         </ul>
       )}

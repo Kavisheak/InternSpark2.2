@@ -15,7 +15,7 @@ export default function ApplicationDetailPanel({
   const [isImageOpen, setIsImageOpen] = useState(false);
   const imageRef = useRef(null);
 
-  const statusOptions = ["Reviewing", "Interviewing", "Rejected", "Hired"];
+  const statusOptions = ["Reviewing", "Shortlisted", "Accepted","Rejected"];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -64,7 +64,7 @@ export default function ApplicationDetailPanel({
           </div>
         </div>
         <span className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full">
-          {selected.status} Application
+          {selected.status}
         </span>
       </div>
 
@@ -126,7 +126,7 @@ export default function ApplicationDetailPanel({
       </div>
 
       <div className="mb-6">
-        <h3 className="mb-2 text-lg font-semibold">Skills / Motivation</h3>
+        <h3 className="mb-2 text-lg font-semibold">Skills </h3>
         <p>{selected.skills}</p>
       </div>
 

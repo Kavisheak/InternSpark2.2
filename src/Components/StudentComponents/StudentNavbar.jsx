@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell, FaBars, FaTimes } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,16 +21,36 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
-    if (!confirmed) return;
-
-    // Clear storage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("notifications");
+    toast.success(" Logged out successfully!");
+    setTimeout(() => navigate("/"), 1000);
+  };
 
-    // Redirect to login
-    navigate("/");
+  const confirmLogout = () => {
+    toast((t) => (
+      <div className="p-3">
+        <p className="mb-2 font-semibold text-white">Are you sure you want to logout?</p>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              handleLogout();
+            }}
+            className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   return (
@@ -71,7 +92,7 @@ const StudentNavbar = () => {
           {/* Logout */}
           <li>
             <button
-              onClick={handleLogout}
+              onClick={confirmLogout}
               className="px-4 py-1 transition bg-white rounded-md text-royalblue hover:bg-blue-100"
             >
               Logout
@@ -121,7 +142,7 @@ const StudentNavbar = () => {
             <button
               onClick={() => {
                 setMenuOpen(false);
-                handleLogout();
+                confirmLogout();
               }}
               className="block w-full px-4 py-2 text-center text-red-600 bg-white rounded-md hover:bg-blue-100"
             >

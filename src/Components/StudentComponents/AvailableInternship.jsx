@@ -32,11 +32,10 @@ const AvailableInternships = () => {
         'Knowledge of Git version control',
         'Currently enrolled in Computer Science or related field'
       ],
-      aboutInternship: 'Join our team to develop modern web applications using React and TypeScript. You\'ll work alongside senior developers on real-world projects, contributing to applications used by thousands of users daily.'
-=======
+
       description: "Join our team to develop modern web applications using React and TypeScript. You'll work alongside senior developers on real-world projects.",
       status: 'closed'
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
+
     },
     {
       id: 2,
@@ -161,7 +160,7 @@ const AvailableInternships = () => {
           ))}
         </div>
 
-        <p className="mb-6 text-white">
+        <p className="mb-6 text-black">
           Showing {filteredInternships.length} internships
         </p>
 

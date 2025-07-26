@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Search, User, Building2 } from "lucide-react"
@@ -32,11 +33,7 @@ export default function StudentHomepage() {
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link
               to="internships"
-<<<<<<< HEAD
-              className="px-8 py-3 text-lg font-medium text-white transition border-2 border-white rounded hover:bg-white hover:text-royalblue"
-=======
               className="px-8 py-3 text-lg font-medium text-white transition border-2 border-white rounded hover:bg-white animate-pulse hover:text-oxfordblue"
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
             >
               Browse Internships
             </Link>

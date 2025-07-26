@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import React from 'react';
-import { MapPin, Clock, Bookmark } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-=======
 import React from "react";
 import { Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
 
 const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
   const navigate = useNavigate();
@@ -16,13 +10,9 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
       case 'hybrid':
         return 'bg-orange-100 text-orange-700';
       case 'on-site':
-        return 'bg-orange-200 text-orange-800';
-      case 'remote':
-<<<<<<< HEAD
-        return 'bg-green-100 text-green-800';
-=======
         return 'bg-orange-100 text-orange-700';
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
+      case 'remote':
+        return 'bg-orange-100 text-orange-700';
       default:
         return 'bg-orange-100 text-orange-700';
     }
@@ -30,18 +20,6 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
 
   const handleBookmarkClick = () => {
     onBookmarkToggle(internship);
-  };
-
-  const handleViewDetails = () => {
-    // Fix 1: Proper path with forward slash
-    navigate(`/student/internships/${internship.id}`, { state: { internship } });
-    
-    // Fix 2: Also store in sessionStorage as backup (matching your InternshipDetails component)
-    const existingData = JSON.parse(sessionStorage.getItem('internshipsData') || '[]');
-    const updatedData = existingData.find(item => item.id === internship.id) 
-      ? existingData 
-      : [...existingData, internship];
-    sessionStorage.setItem('internshipsData', JSON.stringify(updatedData));
   };
 
   return (
@@ -61,13 +39,8 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
         <button
           onClick={handleBookmarkClick}
           className={`transition-colors duration-200 ${
-<<<<<<< HEAD
-            isBookmarked
-              ? 'text-blue-600 hover:text-blue-700'
-=======
             isBookmarked 
               ? 'text-orange-500 hover:text-orange-600' 
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -96,21 +69,12 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
       <p className="mb-4 text-sm text-gray-700 line-clamp-3">{internship.description}</p>
 
       <div className="flex items-center justify-between">
-<<<<<<< HEAD
-        <span className={`text-sm ${internship.status === 'closed' ? 'text-red-500' : 'text-orange-500'}`}>
-          {internship.status === 'closed' ? '🔒 Application closed' : '⏰ Application open'}
-        </span>
-        <button
-          onClick={handleViewDetails}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
-=======
         <span className="text-sm text-red-500">
           {internship.status === 'closed' ? '🔒 Application closed' : '🔓 Application open'}
         </span>
         <button
           onClick={() => navigate(`/student/job/${internship.id}`)}
           className="px-4 py-2 font-medium text-white transition-colors duration-200 rounded-lg bg-oxfordblue hover:bg-oxfordblue/80"
->>>>>>> fe76ef5e7d7175093fd31a4ebbc64e88adf857c6
         >
           View Details
         </button>

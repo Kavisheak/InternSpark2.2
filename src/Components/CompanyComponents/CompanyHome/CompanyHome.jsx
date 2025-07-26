@@ -18,7 +18,7 @@ const CompanyHome = () => {
       <main className="px-4 md:px-0 mt-44 fade-in-up ">
         {/* Title Section */}
 
-        <section className="relative px-4 mx-auto mb-20 -mt-16 md:mb-20 max-w-7xl sm:px-0">
+        <section className="relative px-4 mx-auto mb-20 -mt-24 md:mb-20 max-w-7xl sm:px-0">
           {/* Image */}
           <div className="absolute right-0 hidden -mt-20 translate-x-10 md:block">
             
@@ -55,7 +55,7 @@ const CompanyHome = () => {
             {/* Buttons */}
             <div className="flex flex-wrap gap-4">
               <button
-                className="flex items-center gap-2 px-8 py-4 font-semibold text-white transition bg-[#ED6A2C] rounded-lg shadow-md animate-pulse hover:bg-[#cf4f14]"
+                className="flex items-center gap-2 px-8 py-4 font-semibold text-white transition bg-orange-500 rounded-lg shadow-md animate-pulse hover:bg-[#cf4f14]"
                 onClick={() => navigate("/company/internships")}
               >
                 Get Started <FiArrowRight size={20} />

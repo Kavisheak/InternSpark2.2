@@ -13,14 +13,10 @@ export default function ApplicationDetailPanel({
   primaryColor,
 }) {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const imageRef = useRef(null); // for detecting outside click
+  const imageRef = useRef(null);
 
-  if (!selected)
-    return <div className="w-full p-4 md:w-2/3">Application data not found.</div>;
+  const statusOptions = ["Reviewing", "Interviewing", "Rejected", "Hired"];
 
-  const statusOptions = [ "Reviewing", "Interviewing", "Rejected", "Hired"];
-
-  // Close popup on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (imageRef.current && !imageRef.current.contains(event.target)) {
@@ -40,8 +36,7 @@ export default function ApplicationDetailPanel({
   return (
     <div className="relative w-full p-6 text-gray-800 bg-white shadow-md md:w-2/3 rounded-xl">
       <div className="flex items-center justify-between mb-4">
-        <div className="relative flex items-center gap-4">
-          {/* Profile Picture + Popup Preview */}
+        <div className="flex items-center gap-4">
           <div className="relative">
             <img
               src={selected.image || "/default-avatar.png"}
@@ -50,22 +45,19 @@ export default function ApplicationDetailPanel({
               onClick={() => setIsImageOpen(!isImageOpen)}
               title="Click to enlarge"
             />
-
-            {/* Small popup preview next to the image */}
             {isImageOpen && (
               <div
                 ref={imageRef}
                 className="absolute top-0 z-50 w-40 h-40 p-1 bg-white border shadow-xl rounded-xl left-20"
               >
                 <img
-                  src={selected.image || "/default-avatar.png"}
+                  src={selected.image}
                   alt="Preview"
                   className="object-cover w-full h-full rounded-lg"
                 />
               </div>
             )}
           </div>
-
           <div>
             <h2 className="text-2xl font-semibold">{selected.name}</h2>
             <p className="text-sm text-gray-500">{selected.role}</p>
@@ -78,9 +70,9 @@ export default function ApplicationDetailPanel({
 
       <div className="flex items-center gap-4 mb-6">
         <a
-          href={selected.cvUrl || "/sample-cv.pdf"}
+          href={selected.cv || "/sample-cv.pdf"}
           download
-          className="flex items-center gap-2 bg-[color:var(--primaryColor)] text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all"
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg"
           style={{ backgroundColor: primaryColor }}
         >
           <FiDownload /> Download CV
@@ -99,14 +91,12 @@ export default function ApplicationDetailPanel({
           <FiMail className="text-gray-500" /> {selected.email}
         </p>
         <p className="flex items-center gap-2 text-sm text-gray-700">
-          <FiPhone className="text-gray-500" /> +1 (555) 123-4567
+          <FiPhone className="text-gray-500" /> {selected.phone}
         </p>
         <p className="flex items-center gap-2 text-sm text-gray-700">
           <FiGithub className="text-gray-500" />{" "}
           <a
-            href={`https://github.com/${selected.name
-              .split(" ")[0]
-              .toLowerCase()}`}
+            href={`https://github.com/${selected.name.split(" ")[0].toLowerCase()}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -116,9 +106,7 @@ export default function ApplicationDetailPanel({
         <p className="flex items-center gap-2 text-sm text-gray-700">
           <FiLinkedin className="text-gray-500" />{" "}
           <a
-            href={`https://linkedin.com/in/${selected.name
-              .replace(" ", "")
-              .toLowerCase()}`}
+            href={`https://linkedin.com/in/${selected.name.replace(" ", "").toLowerCase()}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -140,22 +128,6 @@ export default function ApplicationDetailPanel({
       <div className="mb-6">
         <h3 className="mb-2 text-lg font-semibold">Skills / Motivation</h3>
         <p>{selected.skills}</p>
-      </div>
-
-      <div className="mb-6">
-        <h3 className="mb-2 text-lg font-semibold">Skills</h3>
-        <div className="flex flex-wrap gap-2">
-          {["React", "TypeScript", "Next.js", "Tailwind CSS", "Node.js", "GraphQL"].map(
-            (skill) => (
-              <span
-                key={skill}
-                className="px-3 py-1 text-sm bg-gray-100 border rounded-full"
-              >
-                {skill}
-              </span>
-            )
-          )}
-        </div>
       </div>
 
       <div>

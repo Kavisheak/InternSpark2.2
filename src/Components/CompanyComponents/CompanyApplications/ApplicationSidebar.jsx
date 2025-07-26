@@ -4,10 +4,8 @@ export default function ApplicationSidebar({
   applications,
   selectedId,
   setSelectedId,
- 
   searchTerm,
   setSearchTerm,
- 
 }) {
   const filtered = applications.filter((app) =>
     app.name.toLowerCase().includes(searchTerm.toLowerCase())

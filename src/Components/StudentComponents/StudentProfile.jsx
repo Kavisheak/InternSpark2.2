@@ -18,6 +18,9 @@ export default function StudentProfile() {
     bio: "Senior Computer Science student passionate about UI/UX design and front-end development.",
   })
 
+  const [profileImage, setProfileImage] = useState(null)
+  const [cvFile, setCvFile] = useState(null)
+
   const skillsList = ["JavaScript", "React", "UI/UX Design", "HTML/CSS", "Figma"]
 
   const handleChange = (e) => {
@@ -27,12 +30,13 @@ export default function StudentProfile() {
 
   const handleSave = () => {
     console.log("Saved Data:", formData)
+    if (profileImage) console.log("Uploaded Profile Image:", profileImage.name)
+    if (cvFile) console.log("Uploaded CV File:", cvFile.name)
     alert("Changes saved successfully!")
   }
 
   return (
     <div className="min-h-screen text-[#14213D] bg-white fade-in-up">
-
       <div className="max-w-6xl px-6 py-10 mx-auto">
         <h1 className="mb-8 text-3xl font-bold text-[#14213D]">My Profile</h1>
 
@@ -40,9 +44,33 @@ export default function StudentProfile() {
           {/* Sidebar */}
           <div className="p-6 border border-[#D1D5DB] shadow-md bg-[#F8FAFC] rounded-2xl">
             <div className="flex flex-col items-center mb-6">
-              <div className="flex items-center justify-center w-24 h-24 mb-4 bg-[#E5E7EB] rounded-full">
-                <User className="w-10 h-10 text-[#14213D]" />
+              {/* Profile Image Upload with + overlay */}
+              <div className="relative w-24 h-24 mb-4">
+                {profileImage ? (
+                  <img
+                    src={URL.createObjectURL(profileImage)}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-3xl">
+                    <User className="w-10 h-10" />
+                  </div>
+                )}
+                <label htmlFor="profile-upload">
+                  <div className="absolute bottom-0 right-0 w-7 h-7 bg-gray-500 text-white rounded-full flex items-center justify-center hover:bg-gray-700 cursor-pointer text-lg font-bold">
+                    +
+                  </div>
+                </label>
+                <input
+                  id="profile-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setProfileImage(e.target.files[0])}
+                  className="hidden"
+                />
               </div>
+
               <h2 className="text-xl font-semibold">
                 {formData.firstName} {formData.lastName}
               </h2>
@@ -127,6 +155,19 @@ export default function StudentProfile() {
               <p className="mt-1 text-xs text-gray-500">Brief description about yourself for employers</p>
             </div>
 
+            <div className="mt-6">
+              <label htmlFor="cv" className="block mb-1 text-sm font-medium text-[#14213D]">Upload CV (PDF)</label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setCvFile(e.target.files[0])}
+                className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FCA311] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#FCA311] file:text-white hover:file:bg-[#e6960f]"
+              />
+              {cvFile && (
+                <p className="mt-2 text-sm text-gray-600">Selected: {cvFile.name}</p>
+              )}
+            </div>
+
             <button
               onClick={handleSave}
               className="px-6 py-2 mt-6 font-medium text-white transition bg-[#FCA311] rounded-lg hover:bg-[#e6960f]"
@@ -136,7 +177,8 @@ export default function StudentProfile() {
           </div>
         </div>
       </div>
-      <Footer/>
+
+      <Footer />
     </div>
   )
 }

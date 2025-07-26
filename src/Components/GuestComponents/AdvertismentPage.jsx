@@ -7,7 +7,7 @@ import AdFooter from './AdFooter'
 
 const AdvertismentPage = () => {
   return (
-    <div>
+    <div className='bg-sky-100'>
       <AdNavbar/>
       <AdHero/>
       <AdFooter/>

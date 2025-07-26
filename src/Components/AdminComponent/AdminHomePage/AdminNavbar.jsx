@@ -8,10 +8,11 @@ import {
   FaTimes,
   FaTachometerAlt,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const AdminNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Dashboard", path: "/admin", icon: <FaTachometerAlt /> },
@@ -20,15 +21,26 @@ const AdminNavbar = () => {
     { name: "System Settings", path: "/admin/settings", icon: <FaCogs /> },
   ];
 
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (!confirmed) return;
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("notifications");
+
+    navigate("/");
+  };
+
   return (
-    <nav className=" bg-orange-500 w-full mb-10 sticky top-0 z-50">
-      <header className="flex justify-between items-center px-6 py-4 text-white">
+    <nav className="sticky top-0 z-50 w-full mb-10 bg-orange-500">
+      <header className="flex items-center justify-between px-6 py-4 text-white">
         <div className="text-2xl font-bold">
           <span className="text-black">Intern</span>Spark Admin
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-6 items-center">
+        <ul className="items-center hidden space-x-6 md:flex">
           {navItems.map((item) => (
             <li key={item.name}>
               <NavLink
@@ -46,19 +58,19 @@ const AdminNavbar = () => {
             </li>
           ))}
           <li>
-            <NavLink
-              to="/admin/logout"
+            <button
+              onClick={handleLogout}
               className="flex items-center gap-2 text-black hover:underline"
             >
               <FaSignOutAlt />
               Logout
-            </NavLink>
+            </button>
           </li>
         </ul>
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden text-2xl"
+          className="text-2xl md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -68,7 +80,7 @@ const AdminNavbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-blue-700 px-6 pb-4 flex flex-col space-y-3 text-white">
+        <div className="flex flex-col px-6 pb-4 space-y-3 text-white bg-blue-700 md:hidden">
           {navItems.map((item) => (
             <NavLink
               key={item.name}
@@ -84,14 +96,16 @@ const AdminNavbar = () => {
               {item.name}
             </NavLink>
           ))}
-          <NavLink
-            to="/admin/logout"
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleLogout();
+            }}
             className="flex items-center gap-2 text-red-500 hover:underline"
-            onClick={() => setMenuOpen(false)}
           >
             <FaSignOutAlt />
             Logout
-          </NavLink>
+          </button>
         </div>
       )}
     </nav>

@@ -43,7 +43,7 @@ export default function UserManagement() {
       type: "Student",
       joined: "1/15/2024",
       lastActive: "6/6/2024",
-      reports: 10,
+      reports: 7,
       applications: 5,
       status: "active",
     },
@@ -103,19 +103,19 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 mx-auto max-w-7xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-orange-600 mb-2">
+        <h1 className="mb-2 text-2xl font-semibold text-orange-600">
           User Suspension Management
         </h1>
         <p className="text-gray-800">
-          Monitor and manage users based on report counts (auto-suspend at 10 reports)
+          Monitor and manage users based on report counts
         </p>
       </div>
 
-      <div className="mb-6 flex justify-end ">
+      <div className="flex justify-end mb-6 ">
         <div className="relative w-80 ">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 h-4 w-4" />
+          <Search className="absolute w-4 h-4 text-orange-500 transform -translate-y-1/2 left-3 top-1/2" />
           <Input
           
             placeholder="Search users..."
@@ -127,7 +127,7 @@ export default function UserManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+      <div className="grid grid-cols-1 gap-2 mb-6 sm:grid-cols-2 md:grid-cols-4">
         {[
           { label: "All Users", key: "all", count: counts.all },
           { label: "Students", key: "students", count: counts.students },
@@ -154,21 +154,21 @@ export default function UserManagement() {
             <CardContent>
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-orange-50 rounded-full">
+                  <div className="p-2 rounded-full bg-orange-50">
                     {user.type === "Student" ? (
-                      <User className="h-5 w-5 text-orange-600" />
+                      <User className="w-5 h-5 text-orange-600" />
                     ) : (
-                      <Building2 className="h-5 w-5 text-orange-600" />
+                      <Building2 className="w-5 h-5 text-orange-600" />
                     )}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">{user.name}</h3>
-                    <p className="text-gray-800 text-sm">{user.email}</p>
+                    <h3 className="text-lg font-semibold">{user.name}</h3>
+                    <p className="text-sm text-gray-800">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <Badge className="bg-orange-100 text-orange-800">{user.status}</Badge>
+                  <Badge className="text-orange-800 bg-orange-100">{user.status}</Badge>
                   <Badge
                     className={
                       user.reports >= 10
@@ -183,7 +183,7 @@ export default function UserManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4 text-sm">
+              <div className="grid grid-cols-1 gap-6 mt-4 text-sm sm:grid-cols-2 md:grid-cols-4">
                 <div>
                   <span className="text-gray-800">Type:</span>
                   <p className="font-medium text-orange-600">{user.type}</p>
@@ -208,17 +208,17 @@ export default function UserManagement() {
                 </div>
               </div>
 
-              <div className="flex items-center flex-wrap gap-3 mt-4">
+              <div className="flex flex-wrap items-center gap-3 mt-4">
                 {user.reports >= 8 && user.reports < 10 && (
                   <Button className="text-orange-600 border border-orange-300 bg-orange-50">
-                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <AlertTriangle className="w-4 h-4 mr-2" />
                     Warning Zone
                   </Button>
                 )}
                 {user.reports >= 10 && (
                   <Button
                     onClick={() => handleSuspendAccount(user.id)}
-                    className="bg-red-600 text-white"
+                    className="text-white bg-red-600"
                   >
                     Suspend Account
                   </Button>
@@ -227,7 +227,7 @@ export default function UserManagement() {
                   onClick={() => handleViewReports(user.id)}
                   className="text-orange-600 border border-orange-300 bg-orange-50"
                 >
-                  <Eye className="h-4 w-4 mr-2" />
+                  <Eye className="w-4 h-4 mr-2" />
                   View Reports
                 </Button>
               </div>

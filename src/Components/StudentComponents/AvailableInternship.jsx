@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import InternshipCard from './InternshipCard';
-import { useNavigate } from 'react-router-dom';
+import Footer from '../CompanyComponents/Footer';
 
-
-const AvailableInternships = () => {
-  const navigate = useNavigate();
-
+const AvailableInternship = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [bookmarkedInternships, setBookmarkedInternships] = useState([]);
@@ -22,39 +19,19 @@ const AvailableInternships = () => {
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$25/hour',
-
-      description: 'Join our team to develop modern web applications using React and TypeScript. You\'ll work alongside senior developers on real-world projects.',
-      status: 'closed',
-      deadline: 'May 15, 2025',
-      requirements: [
-        'Experience with React and TypeScript',
-        'Understanding of modern web development practices',
-        'Knowledge of Git version control',
-        'Currently enrolled in Computer Science or related field'
-      ],
-
       description: "Join our team to develop modern web applications using React and TypeScript. You'll work alongside senior developers on real-world projects.",
       status: 'closed'
-
     },
     {
       id: 2,
       title: 'UX Design Intern',
       company: 'CreativeMinds Agency',
-      location: 'Kandy, Sri Lanka',
+      location: 'Kandy',
       duration: '6 months',
       workType: 'On-site',
       pay: '$22/hour',
       description: 'Work with our design team to create user-friendly interfaces for web and mobile applications. Help conduct user research and testing.',
-      status: 'closed',
-      deadline: 'May 20, 2025',
-      requirements: [
-        'Figma or Sketch experience',
-        'Basic understanding of UI/UX principles',
-        'Portfolio showcasing previous designs',
-        'Enrolled in a Design or HCI-related degree'
-      ],
-      aboutInternship: 'Work with our design team to create user-friendly interfaces for web and mobile applications. Help conduct user research and testing while learning industry-standard design processes.'
+      status: 'closed'
     },
     {
       id: 3,
@@ -65,45 +42,24 @@ const AvailableInternships = () => {
       workType: 'Remote',
       pay: '$24/hour',
       description: 'Apply machine learning techniques to real-world datasets. Help develop predictive models and visualize insights.',
-      status: 'open',
-      deadline: 'June 1, 2025',
-      requirements: [
-        'Python programming experience',
-        'Knowledge of pandas, numpy, scikit-learn',
-        'Basic understanding of statistics and machine learning',
-        'Currently pursuing a degree in Data Science, Statistics, or related field'
-      ],
-      aboutInternship: 'Apply machine learning techniques to real-world datasets. Help develop predictive models and visualize insights that drive business decisions for our clients.'
+      status: 'open'
     },
     {
       id: 4,
       title: 'Marketing Intern',
       company: 'BrandBoost',
-      location: 'Colombo, Sri Lanka',
+      location: 'Colombo , Sri lanka',
       duration: '3 months',
       workType: 'Hybrid',
       pay: '$20/hour',
       description: 'Support our marketing team in campaign planning, social media management, and content creation. Gain hands-on experience in digital marketing strategies.',
-      status: 'open',
-      deadline: 'May 25, 2025',
-      requirements: [
-        'Strong written and verbal communication skills',
-        'Social media platform knowledge',
-        'Basic understanding of digital marketing concepts',
-        'Currently enrolled in Marketing, Communications, or related field'
-      ],
-      aboutInternship: 'Support our marketing team in campaign planning, social media management, and content creation. Gain hands-on experience in digital marketing strategies while working on real client campaigns.'
+      status: 'open'
     }
   ];
 
-
-  // Store internships in memory (instead of localStorage)
-
   useEffect(() => {
-    // Initialize bookmarks from memory or empty array
     const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
     setBookmarkedInternships(savedBookmarks);
-    
   }, []);
 
   const handleBookmarkToggle = (internship) => {
@@ -160,7 +116,7 @@ const AvailableInternships = () => {
           ))}
         </div>
 
-        <p className="mb-6 text-black">
+        <p className="mb-6 text-white">
           Showing {filteredInternships.length} internships
         </p>
 
@@ -171,7 +127,6 @@ const AvailableInternships = () => {
               internship={internship}
               isBookmarked={bookmarkedInternships.some(item => item.id === internship.id)}
               onBookmarkToggle={handleBookmarkToggle}
-              onViewDetails={() => navigate('/StudentComponents/InternshipDetails', { state: { internship } })}
             />
           ))}
         </div>
@@ -184,8 +139,9 @@ const AvailableInternships = () => {
           </div>
         )}
       </div>
+      <Footer/>
     </div>
   );
 };
 
-export default AvailableInternships;
+export default AvailableInternship;

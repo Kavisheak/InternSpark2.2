@@ -14,25 +14,12 @@ const initialApplications = [
     applied: "5/16/2025",
     education: "Computer Science, Stanford University",
     experience: "1 year part-time web development",
-    skills: "I am excited to apply for this position because…",
+    skills: "React, JavaScript, HTML, CSS",
     email: "sarah.j@example.com",
+    phone: "+1 555 111 2222",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    cv: "/cvs/sarah-johnson.pdf",
     status: "New",
-    references: [
-      {
-        name: "John Peterson",
-        role: "Senior Manager",
-        company: "Tech Solutions Ltd.",
-        email: "john.peterson@techsolutions.com",
-        phone: "+94 71 123 0456",
-      },
-      {
-        name: "Alice Brown",
-        role: "Team Lead",
-        company: "WebTech Solutions",
-        email: "alice.brown@webtech.com",
-        phone: "+94 77 654 7890",
-      },
-    ],
   },
   {
     id: 2,
@@ -42,8 +29,11 @@ const initialApplications = [
     applied: "5/15/2025",
     education: "Design, University of Berkeley",
     experience: "Intern at TechDesign",
-    skills: "Design is my passion…",
+    skills: "Figma, Sketch, UX research",
     email: "m.chen@example.com",
+    phone: "+1 555 222 3333",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    cv: "/cvs/michael-chen.pdf",
     status: "Reviewing",
   },
   {
@@ -54,8 +44,11 @@ const initialApplications = [
     applied: "5/14/2025",
     education: "Data Analytics, MIT",
     experience: "Intern at AnalyticsPro",
-    skills: "I am eager to learn…",
+    skills: "Python, Pandas, Machine Learning",
     email: "alex.w@example.com",
+    phone: "+1 555 333 4444",
+    image: "https://randomuser.me/api/portraits/men/68.jpg",
+    cv: "/cvs/alex-washington.pdf",
     status: "Interviewing",
   },
   {
@@ -66,8 +59,11 @@ const initialApplications = [
     applied: "5/13/2025",
     education: "Web Development, Harvard University",
     experience: "Intern at WebTech Solutions",
-    skills: "I am passionate about coding…",
+    skills: "JavaScript, React, UI Design",
     email: "jamie.g@example.com",
+    phone: "+1 555 444 5555",
+    image: "https://randomuser.me/api/portraits/women/25.jpg",
+    cv: "/cvs/jamie-garcia.pdf",
     status: "Rejected",
   },
 ];
@@ -77,10 +73,7 @@ function useQuery() {
 }
 
 const slugify = (text) =>
-  text
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w-]/g, "");
+  text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
 
 export default function CompanyApplications() {
   const { roleSlug } = useParams();
@@ -89,7 +82,6 @@ export default function CompanyApplications() {
 
   const [applications, setApplications] = useState(initialApplications);
   const [selectedId, setSelectedId] = useState(null);
-  const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredByRole = roleSlug
@@ -120,28 +112,28 @@ export default function CompanyApplications() {
   return (
     <div className="min-h-screen bg-[#01165A] text-gray-100">
       <CompanyNavbar />
-         <div className="fade-in-up">
-      <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white  shadow-lg">
-        <ApplicationSidebar
-          applications={filteredByRole}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          primaryColor="#01165A"
-          accentColor="#F97316"
-        />
-        <ApplicationDetailPanel
-          selected={selected}
-          handleStatusUpdate={handleStatusUpdate}
-          primaryColor="#01165A"
-          accentColor="#F97316"
-        />
-      </div>
-
-      <Footer />
+      <div className="fade-in-up">
+        <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white shadow-lg">
+          <ApplicationSidebar
+            applications={filteredByRole}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+          {selected ? (
+            <ApplicationDetailPanel
+              selected={selected}
+              handleStatusUpdate={handleStatusUpdate}
+              primaryColor="#01165A"
+            />
+          ) : (
+            <div className="w-full p-4 text-center text-gray-500 md:w-2/3">
+              No application selected.
+            </div>
+          )}
+        </div>
+        <Footer />
       </div>
     </div>
   );

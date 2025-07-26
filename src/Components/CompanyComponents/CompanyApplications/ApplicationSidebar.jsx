@@ -1,114 +1,64 @@
-import { useEffect } from "react";
-
-function getStatusClass(status) {
-  return (
-    {
-      New: "bg-purple-100 text-purple-800",
-      Reviewing: "bg-yellow-500 text-gray-800",
-      Interviewing: "bg-blue-100 text-blue-800",
-      Shortlisted: "bg-green-100 text-green-800",
-      Rejected: "bg-red-100 text-red-800",
-    }[status] || "bg-gray-100 text-gray-800"
-  );
-}
+import { FiSearch } from "react-icons/fi";
 
 export default function ApplicationSidebar({
   applications,
   selectedId,
   setSelectedId,
-  activeFilter,
-  setActiveFilter,
   searchTerm,
   setSearchTerm,
-  fullApplications = applications,
 }) {
-  const filteredApps =
-    activeFilter === "All"
-      ? applications
-      : applications.filter((app) => app.status === activeFilter);
-
-  const searchedApps = filteredApps.filter((app) =>
-    app.role.toLowerCase().startsWith(searchTerm.toLowerCase())
+  const filtered = applications.filter((app) =>
+    app.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    const stillExists = fullApplications.some((app) => app.id === selectedId);
-    if (!stillExists) setSelectedId(null);
-  }, [fullApplications, selectedId, setSelectedId]);
+  const statusColor = {
+    New: "bg-blue-500",
+    Reviewing: "bg-yellow-500",
+    Interviewing: "bg-sky-500",
+    Rejected: "bg-red-500",
+    Hired: "bg-green-500",
+  };
 
   return (
-    <div className="w-full md:w-1/4 flex flex-col max-h-[calc(100vh-5rem)]">
-      {/* Filter & Search */}
-      <div className="top-0 z-10 pb-4 ">
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          {[
-            "All",
-            "New",
-            "Reviewing",
-            "Shortlisted",
-            "Interviewing",
-            "Rejected",
-          ].map((status) => (
-            <button
-              key={status}
-              onClick={() => setActiveFilter(status)}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
-                activeFilter === status
-                  ? "bg-oxfordblue text-white shadow"
-                  : "bg-transparent text-oxfordblue border border-[#2128BD]/30 hover:bg-[#2128BD]/10"
-              }`}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
-
-        {/* Search Bar */}
+    <div className="w-full h-full p-4 bg-white shadow-md md:w-1/3 rounded-xl">
+      <h2 className="mb-4 text-xl font-semibold text-gray-800">Recent Applications</h2>
+      <div className="relative mb-4">
+        <FiSearch className="absolute text-gray-400 top-3 left-3" />
         <input
           type="text"
-          placeholder="Search applications by job title..."
+          placeholder="Search applications..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 text-sm text-gray-800 bg-transparent border border-[#2128BD]/50 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2128BD] focus:border-[#2128BD]"
+          className="w-full py-2 pl-10 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
       </div>
-
-      {/* Applications List */}
-      <div className="flex-1 pr-1 mt-3 overflow-y-auto">
-        {searchedApps.length === 0 && (
-          <p className="mt-4 text-center text-gray-500">
-            No applications found.
-          </p>
-        )}
-        {searchedApps.map((app) => (
-          <div
+      <ul className="space-y-2">
+        {filtered.map((app) => (
+          <li
             key={app.id}
             onClick={() => setSelectedId(app.id)}
-            className={`p-4 mb-3 rounded-md border cursor-pointer transition-all duration-200 ${
-              selectedId === app.id
-                ? "bg-sky-50 border-[#2128BD] shadow"
-                : "bg-white border-gray-200 hover:bg-sky-50 hover:border-[#2128BD]"
+            className={`p-3 rounded-lg cursor-pointer flex items-center gap-4 border ${
+              selectedId === app.id ? "border-orange-500 bg-orange-50" : "border-gray-200"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-gray-800">{app.name}</span>
-              <span
-                className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusClass(
-                  app.status
-                )}`}
-              >
-                {app.status}
-              </span>
+            <img
+              src={app.image || "/default-avatar.png"}
+              alt={app.name}
+              className="object-cover w-10 h-10 rounded-full"
+            />
+            <div className="flex-grow">
+              <p className="font-medium text-gray-800">{app.name}</p>
+              <p className="text-sm text-gray-500">{app.role}</p>
+              <p className="text-xs text-gray-400">Applied {app.applied}</p>
             </div>
-            <div className="mt-1 text-sm text-gray-600">
-              Applied for {app.role}
-              <br />
-              {app.applied}
-            </div>
-          </div>
+            <span
+              className={`text-white text-xs px-2 py-1 rounded-full ${statusColor[app.status] || "bg-gray-400"}`}
+            >
+              {app.status}
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import InternshipDetails from "./InternshipDetails";
 import StudentProfile from "./StudentProfile";
-
+import StudentNavbar from "./StudentNavbar";
 import StudentHomepage from "./StudentHomepage";
 import Notifications from "./Notification";
 import AvailableInternship from "./AvailableInternship";
 import MyApplications from "./Applications";
-import StudentNavbar from "./StudentNavbar";
 import Bookmarks from "./Bookmarks";
+import AppliedInternshipDetails from "./AppliedInternshipDetails";
+
 
 
 const StudentMain = () => {
@@ -25,6 +26,7 @@ const StudentMain = () => {
       <Route path="internships" element={<AvailableInternship/>}/>
       <Route path="" element={<StudentHomepage />} />
       <Route path="applications" element={<MyApplications/>}/>
+      <Route path="applications/:id" element={<AppliedInternshipDetails />} />
       <Route path="bookmarks" element={<Bookmarks />} />
     </Routes>
     </div>

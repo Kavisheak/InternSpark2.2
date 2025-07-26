@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Footer from "../CompanyComponents/Footer";
 const applications = [
   {
     title: "Frontend Developer Intern",
@@ -62,8 +63,10 @@ export default function MyApplications() {
     { name: "Accepted", count: statusCounts.Accepted || 0 },
     { name: "Rejected", count: statusCounts.Rejected || 0 },
   ];
+  const navigate = useNavigate();
 
   return (
+    <div>
     <div className="max-w-5xl p-6 mx-auto fade-in-up">
       <h1 className="mb-6 text-3xl font-bold text-gray-800">My Applications</h1>
 
@@ -112,11 +115,16 @@ export default function MyApplications() {
 
                 <div className="flex flex-col items-start gap-3 md:items-end">
                   <span
-                    className={`px-3 py-1 text-sm rounded-full font-medium ${statusColors[app.status]}`}
+                    className={`px-3 py-1 text-sm rounded-full font-medium ${
+                      statusColors[app.status]
+                    }`}
                   >
                     {app.status}
                   </span>
-                  <button className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#002147] text-white hover:bg-[#00152f] transition">
+                  <button
+                    onClick={() => navigate(`/student/applications/${index}`)}
+                    className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#002147] text-white hover:bg-[#00152f] transition"
+                  >
                     View Details
                   </button>
                 </div>
@@ -125,6 +133,8 @@ export default function MyApplications() {
           ))
         )}
       </div>
+    </div>
+    <Footer/>
     </div>
   );
 }

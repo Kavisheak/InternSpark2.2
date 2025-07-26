@@ -1,129 +1,148 @@
-function getStatusClass(status) {
-  return (
-    {
-      New: "bg-purple-100 text-purple-800",
-      Reviewing: "bg-orange-100 text-orange-700",
-      Interviewing: "bg-blue-100 text-blue-800",
-      Shortlisted: "bg-green-100 text-green-800",
-      Rejected: "bg-red-100 text-red-800",
-    }[status] || "bg-gray-100 text-gray-800"
-  );
-}
+import { useState, useRef, useEffect } from "react";
+import {
+  FiDownload,
+  FiMail,
+  FiPhone,
+  FiGithub,
+  FiLinkedin,
+} from "react-icons/fi";
 
 export default function ApplicationDetailPanel({
   selected,
   handleStatusUpdate,
+  primaryColor,
 }) {
-  if (!selected) return null;
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const imageRef = useRef(null);
+
+  const statusOptions = ["Reviewing", "Interviewing", "Rejected", "Hired"];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (imageRef.current && !imageRef.current.contains(event.target)) {
+        setIsImageOpen(false);
+      }
+    };
+
+    if (isImageOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isImageOpen]);
 
   return (
-    <div className="flex-1 w-full mt-1">
-      <h2 className="mb-6 text-3xl font-bold text-center text-[#01165A]">
-        Application Details
-      </h2>
-
-      <div className="max-h-screen p-6 overflow-y-auto border border-[#01165A]/20 rounded-lg shadow-sm bg-white">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl font-semibold text-[#01165A]">
-              {selected.name}
-            </h2>
-            <p className="text-gray-700">{selected.email}</p>
-            {selected.gender && (
-              <p className="text-gray-600">Gender: {selected.gender}</p>
+    <div className="relative w-full p-6 text-gray-800 bg-white shadow-md md:w-2/3 rounded-xl">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <img
+              src={selected.image || "/default-avatar.png"}
+              alt={selected.name}
+              className="object-cover w-16 h-16 rounded-full cursor-pointer"
+              onClick={() => setIsImageOpen(!isImageOpen)}
+              title="Click to enlarge"
+            />
+            {isImageOpen && (
+              <div
+                ref={imageRef}
+                className="absolute top-0 z-50 w-40 h-40 p-1 bg-white border shadow-xl rounded-xl left-20"
+              >
+                <img
+                  src={selected.image}
+                  alt="Preview"
+                  className="object-cover w-full h-full rounded-lg"
+                />
+              </div>
             )}
           </div>
-          <span
-            className={`px-3 py-1 font-semibold rounded-full text-sm ${getStatusClass(
-              selected.status
-            )}`}
-          >
-            {selected.status}
-          </span>
-        </div>
-
-        {/* Role */}
-        <div className="mb-4">
-          <p className="font-semibold text-[#01165A]">Application for</p>
-          <p className="text-gray-700">{selected.role}</p>
-          <p className="text-sm text-gray-600">Applied on {selected.applied}</p>
-        </div>
-
-        {/* Education */}
-        <div className="mb-4">
-          <p className="font-semibold text-[#01165A]">Education</p>
-          <p className="text-gray-700">{selected.education}</p>
-        </div>
-
-        {/* Experience */}
-        <div className="mb-4">
-          <p className="font-semibold text-[#01165A]">Experience</p>
-          <p className="text-gray-700">{selected.experience || " - "}</p>
-        </div>
-
-        {/* Skills */}
-        <div className="mb-4">
-          <p className="font-semibold text-[#01165A]">Skills</p>
-          <p className="text-gray-700">{selected.skills}</p>
-        </div>
-
-        {/* References */}
-        <div className="mb-6">
-          <p className="font-semibold text-[#01165A]">References</p>
-          {selected.references?.length > 0 ? (
-            <ul className="text-gray-700 list-disc list-inside">
-              {selected.references.map((ref, i) => (
-                <li key={i}>
-                  <strong>{ref.name}</strong>, {ref.role} at {ref.company} —{" "}
-                  {ref.email}, {ref.phone}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600">Not provided</p>
-          )}
-        </div>
-
-        {/* Update Status */}
-        {/* Update Status */}
-        <div>
-          <p className="mb-2 font-semibold text-[#01165A]">Update Status</p>
-          <div className="flex flex-wrap gap-3">
-            {[
-              {
-                status: "Reviewing",
-                bg: "bg-orange-500",
-                hover: "hover:bg-orange-600",
-              },
-              {
-                status: "Shortlisted",
-                bg: "bg-emerald-600",
-                hover: "hover:bg-emerald-700",
-              },
-              {
-                status: "Interviewing",
-                bg: "bg-[#1D4ED8]",
-                hover: "hover:bg-[#1E40AF]",
-              },
-              {
-                status: "Rejected",
-                bg: "bg-rose-500",
-                hover: "hover:bg-rose-600",
-              },
-            ].map(({ status, bg, hover }) => (
-              <button
-                key={status}
-                onClick={() => handleStatusUpdate(selected.id, status)}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm border border-white/10 transition duration-200 ${bg} ${hover} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${
-                  bg.split("-")[1]
-                }-400`}
-              >
-                {status}
-              </button>
-            ))}
+          <div>
+            <h2 className="text-2xl font-semibold">{selected.name}</h2>
+            <p className="text-sm text-gray-500">{selected.role}</p>
           </div>
         </div>
+        <span className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full">
+          {selected.status} Application
+        </span>
+      </div>
+
+      <div className="flex items-center gap-4 mb-6">
+        <a
+          href={selected.cv || "/sample-cv.pdf"}
+          download
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg"
+          style={{ backgroundColor: primaryColor }}
+        >
+          <FiDownload /> Download CV
+        </a>
+        <a
+          href={`mailto:${selected.email}`}
+          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100"
+        >
+          <FiMail /> Contact
+        </a>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="mb-2 text-lg font-semibold">Contact Information</h3>
+        <p className="flex items-center gap-2 text-sm text-gray-700">
+          <FiMail className="text-gray-500" /> {selected.email}
+        </p>
+        <p className="flex items-center gap-2 text-sm text-gray-700">
+          <FiPhone className="text-gray-500" /> {selected.phone}
+        </p>
+        <p className="flex items-center gap-2 text-sm text-gray-700">
+          <FiGithub className="text-gray-500" />{" "}
+          <a
+            href={`https://github.com/${selected.name.split(" ")[0].toLowerCase()}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            github.com/{selected.name.split(" ")[0].toLowerCase()}
+          </a>
+        </p>
+        <p className="flex items-center gap-2 text-sm text-gray-700">
+          <FiLinkedin className="text-gray-500" />{" "}
+          <a
+            href={`https://linkedin.com/in/${selected.name.replace(" ", "").toLowerCase()}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            linkedin.com/in/{selected.name.replace(" ", "").toLowerCase()}
+          </a>
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="mb-2 text-lg font-semibold">Education</h3>
+        <p>{selected.education}</p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="mb-2 text-lg font-semibold">Experience</h3>
+        <p>{selected.experience}</p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="mb-2 text-lg font-semibold">Skills / Motivation</h3>
+        <p>{selected.skills}</p>
+      </div>
+
+      <div>
+        <h3 className="mb-2 text-lg font-semibold">Update Application Status</h3>
+        <select
+          value={selected.status}
+          onChange={(e) => handleStatusUpdate(selected.id, e.target.value)}
+          className="p-2 text-sm border rounded-md"
+        >
+          {statusOptions.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

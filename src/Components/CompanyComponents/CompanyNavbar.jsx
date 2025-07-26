@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
-import CompanyNotifications from "./Notification/CompanyNotifications"; // Make sure this component exists
+import CompanyNotifications from "./Notification/CompanyNotifications"; // Ensure this component exists
 
 const CompanyNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [notifications, setNotifications] = useState(() => {
     const stored = localStorage.getItem("notifications");
@@ -39,6 +40,19 @@ const CompanyNavbar = () => {
   }, [notifications]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (!confirmed) return;
+
+    // Clear local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("notifications");
+
+    // Redirect to login
+    navigate("/");
+  };
 
   const navItems = [
     { name: "Home", path: "/company/" },
@@ -94,7 +108,10 @@ const CompanyNavbar = () => {
 
           {/* Logout */}
           <li>
-            <button className="px-4 py-1 text-sm font-medium text-blue-600 transition bg-white rounded-md hover:bg-red-100">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1 text-sm font-medium text-blue-600 transition bg-white rounded-md hover:bg-blue-100"
+            >
               Logout
             </button>
           </li>
@@ -130,10 +147,11 @@ const CompanyNavbar = () => {
             );
           })}
 
-          {/* Notifications (Mobile) */}
-
           {/* Logout Button */}
-          <button className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-900 transition bg-white rounded-md hover:bg-blue-50">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-900 transition bg-white rounded-md hover:bg-blue-100"
+          >
             Logout
           </button>
         </div>

@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const ListofInternships = ({ searchTerm }) => {
   const navigate = useNavigate();
@@ -37,9 +38,11 @@ const ListofInternships = ({ searchTerm }) => {
           setInternships(sortedInternships);
         } else {
           setError(res.data.message || "Failed to load internships.");
+          toast.error(res.data.message || "Failed to load internships.");
         }
       } catch (err) {
         setError("Server error while fetching internships.");
+        toast.error("Server error while fetching internships.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -49,34 +52,42 @@ const ListofInternships = ({ searchTerm }) => {
     fetchInternships();
   }, []);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this post?"
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const res = await axios.delete(
-        "http://localhost/InternBackend/api/delete_internship.php",
-        {
-          data: { id },
-          withCredentials: true,
-        }
-      );
-
-      if (res.data.success) {
-        alert("Internship deleted.");
-        setInternships((prev) =>
-          prev.filter((job) => job.Internship_Id !== id)
-        );
-      } else {
-        alert("❌ Failed: " + res.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting internship:", error);
-      alert("Server error. Try again later.");
-    }
+const handleDelete = (id) => {
+  const confirmDelete = () => {
+    // Your delete logic here, e.g., axios call
+    toast.dismiss(tid); // dismiss the confirmation toast
+    // Call your delete API here
+    toast.success("Internship deleted.");
+    setInternships((prev) => prev.filter((job) => job.Internship_Id !== id));
   };
+
+  const tid = toast(
+    (t) => (
+      <div className="p-3">
+        <p>Are you sure you want to delete this post?</p>
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 text-sm border rounded hover:bg-gray-200"
+          >
+            No
+          </button>
+          <button
+            onClick={confirmDelete}
+            className="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+          >
+            Yes
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      duration: 4000, // keep it longer to allow interaction
+      style: { minWidth: "320px" },
+      position: "top-center",
+    }
+  );
+};
 
   // Filter internships by searchTerm (case-insensitive)
   const filteredInternships = internships.filter((job) =>

@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { User } from "lucide-react"
-import Footer from "../CompanyComponents/Footer"
+import { useState } from "react";
+import { User } from "lucide-react";
+import Footer from "../CompanyComponents/Footer";
+import { toast } from "react-hot-toast";
 
 export default function StudentProfile() {
   const [formData, setFormData] = useState({
@@ -15,36 +16,44 @@ export default function StudentProfile() {
     phone: "(555) 123-4567",
     github: "https://github.com/alexjohnson",
     linkedin: "https://linkedin.com/in/alexjohnson",
-  })
+  });
 
-  const [skillsList, setSkillsList] = useState(["JavaScript", "React", "UI/UX Design"])
-  const [newSkill, setNewSkill] = useState("")
-  const [profileImage, setProfileImage] = useState(null)
-  const [cvFile, setCvFile] = useState(null)
+  const [skillsList, setSkillsList] = useState([
+    "JavaScript",
+    "React",
+    "UI/UX Design",
+  ]);
+  const [newSkill, setNewSkill] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+  const [cvFile, setCvFile] = useState(null);
 
   const handleChange = (e) => {
-    const { id, value } = e.target
-    setFormData({ ...formData, [id]: value })
-  }
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
 
   const handleAddSkill = () => {
-    const skill = newSkill.trim()
+    const skill = newSkill.trim();
     if (skill && !skillsList.includes(skill)) {
-      setSkillsList([...skillsList, skill])
+      setSkillsList([...skillsList, skill]);
+      toast.success(`✅ "${skill}" added`);
     }
-    setNewSkill("")
-  }
+    setNewSkill("");
+  };
 
   const handleRemoveSkill = (skillToRemove) => {
-    setSkillsList(skillsList.filter(skill => skill !== skillToRemove))
-  }
+    setSkillsList(skillsList.filter((skill) => skill !== skillToRemove));
+    toast(`❌ Removed "${skillToRemove}"`, {
+      icon: "🗑️",
+    });
+  };
 
   const handleSave = () => {
-    console.log("Saved Data:", { ...formData, skills: skillsList })
-    if (profileImage) console.log("Uploaded Profile Image:", profileImage.name)
-    if (cvFile) console.log("Uploaded CV File:", cvFile.name)
-    alert("Changes saved successfully!")
-  }
+    console.log("Saved Data:", { ...formData, skills: skillsList });
+    if (profileImage) console.log("Uploaded Profile Image:", profileImage.name);
+    if (cvFile) console.log("Uploaded CV File:", cvFile.name);
+    toast.success("Profile changes saved successfully!");
+  };
 
   return (
     <div className="min-h-screen text-[#14213D] bg-white fade-in-up">
@@ -126,23 +135,70 @@ export default function StudentProfile() {
             />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <InputField label="First Name" id="firstName" value={formData.firstName} onChange={handleChange} />
-              <InputField label="Last Name" id="lastName" value={formData.lastName} onChange={handleChange} />
-              <InputField label="Email" id="email" value={formData.email} onChange={handleChange} />
-              <InputField label="Gender" id="gender" value={formData.gender} onChange={handleChange} />
-              <InputField label="Phone" id="phone" value={formData.phone} onChange={handleChange} />
-              <InputField label="GitHub URL" id="github" value={formData.github} onChange={handleChange} />
-              <InputField label="LinkedIn URL" id="linkedin" value={formData.linkedin} onChange={handleChange} />
+              <InputField
+                label="First Name"
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Last Name"
+                id="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Gender"
+                id="gender"
+                value={formData.gender}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Phone"
+                id="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+              <InputField
+                label="GitHub URL"
+                id="github"
+                value={formData.github}
+                onChange={handleChange}
+              />
+              <InputField
+                label="LinkedIn URL"
+                id="linkedin"
+                value={formData.linkedin}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
-              <InputField label="Education" id="education" value={formData.education} onChange={handleChange} />
-              <InputField label="Experience" id="experience" value={formData.experience} onChange={handleChange} />
+              <InputField
+                label="Education"
+                id="education"
+                value={formData.education}
+                onChange={handleChange}
+              />
+              <InputField
+                label="Experience"
+                id="experience"
+                value={formData.experience}
+                onChange={handleChange}
+              />
             </div>
 
             {/* Add Skill */}
             <div className="mt-6">
-              <label className="block mb-1 text-sm font-medium text-[#14213D]">Add Skill</label>
+              <label className="block mb-1 text-sm font-medium text-[#14213D]">
+                Add Skill
+              </label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -163,7 +219,12 @@ export default function StudentProfile() {
 
             {/* Upload CV */}
             <div className="mt-6">
-              <label htmlFor="cv" className="block mb-1 text-sm font-medium text-[#14213D]">Upload CV (PDF)</label>
+              <label
+                htmlFor="cv"
+                className="block mb-1 text-sm font-medium text-[#14213D]"
+              >
+                Upload CV (PDF)
+              </label>
               <input
                 type="file"
                 accept="application/pdf"
@@ -171,7 +232,9 @@ export default function StudentProfile() {
                 className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FCA311] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#FCA311] file:text-white hover:file:bg-[#e6960f]"
               />
               {cvFile && (
-                <p className="mt-2 text-sm text-gray-600">Selected: {cvFile.name}</p>
+                <p className="mt-2 text-sm text-gray-600">
+                  Selected: {cvFile.name}
+                </p>
               )}
             </div>
 
@@ -187,7 +250,7 @@ export default function StudentProfile() {
 
       <Footer />
     </div>
-  )
+  );
 }
 
 // Info block
@@ -197,14 +260,19 @@ function Info({ label, value }) {
       <p className="mb-1 text-sm font-medium text-[#14213D]">{label}</p>
       <p className="text-sm text-gray-600">{value}</p>
     </div>
-  )
+  );
 }
 
 // Input field
 function InputField({ label, id, value, onChange }) {
   return (
     <div>
-      <label htmlFor={id} className="block mb-1 text-sm font-medium text-[#14213D]">{label}</label>
+      <label
+        htmlFor={id}
+        className="block mb-1 text-sm font-medium text-[#14213D]"
+      >
+        {label}
+      </label>
       <input
         id={id}
         value={value}
@@ -212,7 +280,7 @@ function InputField({ label, id, value, onChange }) {
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FCA311]"
       />
     </div>
-  )
+  );
 }
 
 // Section header
@@ -222,5 +290,5 @@ function SectionHeader({ title, subtitle }) {
       <h3 className="text-xl font-semibold text-[#14213D]">{title}</h3>
       <p className="text-sm text-gray-600">{subtitle}</p>
     </div>
-  )
+  );
 }

@@ -18,7 +18,7 @@ const CompanyHome = () => {
       <main className="px-4 md:px-0 mt-44 fade-in-up ">
         {/* Title Section */}
 
-        <section className="relative px-4 mx-auto mb-20 -mt-24 md:mb-20 max-w-7xl sm:px-0">
+        <section className="relative px-4 mx-auto mb-20 -mt-16 md:mb-20 max-w-7xl sm:px-0">
           {/* Image */}
           <div className="absolute right-0 hidden -mt-20 translate-x-10 md:block">
             

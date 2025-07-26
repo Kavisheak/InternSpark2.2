@@ -1,14 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import InternshipDetails from "./InternshipDetails";
 import StudentProfile from "./StudentProfile";
-import StudentNavbar from "./StudentNavbar";
+
 import StudentHomepage from "./StudentHomepage";
 import Notifications from "./Notification";
 import AvailableInternship from "./AvailableInternship";
 import MyApplications from "./Applications";
+import StudentNavbar from "./StudentNavbar";
 import Bookmarks from "./Bookmarks";
 import AppliedInternshipDetails from "./AppliedInternshipDetails";
-
 
 
 const StudentMain = () => {

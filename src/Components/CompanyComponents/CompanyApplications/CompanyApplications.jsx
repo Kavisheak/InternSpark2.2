@@ -16,6 +16,9 @@ const initialApplications = [
     experience: "1 year part-time web development",
     skills: "I am excited to apply for this position because…",
     email: "sarah.j@example.com",
+    phone: "+1 555 111 2222",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    cv: "/cvs/sarah-johnson.pdf",
     status: "New",
     references: [
       {
@@ -44,6 +47,9 @@ const initialApplications = [
     experience: "Intern at TechDesign",
     skills: "Design is my passion…",
     email: "m.chen@example.com",
+    phone: "+1 555 222 3333",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    cv: "/cvs/michael-chen.pdf",
     status: "Reviewing",
   },
   {
@@ -56,6 +62,9 @@ const initialApplications = [
     experience: "Intern at AnalyticsPro",
     skills: "I am eager to learn…",
     email: "alex.w@example.com",
+    phone: "+1 555 333 4444",
+    image: "https://randomuser.me/api/portraits/men/68.jpg",
+    cv: "/cvs/alex-washington.pdf",
     status: "Interviewing",
   },
   {
@@ -68,6 +77,9 @@ const initialApplications = [
     experience: "Intern at WebTech Solutions",
     skills: "I am passionate about coding…",
     email: "jamie.g@example.com",
+    phone: "+1 555 444 5555",
+    image: "https://randomuser.me/api/portraits/women/25.jpg",
+    cv: "/cvs/jamie-garcia.pdf",
     status: "Rejected",
   },
 ];
@@ -120,28 +132,27 @@ export default function CompanyApplications() {
   return (
     <div className="min-h-screen bg-[#01165A] text-gray-100">
       <CompanyNavbar />
-         <div className="fade-in-up">
-      <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white  shadow-lg">
-        <ApplicationSidebar
-          applications={filteredByRole}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          primaryColor="#01165A"
-          accentColor="#F97316"
-        />
-        <ApplicationDetailPanel
-          selected={selected}
-          handleStatusUpdate={handleStatusUpdate}
-          primaryColor="#01165A"
-          accentColor="#F97316"
-        />
-      </div>
-
-      <Footer />
+      <div className="fade-in-up">
+        <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white shadow-lg">
+          <ApplicationSidebar
+            applications={filteredByRole}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            primaryColor="#01165A"
+            accentColor="#F97316"
+          />
+          <ApplicationDetailPanel
+            selected={selected}
+            handleStatusUpdate={handleStatusUpdate}
+            primaryColor="#01165A"
+            accentColor="#F97316"
+          />
+        </div>
+        <Footer />
       </div>
     </div>
   );

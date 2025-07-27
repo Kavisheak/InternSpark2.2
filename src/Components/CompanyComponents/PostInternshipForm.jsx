@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import CompanyNavbar from "./CompanyNavbar";
+
 
 // Dummy CompanyNavbar component for completeness
 
@@ -160,7 +160,7 @@ const PostInternshipForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <CompanyNavbar />
+      
       <div className="max-w-3xl px-6 py-10 mx-auto my-10 bg-white border border-gray-300 rounded-lg shadow-lg">
         <h1 className="mb-6 text-3xl font-bold text-center text-oxfordblue">
           {id ? (isEditable ? "Edit Internship" : "Internship Details") : "Post a New Internship"}

@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { FiArrowRight, FiUser } from "react-icons/fi";
 import emp1 from "../../../assets/emp1.png";
 import girlemp from "../../../assets/grl.png";
-import CompanyNavbar from "../CompanyNavbar";
 import ForCompanies from "./ForCompanies";
 import ImageSlider from "./ImageSlider";
 import TalktoUs from "./TalktoUs";
@@ -13,7 +12,7 @@ const CompanyHome = () => {
 
   return (
     <div className="relative min-h-screen font-sans text-gray-900 bg-white ">
-      <CompanyNavbar />
+    
 
       <main className="px-4 md:px-0 mt-44 fade-in-up ">
         {/* Title Section */}

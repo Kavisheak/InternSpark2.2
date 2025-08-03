@@ -27,7 +27,7 @@ const CompanyProfileForm = () => {
     async function fetchProfile() {
       try {
         const res = await axios.post(
-          "http://localhost/InternBackend/api/get_company_profile.php",
+          "http://localhost/InternBackend/company/api/get_company_profile.php",
           {},
           { withCredentials: true }
         );
@@ -38,7 +38,7 @@ const CompanyProfileForm = () => {
             companySize: res.data.company.company_size || "",
             location: res.data.company.location || "",
             website: res.data.company.website || "",
-            email: res.data.company.email || "",
+            email: res.data.company.email || "", // <-- Use backend value
             about: res.data.company.about || "",
           });
         } else {
@@ -59,7 +59,7 @@ const CompanyProfileForm = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost/InternBackend/api/save_company_profile.php",
+        "http://localhost/InternBackend/company/api/save_company_profile.php",
         formData,
         { withCredentials: true }
       );

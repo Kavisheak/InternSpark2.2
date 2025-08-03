@@ -36,7 +36,7 @@ const PostInternshipForm = () => {
     if (id) {
       setLoading(true);
       axios
-        .get(`http://localhost/InternBackend/api/get_internship_details.php?id=${id}`, {
+        .get(`http://localhost/InternBackend/company/api/get_internship_details.php?id=${id}`, {
           withCredentials: true,
         })
         .then((res) => {
@@ -120,7 +120,7 @@ const PostInternshipForm = () => {
       };
 
       const res = await axios.post(
-        "http://localhost/InternBackend/api/post_internship.php",
+        "http://localhost/InternBackend/company/api/post_internship.php",
         payload,
         { withCredentials: true }
       );

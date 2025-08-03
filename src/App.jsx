@@ -20,7 +20,7 @@ function App() {
     <Router>
       <ScrollToTop />
 
-    
+      {/* Global Toast Notifications */}
 
 
       {/* Main Route Handling */}

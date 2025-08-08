@@ -29,7 +29,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
         if (role === 'student') {
           navigate('/student');
         } else if (role === 'company') {
-          navigate('/company');
+          navigate('/company/');
         } else if (role === 'admin') {
           navigate('/admin');
         } else {

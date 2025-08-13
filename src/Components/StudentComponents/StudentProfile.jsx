@@ -5,6 +5,7 @@ import { User } from "lucide-react"
 import Footer from "../CompanyComponents/Footer"
 
 export default function StudentProfile() {
+  // Permanent saved data
   const [formData, setFormData] = useState({
     firstName: "Alex",
     lastName: "Johnson",
@@ -17,14 +18,17 @@ export default function StudentProfile() {
     linkedin: "https://linkedin.com/in/alexjohnson",
   })
 
+  // Temporary form edits
+  const [tempData, setTempData] = useState(formData)
+
   const [skillsList, setSkillsList] = useState(["JavaScript", "React", "UI/UX Design"])
   const [newSkill, setNewSkill] = useState("")
   const [profileImage, setProfileImage] = useState(null)
   const [cvFile, setCvFile] = useState(null)
 
-  const handleChange = (e) => {
+  const handleTempChange = (e) => {
     const { id, value } = e.target
-    setFormData({ ...formData, [id]: value })
+    setTempData({ ...tempData, [id]: value })
   }
 
   const handleAddSkill = () => {
@@ -40,7 +44,8 @@ export default function StudentProfile() {
   }
 
   const handleSave = () => {
-    console.log("Saved Data:", { ...formData, skills: skillsList })
+    setFormData(tempData) // Save changes
+    console.log("Saved Data:", { ...tempData, skills: skillsList })
     if (profileImage) console.log("Uploaded Profile Image:", profileImage.name)
     if (cvFile) console.log("Uploaded CV File:", cvFile.name)
     alert("Changes saved successfully!")
@@ -126,18 +131,18 @@ export default function StudentProfile() {
             />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <InputField label="First Name" id="firstName" value={formData.firstName} onChange={handleChange} />
-              <InputField label="Last Name" id="lastName" value={formData.lastName} onChange={handleChange} />
-              <InputField label="Email" id="email" value={formData.email} onChange={handleChange} />
-              <InputField label="Gender" id="gender" value={formData.gender} onChange={handleChange} />
-              <InputField label="Phone" id="phone" value={formData.phone} onChange={handleChange} />
-              <InputField label="GitHub URL" id="github" value={formData.github} onChange={handleChange} />
-              <InputField label="LinkedIn URL" id="linkedin" value={formData.linkedin} onChange={handleChange} />
+              <InputField label="First Name" id="firstName" value={tempData.firstName} onChange={handleTempChange} />
+              <InputField label="Last Name" id="lastName" value={tempData.lastName} onChange={handleTempChange} />
+              <InputField label="Email" id="email" value={tempData.email} onChange={handleTempChange} />
+              <InputField label="Gender" id="gender" value={tempData.gender} onChange={handleTempChange} />
+              <InputField label="Phone" id="phone" value={tempData.phone} onChange={handleTempChange} />
+              <InputField label="GitHub URL" id="github" value={tempData.github} onChange={handleTempChange} />
+              <InputField label="LinkedIn URL" id="linkedin" value={tempData.linkedin} onChange={handleTempChange} />
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
-              <InputField label="Education" id="education" value={formData.education} onChange={handleChange} />
-              <InputField label="Experience" id="experience" value={formData.experience} onChange={handleChange} />
+              <InputField label="Education" id="education" value={tempData.education} onChange={handleTempChange} />
+              <InputField label="Experience" id="experience" value={tempData.experience} onChange={handleTempChange} />
             </div>
 
             {/* Add Skill */}

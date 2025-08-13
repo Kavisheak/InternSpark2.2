@@ -223,6 +223,3 @@ function Section({ title, children }) {
     </div>
   );
 }
-
-
-

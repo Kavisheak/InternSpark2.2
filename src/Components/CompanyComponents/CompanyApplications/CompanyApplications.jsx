@@ -25,10 +25,24 @@ export default function CompanyApplications() {
   }, []);
 
   const handleStatusUpdate = (id, newStatus) => {
-    setApplications((apps) =>
-      apps.map((app) => (app.id === id ? { ...app, status: newStatus } : app))
-    );
-    // TODO: POST to backend to update status
+    axios
+      .post(
+        "http://localhost/InternBackend/company/api/updateApplicationStatus.php",
+        { application_id: id, status: newStatus },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        if (res.data.success) {
+          setApplications((apps) =>
+            apps.map((app) =>
+              app.id === id ? { ...app, status: newStatus } : app
+            )
+          );
+        } else {
+          alert(res.data.message || "Failed to update status");
+        }
+      })
+      .catch(() => alert("Failed to update status"));
   };
 
   const selected = applications.find((app) => app.id === selectedId);

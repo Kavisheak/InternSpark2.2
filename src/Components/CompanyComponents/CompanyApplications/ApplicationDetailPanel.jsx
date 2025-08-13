@@ -39,7 +39,7 @@ export default function ApplicationDetailPanel({
         <div className="flex items-center gap-4">
           <div className="relative">
             <img
-              src={selected.image || "/default-avatar.png"}
+              src={selected.image ? `http://localhost/InternBackend/${selected.image}` : "/default-avatar.png"}
               alt={selected.name}
               className="object-cover w-16 h-16 rounded-full cursor-pointer"
               onClick={() => setIsImageOpen(!isImageOpen)}
@@ -51,7 +51,7 @@ export default function ApplicationDetailPanel({
                 className="absolute top-0 z-50 w-40 h-40 p-1 bg-white border shadow-xl rounded-xl left-20"
               >
                 <img
-                  src={selected.image}
+                  src={selected.image ? `http://localhost/InternBackend/${selected.image}` : "/default-avatar.png"}
                   alt="Preview"
                   className="object-cover w-full h-full rounded-lg"
                 />
@@ -70,8 +70,10 @@ export default function ApplicationDetailPanel({
 
       <div className="flex items-center gap-4 mb-6">
         <a
-          href={selected.cv || "/sample-cv.pdf"}
+          href={selected.cv ? `http://localhost/InternBackend/${selected.cv}` : "/sample-cv.pdf"}
           download
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2 text-white rounded-lg"
           style={{ backgroundColor: primaryColor }}
         >

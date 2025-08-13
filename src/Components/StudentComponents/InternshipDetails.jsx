@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { MdReport } from "react-icons/md";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function InternshipDetails() {
   const navigate = useNavigate();
@@ -36,6 +37,23 @@ export default function InternshipDetails() {
       .catch(() => setError("Failed to fetch internship."))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleApply = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost/InternBackend/students/api/applications.php",
+        { internship_id: internship.id },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message || "Application submitted!");
+      } else {
+        toast.error(res.data.message || "Failed to apply.");
+      }
+    } catch (err) {
+      toast.error("Failed to apply.");
+    }
+  };
 
   if (loading) {
     return (
@@ -194,7 +212,10 @@ export default function InternshipDetails() {
             Submit your application before{" "}
             <strong>{internship.deadline}</strong>
           </p>
-          <button className="px-6 py-3 font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600">
+          <button
+            className="px-6 py-3 font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
+            onClick={handleApply}
+          >
             Apply Now
           </button>
         </div>

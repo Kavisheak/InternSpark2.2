@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import CompanyNavbar from "../CompanyNavbar";
 import CompanyProfileForm from "./CompanyProfileForm";
 import ContactInfo from "./ContactInfo";
 import Footer from "../Footer";
@@ -10,7 +9,7 @@ const CompanyProfile = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <CompanyNavbar />
+      
       <div className="flex flex-col p-4 text-gray-800 fade-in-up">
         <h1 className="mb-6 ml-6 text-3xl font-extrabold text-oxfordblue">
           Company Profile

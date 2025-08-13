@@ -9,6 +9,7 @@ import {
   FaTachometerAlt,
 } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const AdminNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,14 +23,38 @@ const AdminNavbar = () => {
   ];
 
   const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
-    if (!confirmed) return;
-
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("notifications");
+    toast.success(" Logged out successfully!");
+    setTimeout(() => navigate("/"), 1000);
+  };
 
-    navigate("/");
+  const confirmLogout = () => {
+    toast((t) => (
+      <div className="p-3">
+        <p className="mb-2 font-semibold text-white">
+          Are you sure you want to logout?
+        </p>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              handleLogout();
+            }}
+            className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   return (
@@ -59,7 +84,7 @@ const AdminNavbar = () => {
           ))}
           <li>
             <button
-              onClick={handleLogout}
+              onClick={confirmLogout}
               className="flex items-center gap-2 text-black hover:underline"
             >
               <FaSignOutAlt />
@@ -99,7 +124,7 @@ const AdminNavbar = () => {
           <button
             onClick={() => {
               setMenuOpen(false);
-              handleLogout();
+              confirmLogout();
             }}
             className="flex items-center gap-2 text-red-500 hover:underline"
           >

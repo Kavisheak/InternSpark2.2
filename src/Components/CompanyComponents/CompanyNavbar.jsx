@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
-import CompanyNotifications from "./Notification/CompanyNotifications"; // Ensure this component exists
+import { toast } from "react-hot-toast";
+import CompanyNotifications from "./Notification/CompanyNotifications"; // Make sure this exists
 
 const CompanyNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -41,17 +42,44 @@ const CompanyNavbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
-    if (!confirmed) return;
+  const confirmLogout = () => {
+    toast(
+      (t) => (
+        <div className="p-3">
+          <p className="mb-2 font-semibold text-white">Are you sure you want to logout?</p>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                handleLogout();
+              }}
+              className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 8000 }
+    );
+  };
 
-    // Clear local storage
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("notifications");
 
-    // Redirect to login
-    navigate("/");
+    toast.success(" Logged out successfully!");
+
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
   };
 
   const navItems = [
@@ -109,7 +137,7 @@ const CompanyNavbar = () => {
           {/* Logout */}
           <li>
             <button
-              onClick={handleLogout}
+              onClick={confirmLogout}
               className="px-4 py-1 text-sm font-medium text-blue-600 transition bg-white rounded-md hover:bg-blue-100"
             >
               Logout
@@ -117,7 +145,7 @@ const CompanyNavbar = () => {
           </li>
         </ul>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Toggle */}
         <button
           onClick={toggleMenu}
           className="text-2xl text-white md:hidden focus:outline-none"
@@ -147,9 +175,8 @@ const CompanyNavbar = () => {
             );
           })}
 
-          {/* Logout Button */}
           <button
-            onClick={handleLogout}
+            onClick={confirmLogout}
             className="w-full px-4 py-2 mt-2 text-sm font-medium text-blue-900 transition bg-white rounded-md hover:bg-blue-100"
           >
             Logout

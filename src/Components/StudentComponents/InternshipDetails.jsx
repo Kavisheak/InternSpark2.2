@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaMapMarkerAlt,
@@ -10,97 +10,45 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { MdReport } from "react-icons/md";
-import { useState } from "react";
-
-const internships = [
-  {
-    id: 1,
-    title: "Frontend Developer Intern",
-    company: "TechCorp Solutions",
-    location: "Colombo 05, Sri Lanka",
-    duration: "3 months",
-    workType: "Hybrid",
-    pay: "$25/hour",
-    description:
-      "Join our team to develop modern web applications using React and TypeScript. You'll work alongside senior developers on real-world projects.",
-    status: "closed",
-    deadline: "May 10, 2025",
-    requirements: [
-      "Proficiency in HTML, CSS, and JavaScript",
-      "Familiar with React",
-      "Git knowledge",
-      "Strong problem-solving skills",
-    ],
-  },
-  {
-    id: 2,
-    title: "UX Design Intern",
-    company: "CreativeMinds Agency",
-    location: "Kandy",
-    duration: "6 months",
-    workType: "On-site",
-    pay: "$22/hour",
-    description:
-      "Work with our design team to create user-friendly interfaces for web and mobile applications. Help conduct user research and testing.",
-    status: "closed",
-    deadline: "May 15, 2025",
-    requirements: [
-      "Figma or Sketch experience",
-      "Basic understanding of UI/UX principles",
-      "Portfolio showcasing previous designs",
-      "Enrolled in a Design or HCI-related degree",
-    ],
-  },
-  {
-    id: 3,
-    title: "Data Science Intern",
-    company: "DataViz Analytics",
-    location: "Remote",
-    duration: "4 months",
-    workType: "Remote",
-    pay: "$24/hour",
-    description:
-      "Apply machine learning techniques to real-world datasets. Help develop predictive models and visualize insights.",
-    status: "open",
-    deadline: "June 1, 2025",
-    requirements: [
-      "Python and Pandas knowledge",
-      "Familiar with Scikit-learn",
-      "Strong analytical skills",
-      "Basic SQL knowledge",
-    ],
-  },
-  {
-    id: 4,
-    title: "Marketing Intern",
-    company: "BrandBoost",
-    location: "Colombo , Sri lanka",
-    duration: "3 months",
-    workType: "Hybrid",
-    pay: "$20/hour",
-    description:
-      "Support our marketing team in campaign planning, social media management, and content creation.",
-    status: "open",
-    deadline: "June 5, 2025",
-    requirements: [
-      "Strong communication skills",
-      "Understanding of social media platforms",
-      "Basic content writing ability",
-      "Marketing degree preferred",
-    ],
-  },
-];
+import axios from "axios";
 
 export default function InternshipDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const internship = internships.find((i) => i.id === parseInt(id));
+  const [internship, setInternship] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!internship) {
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(
+        `http://localhost/InternBackend/students/api/get_internship_by_id.php?id=${id}`
+      )
+      .then((res) => {
+        if (res.data.success && res.data.internship) {
+          setInternship(res.data.internship);
+        } else {
+          setError("Internship not found.");
+        }
+      })
+      .catch(() => setError("Failed to fetch internship."))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="p-6 text-center text-gray-600">
+        Loading internship details...
+      </div>
+    );
+  }
+
+  if (error || !internship) {
     return (
       <div className="p-6 text-center text-red-600">
-        Internship not found.
+        {error || "Internship not found."}
         <button
           onClick={() => navigate(-1)}
           className="block mt-4 text-orange-500 underline"
@@ -134,7 +82,9 @@ export default function InternshipDetails() {
                 <h1 className="mb-1 text-3xl font-bold text-[#002147]">
                   {internship.title}
                 </h1>
-                <p className="text-gray-500">{internship.company}</p>
+                <p className="text-gray-500">
+                  {internship.company || `Company ID: ${internship.Company_Id}`}
+                </p>
               </div>
             </div>
 
@@ -152,7 +102,6 @@ export default function InternshipDetails() {
                   <button
                     onClick={() => {
                       setMenuOpen(false);
-                      // add your report logic here
                       alert("Reported!");
                     }}
                     className="flex items-center w-full px-4 py-2 text-sm text-red-600 transition hover:bg-red-50"
@@ -185,22 +134,40 @@ export default function InternshipDetails() {
             <DetailItem
               icon={<FaBriefcase />}
               label="Internship Type"
-              value={internship.workType}
+              value={internship.workType || internship.internship_type}
             />
             <DetailItem
               icon={<FaDollarSign />}
               label="Salary"
-              value={internship.pay}
+              value={internship.pay || internship.salary}
+            />
+            <DetailItem
+              icon={<FaBriefcase />}
+              label="Status"
+              value={internship.status}
+            />
+            <DetailItem
+              icon={<FaBriefcase />}
+              label="Application Limit"
+              value={internship.application_limit}
+            />
+            <DetailItem
+              icon={<FaBriefcase />}
+              label="Posted On"
+              value={internship.created_at}
             />
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
             <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
-              {internship.workType}
+              {internship.workType || internship.internship_type}
             </span>
             <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
-              {internship.pay}
+              {internship.pay || internship.salary}
+            </span>
+            <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
+              {internship.status}
             </span>
           </div>
 
@@ -210,7 +177,10 @@ export default function InternshipDetails() {
 
           <Section title="Requirements">
             <ul className="pl-6 space-y-1 text-gray-700 list-disc">
-              {internship.requirements.map((req, i) => (
+              {(Array.isArray(internship.requirements)
+                ? internship.requirements
+                : internship.requirements?.split("\n") || []
+              ).map((req, i) => (
                 <li key={i}>{req}</li>
               ))}
             </ul>
@@ -253,4 +223,3 @@ function Section({ title, children }) {
     </div>
   );
 
-}

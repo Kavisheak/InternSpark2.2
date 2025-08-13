@@ -8,7 +8,7 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { BsBuildingsFill } from "react-icons/bs";
-import toast from "react-hot-toast"; // ✅ import toast
+import toast from "react-hot-toast";
 
 const CompanyProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -24,6 +24,7 @@ const CompanyProfileForm = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true; // ✅ prevent toast when component unmounts
     async function fetchProfile() {
       try {
         const res = await axios.post(
@@ -31,25 +32,32 @@ const CompanyProfileForm = () => {
           {},
           { withCredentials: true }
         );
-        if (res.data.success && res.data.company) {
-          setFormData({
-            companyName: res.data.company.company_name || "",
-            industry: res.data.company.industry || "",
-            companySize: res.data.company.company_size || "",
-            location: res.data.company.location || "",
-            website: res.data.company.website || "",
-            email: res.data.company.email || "", // <-- Use backend value
-            about: res.data.company.about || "",
-          });
-        } else {
-          toast.error("No company profile found.");
+        if (isMounted) {
+          if (res.data.success && res.data.company) {
+            setFormData({
+              companyName: res.data.company.company_name || "",
+              industry: res.data.company.industry || "",
+              companySize: res.data.company.company_size || "",
+              location: res.data.company.location || "",
+              website: res.data.company.website || "",
+              email: res.data.company.email || "",
+              about: res.data.company.about || "",
+            });
+          } else {
+            toast.error("No company profile found.", { id: "no-profile" }); // ✅ unique toast id
+          }
         }
       } catch (err) {
-        toast.error("Failed to load company profile.");
+        if (isMounted) {
+          toast.error("Failed to load company profile.", { id: "load-fail" }); // ✅ unique toast id
+        }
         console.error(err);
       }
     }
     fetchProfile();
+    return () => {
+      isMounted = false; // cleanup
+    };
   }, []);
 
   const handleChange = (e) =>
@@ -64,12 +72,12 @@ const CompanyProfileForm = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        toast.success("Company profile saved successfully!");
+        toast.success("Company profile saved successfully!", { id: "save-success" }); // ✅ unique id
       } else {
-        toast.error("Error: " + response.data.message);
+        toast.error("Error: " + response.data.message, { id: "save-error" }); // ✅ unique id
       }
     } catch (error) {
-      toast.error("Server error: " + error.message);
+      toast.error("Server error: " + error.message, { id: "server-error" }); // ✅ unique id
     }
     setLoading(false);
   };

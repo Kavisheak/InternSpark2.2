@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { User } from "lucide-react";
+import { FiChevronDown } from "react-icons/fi";
 import Footer from "../CompanyComponents/Footer";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -9,7 +10,7 @@ export default function StudentProfile() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "", // non-editable
+    email: "",
     gender: "",
     education: "",
     experience: "",
@@ -22,7 +23,7 @@ export default function StudentProfile() {
   const [profileImage, setProfileImage] = useState(null);
   const [cvFile, setCvFile] = useState(null);
 
-  // On load: fetch existing student profile or default email
+  // Fetch existing student profile
   useEffect(() => {
     axios
       .get(
@@ -35,28 +36,24 @@ export default function StudentProfile() {
           setFormData({
             firstName: st.fname || "",
             lastName: st.lname || "",
-            email: st.email, // from user table
+            email: st.email || "",
             gender: st.gender || "",
             education: st.education || "",
             experience: st.experience || "",
             phone: st.phone || "",
             github: st.github || "",
             linkedin: st.linkedin || "",
-            profile_img: st.profile_img || "", // ✅ add this
+            profile_img: st.profile_img || "",
             cv_file: st.cv_file || "",
           });
           setSkillsList(st.skills ?? []);
         } else if (res.data.success && !res.data.student) {
-          // no student row yet but still get email
           setFormData((prev) => ({ ...prev, email: res.data.email }));
         } else {
           toast.error(res.data.message || "Failed to fetch profile");
         }
       })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Server error fetching profile");
-      });
+      .catch(() => toast.error("Server error fetching profile"));
   }, []);
 
   const handleChange = (e) => {
@@ -78,8 +75,19 @@ export default function StudentProfile() {
     toast(`❌ Removed "${skill}"`, { icon: "🗑️" });
   };
 
+  // Sri Lankan phone number validation
+  const isValidSriLankanPhone = (phone) => {
+    const localPattern = /^07\d{8}$/; // e.g., 0712345678
+    const intlPattern = /^\+947\d{8}$/; // e.g., +94712345678
+    return localPattern.test(phone) || intlPattern.test(phone);
+  };
+
   const handleSave = async () => {
-    console.log("Saving profile...");
+    // Validate phone
+    if (!isValidSriLankanPhone(formData.phone)) {
+      toast.error("❌ Invalid phone number");
+      return;
+    }
 
     const data = new FormData();
     data.append("fname", formData.firstName);
@@ -98,21 +106,11 @@ export default function StudentProfile() {
       const res = await axios.post(
         "http://localhost/InternBackend/students/api/save_student_profile.php",
         data,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
-
-      console.log("Server response:", res.data); // ✅ Show what backend says
-
-      if (res.data.success) {
-        toast.success("Profile saved successfully!");
-      } else {
-        toast.error(res.data.message || "Save failed");
-      }
-    } catch (err) {
-      console.error("Error saving profile:", err); // ✅ show any error
+      if (res.data.success) toast.success("Profile saved successfully!");
+      else toast.error(res.data.message || "Save failed");
+    } catch {
       toast.error("Server error saving profile");
     }
   };
@@ -120,7 +118,7 @@ export default function StudentProfile() {
   return (
     <div className="min-h-screen text-[#14213D] bg-white fade-in-up">
       <div className="max-w-6xl px-6 py-10 mx-auto">
-        <h1 className="mb-8 text-3xl font-bold text-[#14213D]">My Profile</h1>
+        <h1 className="mb-8 text-3xl font-bold">My Profile</h1>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Sidebar */}
           <div className="p-6 border border-[#D1D5DB] shadow-md bg-[#F8FAFC] rounded-2xl">
@@ -131,9 +129,7 @@ export default function StudentProfile() {
                     src={
                       profileImage
                         ? URL.createObjectURL(profileImage)
-                        : formData.profile_img
-                        ? `http://localhost/InternBackend/${formData.profile_img}`
-                        : ""
+                        : `http://localhost/InternBackend/${formData.profile_img}`
                     }
                     alt="Profile"
                     className="object-cover w-24 h-24 rounded-full"
@@ -143,7 +139,6 @@ export default function StudentProfile() {
                     <User className="w-10 h-10" />
                   </div>
                 )}
-
                 <label htmlFor="profile-upload">
                   <div className="absolute bottom-0 right-0 flex items-center justify-center text-lg font-bold text-white bg-gray-500 rounded-full cursor-pointer w-7 h-7 hover:bg-gray-700">
                     +
@@ -162,6 +157,7 @@ export default function StudentProfile() {
               </h2>
               <p className="text-sm text-gray-600">{formData.email}</p>
             </div>
+
             <div className="mb-6 space-y-4">
               <Info label="Email" value={formData.email} />
               <Info label="Phone" value={formData.phone} />
@@ -171,8 +167,9 @@ export default function StudentProfile() {
               <Info label="GitHub" value={formData.github} />
               <Info label="LinkedIn" value={formData.linkedin} />
             </div>
+
             <div>
-              <p className="mb-2 text-sm font-medium text-[#14213D]">Skills</p>
+              <p className="mb-2 text-sm font-medium">Skills</p>
               <div className="flex flex-wrap gap-2">
                 {skillsList.map((s, i) => (
                   <span
@@ -205,78 +202,50 @@ export default function StudentProfile() {
             )}
           </div>
 
+          {/* Main content */}
           <div className="p-6 bg-white border border-gray-200 shadow-md lg:col-span-2 rounded-2xl">
-            <SectionHeader
-              title="Personal Information"
-              subtitle="Update your personal details"
-            />
+            <SectionHeader title="Personal Information" subtitle="Update your personal details" />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <InputField
-                label="First Name"
-                id="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-              <InputField
-                label="Last Name"
-                id="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-              <InputField
-                label="Email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled
-              />
-              <InputField
-                label="Gender"
-                id="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              />
-              <InputField
-                label="Phone"
-                id="phone"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-              <InputField
-                label="GitHub URL"
-                id="github"
-                value={formData.github}
-                onChange={handleChange}
-              />
-              <InputField
-                label="LinkedIn URL"
-                id="linkedin"
-                value={formData.linkedin}
-                onChange={handleChange}
-              />
+              <InputField label="First Name" id="firstName" value={formData.firstName} onChange={handleChange} />
+              <InputField label="Last Name" id="lastName" value={formData.lastName} onChange={handleChange} />
+              <InputField label="Email" id="email" value={formData.email} onChange={handleChange} disabled />
+
+              {/* Gender Dropdown */}
+              <div>
+                <label htmlFor="gender" className="block mb-1 text-sm font-medium">Gender</label>
+                <div className="relative">
+                  <select
+                    id="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className="block w-full appearance-none border border-gray-300 rounded-lg py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-[#FCA311]"
+                  >
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <FiChevronDown
+                    className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-2 top-1/2"
+                    size={20}
+                  />
+                </div>
+              </div>
+
+              <InputField label="Phone" id="phone" value={formData.phone} onChange={handleChange} />
+              <InputField label="GitHub URL" id="github" value={formData.github} onChange={handleChange} />
+              <InputField label="LinkedIn URL" id="linkedin" value={formData.linkedin} onChange={handleChange} />
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
-              <InputField
-                label="Education"
-                id="education"
-                value={formData.education}
-                onChange={handleChange}
-              />
-              <InputField
-                label="Experience"
-                id="experience"
-                value={formData.experience}
-                onChange={handleChange}
-              />
+              <InputField label="Education" id="education" value={formData.education} onChange={handleChange} />
+              <InputField label="Experience" id="experience" value={formData.experience} onChange={handleChange} />
             </div>
 
             {/* Add skill */}
             <div className="mt-6">
-              <label className="block mb-1 text-sm font-medium text-[#14213D]">
-                Add Skill
-              </label>
+              <label className="block mb-1 text-sm font-medium">Add Skill</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -297,26 +266,15 @@ export default function StudentProfile() {
 
             {/* Upload CV */}
             <div className="mt-6">
-              <label
-                htmlFor="cv"
-                className="block mb-1 text-sm font-medium text-[#14213D]"
-              >
-                Upload CV (PDF)
-              </label>
+              <label htmlFor="cv" className="block mb-1 text-sm font-medium">Upload CV (PDF)</label>
               <input
                 type="file"
                 id="cv"
                 accept=".pdf"
-                onChange={(e) => {
-                  setCvFile(e.target.files[0]);
-                }}
+                onChange={(e) => setCvFile(e.target.files[0])}
                 className="block w-full text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FCA311]"
               />
-              {cvFile && (
-                <p className="mt-2 text-sm text-gray-600">
-                  Selected: {cvFile.name}
-                </p>
-              )}
+              {cvFile && <p className="mt-2 text-sm text-gray-600">Selected: {cvFile.name}</p>}
             </div>
 
             <button
@@ -336,7 +294,7 @@ export default function StudentProfile() {
 function Info({ label, value }) {
   return (
     <div>
-      <p className="mb-1 text-sm font-medium text-[#14213D]">{label}</p>
+      <p className="mb-1 text-sm font-medium">{label}</p>
       <p className="text-sm text-gray-600">{value}</p>
     </div>
   );
@@ -345,12 +303,7 @@ function Info({ label, value }) {
 function InputField({ label, id, value, onChange, disabled }) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block mb-1 text-sm font-medium text-[#14213D]"
-      >
-        {label}
-      </label>
+      <label htmlFor={id} className="block mb-1 text-sm font-medium">{label}</label>
       <input
         id={id}
         value={value}
@@ -367,7 +320,7 @@ function InputField({ label, id, value, onChange, disabled }) {
 function SectionHeader({ title, subtitle }) {
   return (
     <div className="mb-6">
-      <h3 className="text-xl font-semibold text-[#14213D]">{title}</h3>
+      <h3 className="text-xl font-semibold">{title}</h3>
       <p className="text-sm text-gray-600">{subtitle}</p>
     </div>
   );

@@ -69,7 +69,7 @@ export default function ApplicationSidebar({
               }`}
             >
               <img
-                src={app.image || "/default-avatar.png"}
+                src={app.image ? `http://localhost/InternBackend/${app.image}` : "/default-avatar.png"}
                 alt={app.name}
                 className="object-cover w-10 h-10 rounded-full"
               />

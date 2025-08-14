@@ -182,7 +182,7 @@ const PostInternshipForm = () => {
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
                 ${errors.title ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
             >
-              <option value="">-- Select Title --</option>
+              <option value="">------------------------------------------ Select Title ---------------------------------------------</option>
               {internshipTitles.map((title) => (
                 <option key={title} value={title}>{title}</option>
               ))}

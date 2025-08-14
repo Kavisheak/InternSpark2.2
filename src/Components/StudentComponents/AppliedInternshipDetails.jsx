@@ -1,60 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-
-const applications = [
-  {
-    title: "Frontend Developer Intern",
-    company: "TechCorp Inc.",
-    location: "San Francisco, CA",
-    appliedDate: "5/20/2024",
-    deadline: "6/15/2024",
-    status: "Shortlisted",
-    jobType: "On-site",
-    stipend: "$1000/month",
-    duration: "6 months",
-    description: "Work with React and REST APIs to build intuitive user interfaces. Collaborate with a cross-functional team to develop scalable web applications.",
-    skills: ["React", "JavaScript", "REST APIs", "Git"],
-  },
-  {
-    title: "UI/UX Design Intern",
-    company: "DesignStudio",
-    location: "Remote",
-    appliedDate: "5/18/2024",
-    deadline: "6/10/2024",
-    status: "Interviewing",
-    interviewDate: "7/30/2024",
-    jobType: "Remote",
-    stipend: "Unpaid",
-    duration: "3 months",
-    description: "Assist in designing user flows, wireframes, and visual mockups. Conduct user research and usability testing.",
-    skills: ["Figma", "Adobe XD", "User Research", "Wireframing"],
-  },
-  {
-    title: "Data Science Intern",
-    company: "DataFlow Systems",
-    location: "New York, NY",
-    appliedDate: "5/15/2024",
-    deadline: "6/20/2024",
-    status: "Accepted",
-    jobType: "Hybrid",
-    stipend: "$1500/month",
-    duration: "4 months",
-    description: "Build data pipelines and predictive models using Python. Work with large datasets to drive insights for the product team.",
-    skills: ["Python", "Pandas", "Machine Learning", "SQL"],
-  },
-  {
-    title: "Marketing Intern",
-    company: "Growth Co.",
-    location: "Austin, TX",
-    appliedDate: "5/10/2024",
-    deadline: "6/5/2024",
-    status: "Rejected",
-    jobType: "On-site",
-    stipend: "Unpaid",
-    duration: "2 months",
-    description: "Assist in creating social media content, analyzing campaign metrics, and conducting market research.",
-    skills: ["SEO", "Canva", "Analytics", "Communication"],
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const statusColors = {
   Shortlisted: "bg-yellow-100 text-yellow-800",
@@ -66,7 +12,23 @@ const statusColors = {
 export default function AppliedInternshipDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const application = applications[id];
+  const [application, setApplication] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost/InternBackend/students/api/get_applications.php", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data.success && Array.isArray(res.data.applications)) {
+          // Find by Application_Id
+          const app = res.data.applications.find(
+            (a) => String(a.Application_Id) === String(id)
+          );
+          setApplication(app || null);
+        }
+      });
+  }, [id]);
 
   if (!application) {
     return (
@@ -77,7 +39,7 @@ export default function AppliedInternshipDetails() {
   }
 
   return (
-    <div className="max-w-4xl p-8 mx-auto mt-8 bg-white rounded-lg shadow-md space-y-6">
+    <div className="max-w-4xl p-8 mx-auto mt-8 space-y-6 bg-white rounded-lg shadow-md">
       <div>
         <h1 className="mb-1 text-3xl font-bold text-[#002147]">
           {application.title}
@@ -85,16 +47,12 @@ export default function AppliedInternshipDetails() {
         <p className="text-lg font-medium text-gray-700">{application.company}</p>
         <p className="text-sm text-gray-500">{application.location}</p>
       </div>
-
       <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
         <p>📅 <strong>Applied on:</strong> {application.appliedDate}</p>
         <p>⏳ <strong>Deadline:</strong> {application.deadline}</p>
         <p>💼 <strong>Job Type:</strong> {application.jobType}</p>
         <p>💰 <strong>Stipend:</strong> {application.stipend}</p>
         <p>📆 <strong>Duration:</strong> {application.duration}</p>
-        {application.status === "Interviewing" && (
-          <p>🗓️ <strong>Interview Date:</strong> {application.interviewDate}</p>
-        )}
         <p>
           🏷️ <strong>Status:</strong>{" "}
           <span
@@ -104,12 +62,10 @@ export default function AppliedInternshipDetails() {
           </span>
         </p>
       </div>
-
       <div>
         <h3 className="text-lg font-semibold text-[#002147] mb-2">Description</h3>
         <p className="text-sm text-gray-700">{application.description}</p>
       </div>
-
       <div>
         <h3 className="text-lg font-semibold text-[#002147] mb-2">Required Skills</h3>
         <ul className="flex flex-wrap gap-2">
@@ -123,14 +79,27 @@ export default function AppliedInternshipDetails() {
           ))}
         </ul>
       </div>
-
       <div className="flex gap-4 pt-4">
         <button
           onClick={() => {
-            const confirmCancel = window.confirm("Are you sure you want to cancel this application?");
-            if (confirmCancel) {
-              alert("Your application has been cancelled.");
-              navigate("/student/applications");
+            if (
+              window.confirm("Are you sure you want to cancel this application?")
+            ) {
+              axios
+                .post(
+                  "http://localhost/InternBackend/students/api/delete_application.php",
+                  { application_id: application.Application_Id },
+                  { withCredentials: true }
+                )
+                .then((res) => {
+                  if (res.data.success) {
+                    alert("Your application has been cancelled.");
+                    navigate("/student/applications");
+                  } else {
+                    alert(res.data.message || "Failed to cancel application.");
+                  }
+                })
+                .catch(() => alert("Failed to cancel application."));
             }
           }}
           className="px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"

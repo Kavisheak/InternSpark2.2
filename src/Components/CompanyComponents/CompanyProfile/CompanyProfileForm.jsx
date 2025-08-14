@@ -21,10 +21,12 @@ const CompanyProfileForm = () => {
     about: "",
   });
 
+  const [savedData, setSavedData] = useState({}); // To hold last saved data for display
   const [loading, setLoading] = useState(false);
+  const [isProfileExists, setIsProfileExists] = useState(false); // Button control
 
   useEffect(() => {
-    let isMounted = true; // ✅ prevent toast when component unmounts
+    let isMounted = true;
     async function fetchProfile() {
       try {
         const res = await axios.post(
@@ -34,7 +36,7 @@ const CompanyProfileForm = () => {
         );
         if (isMounted) {
           if (res.data.success && res.data.company) {
-            setFormData({
+            const companyData = {
               companyName: res.data.company.company_name || "",
               industry: res.data.company.industry || "",
               companySize: res.data.company.company_size || "",
@@ -42,21 +44,24 @@ const CompanyProfileForm = () => {
               website: res.data.company.website || "",
               email: res.data.company.email || "",
               about: res.data.company.about || "",
-            });
+            };
+            setFormData(companyData);
+            setSavedData(companyData);
+            setIsProfileExists(true);
           } else {
-            toast.error("No company profile found.", { id: "no-profile" }); // ✅ unique toast id
+            setIsProfileExists(false);
           }
         }
       } catch (err) {
         if (isMounted) {
-          toast.error("Failed to load company profile.", { id: "load-fail" }); // ✅ unique toast id
+          toast.error("Failed to load company profile.", { id: "load-fail" });
         }
         console.error(err);
       }
     }
     fetchProfile();
     return () => {
-      isMounted = false; // cleanup
+      isMounted = false;
     };
   }, []);
 
@@ -72,12 +77,19 @@ const CompanyProfileForm = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        toast.success("Company profile saved successfully!", { id: "save-success" }); // ✅ unique id
+        toast.success(
+          isProfileExists
+            ? "Company profile updated successfully!"
+            : "Company profile saved successfully!",
+          { id: "save-success" }
+        );
+        setSavedData(formData); // Only update card after saving
+        setIsProfileExists(true);
       } else {
-        toast.error("Error: " + response.data.message, { id: "save-error" }); // ✅ unique id
+        toast.error("Error: " + response.data.message, { id: "save-error" });
       }
     } catch (error) {
-      toast.error("Server error: " + error.message, { id: "server-error" }); // ✅ unique id
+      toast.error("Server error: " + error.message, { id: "server-error" });
     }
     setLoading(false);
   };
@@ -132,10 +144,10 @@ const CompanyProfileForm = () => {
               <BsBuildingsFill className="text-4xl" />
             </div>
             <h2 className="text-2xl font-bold text-center text-oxfordblue">
-              {formData.companyName || "Company Name"}
+              {savedData.companyName || "Company Name"}
             </h2>
             <p className="text-center text-gray-600">
-              {formData.industry || "Industry"}
+              {savedData.industry || "Industry"}
             </p>
           </div>
 
@@ -143,27 +155,27 @@ const CompanyProfileForm = () => {
             <div className="flex items-center gap-2">
               <FaUsers className="text-oxfordblue" />
               <span>
-                <strong>Size:</strong> {formData.companySize || "N/A"}
+                <strong>Size:</strong> {savedData.companySize || "N/A"}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-oxfordblue" />
               <span>
-                <strong>Location:</strong> {formData.location || "N/A"}
+                <strong>Location:</strong> {savedData.location || "N/A"}
               </span>
             </div>
             <div className="flex items-center gap-2 break-all">
               <FaGlobe className="text-oxfordblue" />
               <span>
                 <strong>Website:</strong>{" "}
-                {formData.website ? (
+                {savedData.website ? (
                   <a
-                    href={formData.website}
+                    href={savedData.website}
                     target="_blank"
                     rel="noreferrer"
                     className="underline text-oxfordblue hover:text-orange-500"
                   >
-                    {formData.website}
+                    {savedData.website}
                   </a>
                 ) : (
                   "N/A"
@@ -173,7 +185,7 @@ const CompanyProfileForm = () => {
             <div className="flex items-center gap-2 break-all">
               <FaEnvelope className="text-oxfordblue" />
               <span>
-                <strong>Email:</strong> {formData.email || "N/A"}
+                <strong>Email:</strong> {savedData.email || "N/A"}
               </span>
             </div>
             <div className="flex items-start gap-2">
@@ -181,7 +193,7 @@ const CompanyProfileForm = () => {
               <div>
                 <p className="font-semibold">About:</p>
                 <p className="text-gray-700 whitespace-pre-line">
-                  {formData.about || "No description provided."}
+                  {savedData.about || "No description provided."}
                 </p>
               </div>
             </div>
@@ -229,7 +241,11 @@ const CompanyProfileForm = () => {
               disabled={loading}
               className="px-6 py-2 text-sm font-semibold text-white bg-orange-500 rounded-md shadow hover:bg-orange-600 disabled:opacity-50"
             >
-              {loading ? "Saving..." : "Save"}
+              {loading
+                ? "Saving..."
+                : isProfileExists
+                ? "Update Profile"
+                : "Save Profile"}
             </button>
           </div>
         </div>

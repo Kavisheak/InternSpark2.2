@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import Footer from "../Footer";
-import CompanyNavbar from "../CompanyNavbar";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
 
@@ -111,7 +110,7 @@ export default function CompanyApplications() {
 
   return (
     <div className="min-h-screen bg-[#01165A] text-gray-100">
-      <CompanyNavbar />
+     
       <div className="fade-in-up">
         <div className="flex flex-col md:flex-row items-start gap-6 p-6 min-h-[calc(100vh-8rem)] bg-white shadow-lg">
           <ApplicationSidebar

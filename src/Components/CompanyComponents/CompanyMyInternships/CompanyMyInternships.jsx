@@ -3,7 +3,7 @@ import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 import Footer from "../Footer";
-import CompanyNavbar from "../CompanyNavbar";
+
 import ListofInternships from "./ListofInternships";
 
 export default function CompanyMyInternships() {
@@ -12,7 +12,7 @@ export default function CompanyMyInternships() {
 
   return (
     <div className="min-h-screen bg-white ">
-      <CompanyNavbar />
+      
       <div className="fade-in-up">
       <div className="flex items-center justify-center px-4 bg-gray-100 fade-in-up">
         <div className="relative z-10 max-w-2xl p-10 text-center backdrop-blur-md rounded-2xl">

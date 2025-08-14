@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ContactInfo = () => {
   const [formData, setFormData] = useState({
@@ -10,13 +10,72 @@ const ContactInfo = () => {
     secondaryPhone: "555-987-6543",
   });
 
+  useEffect(() => {
+    async function fetchContacts() {
+      const res = await fetch(
+        "http://localhost/InternBackend/company/api/get_company_contact.php",
+        {
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      if (data.success && data.contacts) {
+        const primary = data.contacts.find((c) => c.contact_type === "primary") || {};
+        const secondary = data.contacts.find((c) => c.contact_type === "secondary") || {};
+        setFormData({
+          primaryName: primary.contact_name || "",
+          primaryEmail: primary.contact_email || "",
+          primaryPhone: primary.contact_phone || "",
+          secondaryName: secondary.contact_name || "",
+          secondaryEmail: secondary.contact_email || "",
+          secondaryPhone: secondary.contact_phone || "",
+        });
+      }
+    }
+    fetchContacts();
+  }, []);
+
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSave = () => {
-    console.log("Saved Contact Info!", formData);
-    alert("Contact information saved successfully!");
+  const handleSave = async () => {
+    const contacts = [
+      {
+        name: formData.primaryName,
+        email: formData.primaryEmail,
+        phone: formData.primaryPhone,
+        type: "primary",
+      },
+      {
+        name: formData.secondaryName,
+        email: formData.secondaryEmail,
+        phone: formData.secondaryPhone,
+        type: "secondary",
+      },
+    ].filter((c) => c.name || c.email || c.phone);
+
+    try {
+      const res = await fetch(
+        "http://localhost/InternBackend/company/api/save_company_contact.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ contacts }),
+        }
+      );
+      const data = await res.json();
+      console.log("Contact save response:", data); // <-- Add this line
+      if (data.success) {
+        alert("Contact information saved successfully!");
+      } else {
+        alert("Failed to save contact info: " + data.message);
+      }
+    } catch (err) {
+      alert("Error saving contact info.");
+      console.error(err); // <-- Add this line
+    }
   };
 
   return (

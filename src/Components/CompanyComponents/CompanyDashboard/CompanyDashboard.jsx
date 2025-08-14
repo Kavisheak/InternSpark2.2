@@ -4,7 +4,6 @@ import {
   MdDescription,
 } from "react-icons/md";
 import Footer from "../Footer";
-import CompanyNavbar from "../CompanyNavbar";
 import DashboardBannerSlider from "./DashboardBannerSlider";
 import DashboardRecentApplications from "./DashboardRecentApplications";
 import DashboardActiveInternships from "./DashboardActiveInternships";
@@ -71,7 +70,7 @@ const CompanyDashboard = () => {
 
   return (
     <div className="min-h-screen text-white ">
-      <CompanyNavbar />
+      
       <div className="fade-in-up">
       <DashboardBannerSlider />
 

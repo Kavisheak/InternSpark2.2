@@ -12,7 +12,7 @@ const DashboardActiveInternships = () => {
   useEffect(() => {
     const fetchInternships = async () => {
       try {
-        const response = await axios.get("http://localhost/InternBackend/api/Dashboardget_active_internships.php", {
+        const response = await axios.get("http://localhost/InternBackend/company/api/dashboard_get_active_internships.php", {
           withCredentials: true, // important for session handling
         });
 

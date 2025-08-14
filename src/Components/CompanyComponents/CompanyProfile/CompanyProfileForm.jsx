@@ -8,6 +8,7 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { BsBuildingsFill } from "react-icons/bs";
+import toast from "react-hot-toast"; // ✅ import toast
 
 const CompanyProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +22,12 @@ const CompanyProfileForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     async function fetchProfile() {
       try {
         const res = await axios.post(
-          "http://localhost/InternBackend/api/get_company_profile.php",
+          "http://localhost/InternBackend/company/api/get_company_profile.php",
           {},
           { withCredentials: true }
         );
@@ -38,14 +38,14 @@ const CompanyProfileForm = () => {
             companySize: res.data.company.company_size || "",
             location: res.data.company.location || "",
             website: res.data.company.website || "",
-            email: res.data.company.email || "",
+            email: res.data.company.email || "", // <-- Use backend value
             about: res.data.company.about || "",
           });
         } else {
-          setMessage("No company profile found.");
+          toast.error("No company profile found.");
         }
       } catch (err) {
-        setMessage("Failed to load company profile.");
+        toast.error("Failed to load company profile.");
         console.error(err);
       }
     }
@@ -57,20 +57,19 @@ const CompanyProfileForm = () => {
 
   const handleSave = async () => {
     setLoading(true);
-    setMessage("");
     try {
       const response = await axios.post(
-        "http://localhost/InternBackend/api/save_company_profile.php",
+        "http://localhost/InternBackend/company/api/save_company_profile.php",
         formData,
         { withCredentials: true }
       );
       if (response.data.success) {
-        setMessage("Company profile saved successfully!");
+        toast.success("Company profile saved successfully!");
       } else {
-        setMessage("Error: " + response.data.message);
+        toast.error("Error: " + response.data.message);
       }
     } catch (error) {
-      setMessage("Server error: " + error.message);
+      toast.error("Server error: " + error.message);
     }
     setLoading(false);
   };
@@ -225,18 +224,6 @@ const CompanyProfileForm = () => {
               {loading ? "Saving..." : "Save"}
             </button>
           </div>
-
-          {message && (
-            <p
-              className={`mt-4 text-center font-semibold ${
-                message.startsWith("Error") || message.startsWith("Failed")
-                  ? "text-red-600"
-                  : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </div>

@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { FiArrowRight, FiUser } from "react-icons/fi";
 import emp1 from "../../../assets/emp1.png";
 import girlemp from "../../../assets/grl.png";
-import CompanyNavbar from "../CompanyNavbar";
 import ForCompanies from "./ForCompanies";
 import ImageSlider from "./ImageSlider";
 import TalktoUs from "./TalktoUs";
@@ -13,12 +12,12 @@ const CompanyHome = () => {
 
   return (
     <div className="relative min-h-screen font-sans text-gray-900 bg-white ">
-      <CompanyNavbar />
+    
 
       <main className="px-4 md:px-0 mt-44 fade-in-up ">
         {/* Title Section */}
 
-        <section className="relative px-4 mx-auto mb-20 -mt-24 md:mb-20 max-w-7xl sm:px-0">
+        <section className="relative px-4 mx-auto mb-20 -mt-16 md:mb-20 max-w-7xl sm:px-0">
           {/* Image */}
           <div className="absolute right-0 hidden -mt-20 translate-x-10 md:block">
             

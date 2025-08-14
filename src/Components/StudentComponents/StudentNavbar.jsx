@@ -21,6 +21,12 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
+    // Call backend to destroy session
+    fetch("http://localhost/InternBackend/api/logout.php", {
+      method: "POST",
+      credentials: "include",
+    });
+
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("notifications");

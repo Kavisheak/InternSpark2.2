@@ -22,6 +22,8 @@ export default function InternshipDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); // modal state
+  const [applied, setApplied] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -38,6 +40,25 @@ export default function InternshipDetails() {
       })
       .catch(() => setError("Failed to fetch internship."))
       .finally(() => setLoading(false));
+
+    // Check if already applied
+    axios
+      .get("http://localhost/InternBackend/students/api/get_applications.php", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (
+          res.data.success &&
+          Array.isArray(res.data.applications) &&
+          res.data.applications.some(
+            (app) => String(app.Internship_Id) === String(id)
+          )
+        ) {
+          setApplied(true);
+        } else {
+          setApplied(false);
+        }
+      });
   }, [id]);
 
   const proceedApplication = async () => {
@@ -48,17 +69,47 @@ export default function InternshipDetails() {
         { withCredentials: true }
       );
       if (res.data.success) {
+        setApplied(true);
         toast.success(res.data.message || "Application submitted!", {
           style: { background: "#002147", color: "white" },
           iconTheme: { primary: "#FCA311", secondary: "white" },
         });
-      } else {
-        toast.error(res.data.message || "Failed to apply.");
       }
     } catch {
       toast.error("Failed to apply.");
     }
     setShowModal(false);
+  };
+
+  const handleCancelApplication = async () => {
+    try {
+      // Find the application id for this internship
+      const res = await axios.get(
+        "http://localhost/InternBackend/students/api/get_applications.php",
+        { withCredentials: true }
+      );
+      const app = res.data.applications.find(
+        (a) => String(a.Internship_Id) === String(id)
+      );
+      if (!app) {
+        toast.error("Application not found.");
+        setCancelModal(false);
+        return;
+      }
+      await axios.post(
+        "http://localhost/InternBackend/students/api/delete_application.php",
+        { application_id: app.Application_Id },
+        { withCredentials: true }
+      );
+      setApplied(false);
+      toast.success("Application cancelled successfully!", {
+        style: { background: "#002147", color: "white" },
+        iconTheme: { primary: "#FCA311", secondary: "white" },
+      });
+    } catch {
+      toast.error("Failed to cancel application.");
+    }
+    setCancelModal(false);
   };
 
   if (loading) {
@@ -210,22 +261,39 @@ export default function InternshipDetails() {
 
           {/* CTA Card */}
           <div className="p-8 text-center bg-white border border-gray-200 shadow-md text-oxfordblue rounded-xl">
-            <h2 className="mb-2 text-2xl font-semibold">Ready to Apply?</h2>
+            <h2 className="mb-2 text-2xl font-semibold">
+              {applied ? "Already Applied" : "Ready to Apply?"}
+            </h2>
             <p className="mb-6">
-              Submit your application before{" "}
-              <strong>{internship.deadline}</strong>
+              {applied
+                ? "You have already applied for this internship."
+                : (
+                  <>
+                    Submit your application before{" "}
+                    <strong>{internship.deadline}</strong>
+                  </>
+                )}
             </p>
-            <button
-              className="px-6 py-3 font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
-              onClick={() => setShowModal(true)}
-            >
-              Apply Now
-            </button>
+            {applied ? (
+              <button
+                className="px-6 py-3 font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                onClick={() => setCancelModal(true)}
+              >
+                Cancel Application
+              </button>
+            ) : (
+              <button
+                className="px-6 py-3 font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
+                onClick={() => setShowModal(true)}
+              >
+                Apply Now
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Apply Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="relative p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center">
@@ -257,6 +325,44 @@ export default function InternshipDetails() {
                 className="px-4 py-2 text-sm font-medium text-white rounded bg-oxfordblue hover:bg-oxfordblue/80"
               >
                 Yes, Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="relative p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center">
+            <button
+              className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
+              onClick={() => setCancelModal(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-semibold text-[#002147] mb-4">
+              Cancel Application
+            </h2>
+            <p className="mb-6 text-sm text-gray-600">
+              Are you sure you want to cancel your application for{" "}
+              <span className="font-semibold text-[#FCA311]">
+                "{internship.title}"
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setCancelModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                No
+              </button>
+              <button
+                onClick={handleCancelApplication}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+              >
+                Yes, Cancel
               </button>
             </div>
           </div>

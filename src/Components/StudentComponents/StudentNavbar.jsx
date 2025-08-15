@@ -13,7 +13,7 @@ const StudentNavbar = () => {
   const navItems = [
     { name: "Home", path: "/student" },
     { name: "Internships", path: "/student/internships" },
-    { name: "Applications", path: "/student/applications" },
+    { name: "My Applications", path: "/student/applications" },
     { name: "Bookmarks", path: "/student/bookmarks" },
     { name: "My Profile", path: "/student/studentprofile" },
   ];

@@ -3,11 +3,19 @@ import axios from "axios";
 import Footer from "../Footer";
 import ApplicationSidebar from "./ApplicationSidebar";
 import ApplicationDetailPanel from "./ApplicationDetailPanel";
+import { useLocation } from "react-router-dom";
 
 export default function CompanyApplications() {
+  const location = useLocation();
   const [applications, setApplications] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const selected = params.get("selectedId");
+    if (selected) setSelectedId(Number(selected));
+  }, [location.search]);
 
   useEffect(() => {
     axios

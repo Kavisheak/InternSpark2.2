@@ -168,11 +168,6 @@ export default function InternshipDetails() {
           style: { background: "#002147", color: "white" },
           iconTheme: { primary: "#FCA311", secondary: "white" },
         });
-        // Show already reported toast immediately
-        toast("You have already reported this internship.", {
-          icon: "⚠️",
-          style: { background: "#002147", color: "white" },
-        });
         setShowReportModal(false);
         setReportReason("");
         setReportDetails("");
@@ -352,7 +347,7 @@ export default function InternshipDetails() {
                 "You have already applied for this internship."
               ) : (
                 <>
-                  Submit your application before <strong>{internship.deadline}</strong>
+                  Apply on or before <strong>{internship.deadline}</strong>
                 </>
               )}
             </p>

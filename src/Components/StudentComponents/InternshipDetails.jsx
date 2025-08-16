@@ -168,6 +168,11 @@ export default function InternshipDetails() {
           style: { background: "#002147", color: "white" },
           iconTheme: { primary: "#FCA311", secondary: "white" },
         });
+        // Show already reported toast immediately
+        toast("You have already reported this internship.", {
+          icon: "⚠️",
+          style: { background: "#002147", color: "white" },
+        });
         setShowReportModal(false);
         setReportReason("");
         setReportDetails("");
@@ -251,17 +256,22 @@ export default function InternshipDetails() {
                     <button
                       onClick={() => {
                         setMenuOpen(false);
-                        setShowReportModal(true);
+                        if (alreadyReported) {
+                          toast("You have already reported this internship.", {
+                            icon: "⚠️",
+                            style: { background: "#002147", color: "white" },
+                          });
+                        } else {
+                          setShowReportModal(true);
+                        }
                       }}
                       className="flex items-center w-full px-4 py-2 text-sm text-red-600 transition hover:bg-red-50"
-                      disabled={alreadyReported}
                       title={
                         alreadyReported
                           ? "You already reported this post."
                           : "Report this internship"
                       }
                     >
-                      {/* simple dot icon to avoid extra imports */}
                       <span className="inline-block w-2 h-2 mr-2 bg-red-600 rounded-full" />
                       {alreadyReported ? "Reported" : "Report"}
                     </button>

@@ -1,82 +1,71 @@
-import { useState } from "react"
-import { Search, Eye, Trash2, MapPin, Calendar, Building2 } from "lucide-react"
-
-const internships = [
-  {
-    id: "1",
-    title: "Frontend Developer Intern",
-    company: "TechCorp Inc.",
-    location: "San Francisco, CA",
-    duration: "3 months",
-    posted: "6/1/2024",
-    applications: 25,
-    status: "active",
-    workType: "Hybrid",
-    description: "Join our frontend team to work on cutting-edge web applications...",
-  },
-  {
-    id: "2",
-    title: "Data Science Intern",
-    company: "AnalyticsPro",
-    location: "New York, NY",
-    duration: "6 months",
-    posted: "5/20/2024",
-    applications: 18,
-    status: "active",
-    workType: "Remote",
-    description: "Work with our data science team on machine learning projects...",
-  },
-  {
-    id: "3",
-    title: "Marketing Intern",
-    company: "BrandCorp",
-    location: "Los Angeles, CA",
-    duration: "4 months",
-    posted: "4/15/2024",
-    applications: 12,
-    status: "expired",
-    workType: "On-site",
-    description: "Support our marketing team with campaign development...",
-  },
-]
+import React, { useState, useEffect } from "react";
+import { Search, Eye, Trash2, MapPin, Calendar, Building2 } from "lucide-react";
 
 export default function InternshipManagement() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [internships, setInternships] = useState([]);
+  const [selectedInternship, setSelectedInternship] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost/InternBackend/admin/api/internships.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setInternships(data.data);
+      });
+  }, []);
 
   const filtered = internships.filter((item) => {
-    const search = searchQuery.toLowerCase()
+    const search = searchQuery.toLowerCase();
     const match =
       item.title.toLowerCase().includes(search) ||
       item.company.toLowerCase().includes(search) ||
-      item.location.toLowerCase().includes(search)
-    if (activeTab === "active") return item.status === "active" && match
-    if (activeTab === "expired") return item.status === "expired" && match
-    return match
-  })
+      item.location.toLowerCase().includes(search);
+    if (activeTab === "active") return item.status === "active" && match;
+    if (activeTab === "expired") return item.status === "expired" && match;
+    return match;
+  });
 
   const stats = {
     all: internships.length,
     active: internships.filter((i) => i.status === "active").length,
     expired: internships.filter((i) => i.status === "expired").length,
-  }
+  };
 
-  const handleView = (id) => alert(`View details of: ${id}`)
-  const handleRemove = (id) => alert(`Remove internship: ${id}`)
-  const handleExport = () => alert("Exporting listings...")
+  const handleRemove = (id) => alert(`Remove internship: ${id}`);
+  const handleExport = () => alert("Exporting listings...");
 
   const getWorkTypeBadgeColor = (workType) => {
     switch (workType) {
       case "Remote":
-        return "bg-green-500/20 text-green-500 border-green-500/30"
+        return "bg-green-500/20 text-green-500 border-green-500/30";
       case "Hybrid":
-        return "bg-purple-500/20 text-purple-500 border-purple-500/30"
+        return "bg-purple-500/20 text-purple-500 border-purple-500/30";
       case "On-site":
-        return "bg-blue-500/20 text-blue-500 border-blue-500/30"
+        return "bg-blue-500/20 text-blue-500 border-blue-500/30";
       default:
-        return "bg-gray-500/20 text-gray-500 border-gray-500/30"
+        return "bg-gray-500/20 text-gray-500 border-gray-500/30";
     }
-  }
+  };
+
+  const viewDetails = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost/InternBackend/admin/api/view_internship.php?id=${id}`
+      );
+      const data = await res.json();
+      if (data.success) {
+        console.log("Internship Details:", data.data);
+        // Set state to show details in a modal or details section
+        // setSelectedInternship(data.data);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="bg-white">
@@ -148,7 +137,9 @@ export default function InternshipManagement() {
                     {item.status}
                   </span>
                   <span
-                    className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(item.workType)}`}
+                    className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(
+                      item.workType
+                    )}`}
                   >
                     {item.workType}
                   </span>
@@ -182,7 +173,7 @@ export default function InternshipManagement() {
 
               <div className="flex gap-3">
                 <button
-                  onClick={() => handleView(item.id)}
+                  onClick={() => viewDetails(item.id)}
                   className="flex items-center px-4 py-2 rounded border bg-orange-500 hover:bg-gray-400 text-white"
                 >
                   <Eye className="h-4 w-4 mr-2" />
@@ -201,5 +192,5 @@ export default function InternshipManagement() {
         </div>
       </div>
     </div>
-  )
+  );
 }

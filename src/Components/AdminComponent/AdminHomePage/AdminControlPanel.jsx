@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUsers, FaClipboardList } from "react-icons/fa";
 import { AiOutlineSetting } from "react-icons/ai";
 
 const AdminControlPanel = () => {
   const navigate = useNavigate();
+  const [counts, setCounts] = useState({
+    users: { total: 0, suspended: 0 },
+    internships: { total: 0 }
+  });
+
+  useEffect(() => {
+    fetch("http://localhost/InternBackend/admin/api/dashboard.php")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setCounts(data.data);
+      });
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -14,10 +26,10 @@ const AdminControlPanel = () => {
           <span className="text-sm font-bold text-black">User Management</span>
           <FaUsers color="black" />
         </div>
-        <div className="text-3xl font-bold text-orange-600">1,247</div>
-        <div className="text-sm text-black">12 suspended</div>
+        <div className="text-3xl font-bold text-orange-600">{counts.users.total}</div>
+        <div className="text-sm text-black">{counts.users.suspended} suspended</div>
         <button
-          onClick={() => navigate("usermanage")}
+          onClick={() => navigate("/admin/usermanage")}
           className="mt-3 bg-orange-500 hover:bg-gray-600 px-4 py-1 rounded text-sm text-white"
         >
           Manage
@@ -30,7 +42,7 @@ const AdminControlPanel = () => {
           <span className="text-sm font-bold text-black">Internship Listings</span>
           <FaClipboardList color="black" />
         </div>
-        <div className="text-3xl font-bold text-orange-600">89</div>
+        <div className="text-3xl font-bold text-orange-600">{counts.internships.total}</div>
         <div className="text-sm text-black">Active listings</div>
         <button
           onClick={() => navigate("internshipmanage")}

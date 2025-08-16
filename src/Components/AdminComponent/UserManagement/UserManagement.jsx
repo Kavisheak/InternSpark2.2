@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Eye,
@@ -34,42 +34,36 @@ const Badge = ({ children, className = "" }) => (
 export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [users, setUsers] = useState([]);
 
-  const users = [
-    {
-      id: "1",
-      name: "Alex Johnson",
-      email: "alex.johnson@university.edu",
-      type: "Student",
-      joined: "1/15/2024",
-      lastActive: "6/6/2024",
-      reports: 7,
-      applications: 5,
-      status: "active",
-    },
-    {
-      id: "2",
-      name: "TechCorp Inc.",
-      email: "hr@techcorp.com",
-      type: "Company",
-      joined: "2/20/2024",
-      lastActive: "6/5/2024",
-      reports: 12,
-      internships: 12,
-      status: "active",
-    },
-    {
-      id: "3",
-      name: "Sarah Wilson",
-      email: "sarah.wilson@college.edu",
-      type: "Student",
-      joined: "6/1/2024",
-      lastActive: "6/3/2024",
-      reports: 12,
-      applications: 1,
-      status: "active",
-    },
-  ];
+  useEffect(() => {
+    fetch("http://localhost/InternBackend/admin/api/users.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // Map backend fields to frontend fields
+          setUsers(
+            data.data.map((u) => ({
+              id: u.id,
+              name: u.username,
+              email: u.email,
+              type:
+                u.role === "student"
+                  ? "Student"
+                  : u.role === "company"
+                  ? "Company"
+                  : "Admin",
+              status: u.is_active ? "Active" : "Suspended",
+              joined: u.created_at,
+              lastActive: u.last_login ?? "N/A", // If you have last_login
+              reports: u.reports ?? 0,
+              applications: u.applications ?? 0,
+              internships: u.internships ?? 0,
+            }))
+          );
+        }
+      });
+  }, []);
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -132,7 +126,7 @@ export default function UserManagement() {
           { label: "All Users", key: "all", count: counts.all },
           { label: "Students", key: "students", count: counts.students },
           { label: "Companies", key: "companies", count: counts.companies },
-          
+        
         ].map((tab) => (
           <Button
             key={tab.key}

@@ -76,7 +76,7 @@ export default function ApplicationSidebar({
               <div className="flex-grow">
                 <p className="font-medium text-gray-800">{app.name}</p>
                 <p className="text-sm text-gray-500">{app.role}</p>
-                <p className="text-xs text-gray-400">Applied {app.applied}</p>
+                <p className="text-xs text-gray-400">Applied on : {app.applied}</p>
               </div>
               <span
                 className={`text-white text-xs px-2 py-1 rounded-full ${

@@ -40,6 +40,24 @@ const CompanyNavbar = () => {
     localStorage.setItem("notifications", JSON.stringify(notifications));
   }, [notifications]);
 
+  useEffect(() => {
+    // Fetch notifications from backend
+    fetch("http://localhost/InternBackend/company/api/get_company_notifications.php", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.notifications)) {
+          setNotifications(data.notifications.map((n, i) => ({
+            id: i + 1,
+            message: n.message,
+            time: n.time,
+            read: false,
+          })));
+        }
+      });
+  }, []);
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const confirmLogout = () => {

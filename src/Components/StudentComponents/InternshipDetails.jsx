@@ -7,7 +7,7 @@ import {
   FaBriefcase,
   FaDollarSign,
 } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { X } from "lucide-react";
 import axios from "axios";
@@ -224,9 +224,7 @@ export default function InternshipDetails() {
           <div className="p-6 mb-2 bg-white border border-gray-200 shadow-md rounded-xl">
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center bg-gray-100 rounded-lg w-14 h-14">
-                  <FaBriefcase className="text-2xl text-[#002147]" />
-                </div>
+                
                 <div>
                   <h1 className="mb-1 text-3xl font-bold text-[#002147]">
                     {title}
@@ -234,6 +232,22 @@ export default function InternshipDetails() {
                   <p className="text-gray-500">
                     {internship.company || `Company ID: ${internship.Company_Id}`}
                   </p>
+                  {/* --- Add Company Profile & Contact Buttons --- */}
+                  <div className="flex gap-3 mt-2">
+                    <Link
+                      to="/student/companyprofile"
+                      className="px-4 py-2 text-sm font-semibold rounded bg-[#002147] text-white hover:bg-orange-500 hover:text-[#002147] transition"
+                    >
+                      View Company Profile
+                    </Link>
+                    <Link
+                      to="/student/companycontact"
+                      className="px-4 py-2 text-sm font-semibold rounded bg-orange-500 text-[#002147] hover:bg-[#002147] hover:text-white transition"
+                    >
+                      View Contact
+                    </Link>
+                  </div>
+                  {/* --- End Buttons --- */}
                 </div>
               </div>
 
@@ -315,12 +329,10 @@ export default function InternshipDetails() {
               <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
                 {workType}
               </span>
-              <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
+              <span className="px-3 py-1 text-sm text-white rounded-full bg-oxfordblue">
                 {pay}
               </span>
-              <span className="px-3 py-1 text-sm text-white bg-orange-500 rounded-full">
-                {internship.status || "Active"}
-              </span>
+              
             </div>
 
             <Section title="About the Internship">{internship.description}</Section>

@@ -4,6 +4,8 @@ import { Toaster } from "react-hot-toast";
 // Pages
 import InternshipDetails from "./InternshipDetails";
 import StudentProfile from "./StudentProfile";
+import ViewCompanyProfile from "./ViewCompanyProfile";
+import ViewCompanyContact from "./ViewCompanyContact";
 
 import StudentHomepage from "./StudentHomepage";
 import Notifications from "./Notification";
@@ -69,6 +71,8 @@ const StudentMain = () => {
         <Route path="applications" element={<MyApplications />} />
         <Route path="applications/:id" element={<AppliedInternshipDetails />} />
         <Route path="bookmarks" element={<Bookmarks />} />
+        <Route path="companyprofile" element={<ViewCompanyProfile />} />
+        <Route path="companycontact" element={<ViewCompanyContact />} />
       </Routes>
     </div>
   );

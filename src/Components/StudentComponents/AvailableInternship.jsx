@@ -73,7 +73,23 @@ const AvailableInternship = () => {
   };
 
   const filteredInternships = useMemo(() => {
+    const today = new Date();
     return internships.filter((internship) => {
+      // Check deadline (hide if expired)
+      if (internship.deadline && new Date(internship.deadline) < today) return false;
+
+      // Check application limit (hide if reached)
+      // application_count: number of applications for this post (should be provided by backend)
+      // application_limit: max allowed (from internship table)
+      if (
+        typeof internship.application_limit === "number" &&
+        typeof internship.application_count === "number" &&
+        internship.application_count >= internship.application_limit
+      ) {
+        return false;
+      }
+
+      // Filter by type and search
       const matchesFilter =
         activeFilter === 'All' ||
         normalize(internship.workType) === normalize(activeFilter);

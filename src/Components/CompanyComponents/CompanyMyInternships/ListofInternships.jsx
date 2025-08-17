@@ -17,14 +17,14 @@ const ListofInternships = ({ searchTerm }) => {
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
   const [error, setError] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // NEW
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     async function fetchInternships() {
       try {
         setLoading(true);
         const res = await axios.get(
-          "http://localhost/InternBackend/api/get_internships.php",
+          "http://localhost/InternBackend/company/api/get_internships.php",
           { withCredentials: true }
         );
         if (res.data.success) {
@@ -48,7 +48,10 @@ const ListofInternships = ({ searchTerm }) => {
   }, []);
 
   const handleDelete = (internship) => {
-    setShowDeleteConfirm(true); // Enable blur
+    setShowDeleteConfirm(true);
+
+    const isMobile = window.innerWidth <= 768;
+
     toast(
       (t) => (
         <div
@@ -56,13 +59,16 @@ const ListofInternships = ({ searchTerm }) => {
             position: "fixed",
             top: "50vh",
             left: "50vw",
-            transform: "translate(-280%, -100%)",
+            transform: isMobile
+              ? "translate(-120%, -100%)"
+              : "translate(-280%, -100%)",
             zIndex: 99999,
             background: "#002147",
             color: "white",
             padding: 20,
             borderRadius: 12,
             minWidth: 320,
+            maxWidth: "90vw",
             boxShadow: "0 0 15px rgba(0,0,0,0.3)",
             display: "flex",
             flexDirection: "column",
@@ -79,7 +85,7 @@ const ListofInternships = ({ searchTerm }) => {
             <button
               onClick={() => {
                 toast.dismiss(t.id);
-                setShowDeleteConfirm(false); // Disable blur
+                setShowDeleteConfirm(false);
               }}
               style={{
                 padding: "8px 16px",
@@ -93,24 +99,48 @@ const ListofInternships = ({ searchTerm }) => {
               Cancel
             </button>
             <button
-              onClick={() => {
-                setInternships((prev) =>
-                  prev.filter(
-                    (job) => job.Internship_Id !== internship.Internship_Id
-                  )
-                );
-                toast.dismiss(t.id);
-                setShowDeleteConfirm(false); // Disable blur
-                toast.success("Internship deleted.", {
-                  style: {
-                    background: "#002147",
-                    color: "white",
-                  },
-                  iconTheme: {
-                    primary: "#FCA311",
-                    secondary: "white",
-                  },
-                });
+              onClick={async () => {
+                try {
+                  const res = await axios.delete(
+                    "http://localhost/InternBackend/company/api/delete_internship.php",
+                    {
+                      data: { id: internship.Internship_Id },
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      withCredentials: true,
+                    }
+                  );
+
+                  if (res.data.success) {
+                    setInternships((prev) =>
+                      prev.filter(
+                        (job) => job.Internship_Id !== internship.Internship_Id
+                      )
+                    );
+                    toast.dismiss(t.id);
+                    setShowDeleteConfirm(false);
+                    toast.success("Internship deleted.", {
+                      style: {
+                        background: "#002147",
+                        color: "white",
+                      },
+                      iconTheme: {
+                        primary: "#FCA311",
+                        secondary: "white",
+                      },
+                    });
+                  } else {
+                    toast.dismiss(t.id);
+                    setShowDeleteConfirm(false);
+                    toast.error(res.data.message || "Deletion failed.");
+                  }
+                } catch (err) {
+                  toast.dismiss(t.id);
+                  setShowDeleteConfirm(false);
+                  console.error(err);
+                  toast.error("Server error while deleting internship.");
+                }
               }}
               style={{
                 padding: "8px 16px",
@@ -150,12 +180,15 @@ const ListofInternships = ({ searchTerm }) => {
 
   return (
     <>
-      {/* Blur Overlay */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[9990] backdrop-blur-sm bg-black/10"></div>
       )}
 
-      <div className={`flex flex-col items-center space-y-6 ${showDeleteConfirm ? "pointer-events-none select-none" : ""}`}>
+      <div
+        className={`flex flex-col items-center space-y-6 ${
+          showDeleteConfirm ? "pointer-events-none select-none" : ""
+        }`}
+      >
         <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {displayedInternships.map((job) => (
             <div

@@ -69,14 +69,14 @@ export default function ApplicationSidebar({
               }`}
             >
               <img
-                src={app.image || "/default-avatar.png"}
+                src={app.image ? `http://localhost/InternBackend/${app.image}` : "/default-avatar.png"}
                 alt={app.name}
                 className="object-cover w-10 h-10 rounded-full"
               />
               <div className="flex-grow">
                 <p className="font-medium text-gray-800">{app.name}</p>
                 <p className="text-sm text-gray-500">{app.role}</p>
-                <p className="text-xs text-gray-400">Applied {app.applied}</p>
+                <p className="text-xs text-gray-400">Applied on : {app.applied}</p>
               </div>
               <span
                 className={`text-white text-xs px-2 py-1 rounded-full ${

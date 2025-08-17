@@ -10,7 +10,7 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
       case 'hybrid':
         return 'bg-orange-100 text-orange-700';
       case 'on-site':
-        return 'bg-orange-200 text-orange-800';
+        return 'bg-orange-100 text-orange-700';
       case 'remote':
         return 'bg-orange-100 text-orange-700';
       default:

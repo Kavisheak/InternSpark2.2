@@ -13,7 +13,7 @@ const StudentNavbar = () => {
   const navItems = [
     { name: "Home", path: "/student" },
     { name: "Internships", path: "/student/internships" },
-    { name: "Applications", path: "/student/applications" },
+    { name: "My Applications", path: "/student/applications" },
     { name: "Bookmarks", path: "/student/bookmarks" },
     { name: "My Profile", path: "/student/studentprofile" },
   ];
@@ -21,6 +21,12 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
+    // Call backend to destroy session
+    fetch("http://localhost/InternBackend/api/logout.php", {
+      method: "POST",
+      credentials: "include",
+    });
+
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("notifications");

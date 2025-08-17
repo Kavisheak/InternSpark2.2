@@ -3,16 +3,40 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-
-// Dummy CompanyNavbar component for completeness
-
-
 const PostInternshipForm = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
   const isViewOnlyMode = location.state?.viewOnly === true;
+
+  const internshipTitles = [
+    "Software Development Intern",
+    "Frontend Developer Intern",
+    "Backend Developer Intern",
+    "Full Stack Developer Intern",
+    "Mobile App Developer Intern",
+    "Web Development Intern",
+    "UI/UX Design Intern",
+    "Data Science Intern",
+    "Data Analyst Intern",
+    "Machine Learning Intern",
+    "Cybersecurity Intern",
+    "DevOps Intern",
+    "QA / Software Testing Intern",
+    "Database Management Intern",
+    "Blockchain Development Intern",
+  ];
+
+  // All Sri Lankan Cities (Alphabetical)
+  const sriLankaCities = [
+    "Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo",
+    "Dambulla", "Galle", "Gampaha", "Hambantota", "Jaffna",
+    "Kalutara", "Kandy", "Kegalle", "Kilinochchi", "Kurunegala",
+    "Mannar", "Matale", "Matara", "Monaragala", "Mullaitivu",
+    "Nuwara Eliya", "Polonnaruwa", "Puttalam", "Ratnapura",
+    "Trincomalee", "Vavuniya"
+  ].sort();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,23 +52,25 @@ const PostInternshipForm = () => {
 
   const [isEditable, setIsEditable] = useState(!isViewOnlyMode && !id);
   const [loading, setLoading] = useState(false);
-
-  // For field validation error messages
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (id) {
       setLoading(true);
       axios
-        .get(`http://localhost/InternBackend/api/get_internship_details.php?id=${id}`, {
-          withCredentials: true,
-        })
+        .get(
+          `http://localhost/InternBackend/company/api/get_internship_details.php?id=${id}`,
+          {
+            withCredentials: true,
+          }
+        )
         .then((res) => {
           if (res.data.success) {
             const internship = res.data.internship;
-
             const capitalize = (str) =>
-              str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "On-site";
+              str
+                ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+                : "On-site";
 
             setFormData({
               title: internship.title || "",
@@ -78,7 +104,7 @@ const PostInternshipForm = () => {
   const handleChange = (e) => {
     if (!isEditable) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // Clear error on change
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleTypeChange = (type) => {
@@ -87,20 +113,21 @@ const PostInternshipForm = () => {
     setErrors({ ...errors, internshipType: "" });
   };
 
-  // Validate required fields on submit
   const validate = () => {
     const newErrors = {};
-
-    if (!formData.title.trim()) newErrors.title = "Please fill out this field";
-    if (!formData.duration.trim()) newErrors.duration = "Please fill out this field";
-    if (!formData.description.trim()) newErrors.description = "Please fill out this field";
-    if (!formData.requirements.trim()) newErrors.requirements = "Please fill out this field";
-    if (!formData.deadline.trim()) newErrors.deadline = "Please fill out this field";
-    if (!formData.applicationLimit.toString().trim()) newErrors.applicationLimit = "Please fill out this field";
+    if (!formData.title.trim()) newErrors.title = "Please select a title";
+    if (!formData.duration.trim())
+      newErrors.duration = "Please fill out this field";
+    if (!formData.description.trim())
+      newErrors.description = "Please fill out this field";
+    if (!formData.requirements.trim())
+      newErrors.requirements = "Please fill out this field";
+    if (!formData.deadline.trim())
+      newErrors.deadline = "Please select a deadline";
+    if (!formData.applicationLimit.toString().trim())
+      newErrors.applicationLimit = "Please fill out this field";
 
     setErrors(newErrors);
-
-    // Return true if no errors
     return Object.keys(newErrors).length === 0;
   };
 
@@ -114,13 +141,9 @@ const PostInternshipForm = () => {
     }
 
     try {
-      const payload = {
-        ...formData,
-        id: id || null,
-      };
-
+      const payload = { ...formData, id: id || null };
       const res = await axios.post(
-        "http://localhost/InternBackend/api/post_internship.php",
+        "http://localhost/InternBackend/company/api/post_internship.php",
         payload,
         { withCredentials: true }
       );
@@ -158,28 +181,47 @@ const PostInternshipForm = () => {
     );
   }
 
+  const minDate = new Date().toISOString().split("T")[0]; // Current date for deadline validation
+
   return (
     <div className="min-h-screen bg-gray-100">
-      
       <div className="max-w-3xl px-6 py-10 mx-auto my-10 bg-white border border-gray-300 rounded-lg shadow-lg">
         <h1 className="mb-6 text-3xl font-bold text-center text-oxfordblue">
-          {id ? (isEditable ? "Edit Internship" : "Internship Details") : "Post a New Internship"}
+          {id
+            ? isEditable
+              ? "Edit Internship"
+              : "Internship Details"
+            : "Post a New Internship"}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
-          {/* Internship Title */}
+          {/* Internship Title Dropdown */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Internship Title</label>
-            <input
-              type="text"
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Internship Title
+            </label>
+            <select
               name="title"
               value={formData.title}
               onChange={handleChange}
               disabled={!isEditable}
-              placeholder="e.g., Frontend Developer Intern"
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.title ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
-            />
+                ${
+                  errors.title
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
+            >
+              <option value="">
+                ------------------------------------------ Select Title
+                ---------------------------------------------
+              </option>
+              {internshipTitles.map((title) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
+              ))}
+            </select>
             {errors.title && (
               <p className="mt-1 text-sm text-red-600">{errors.title}</p>
             )}
@@ -188,20 +230,30 @@ const PostInternshipForm = () => {
           {/* Location & Type */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Location</label>
-              <input
-                type="text"
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Location
+              </label>
+              <select
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., San Francisco, CA"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
-              />
+              >
+                <option value="">
+                  ------------------- Select City ----------------------
+                </option>
+                {sriLankaCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
             </div>
-
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Internship Type</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Internship Type
+              </label>
               <div className="flex space-x-2">
                 {["On-site", "Remote", "Hybrid"].map((type) => (
                   <button
@@ -225,7 +277,9 @@ const PostInternshipForm = () => {
           {/* Salary & Duration */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Salary</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Salary
+              </label>
               <input
                 type="text"
                 name="salary"
@@ -237,7 +291,9 @@ const PostInternshipForm = () => {
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Duration</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Duration
+              </label>
               <input
                 type="text"
                 name="duration"
@@ -246,7 +302,11 @@ const PostInternshipForm = () => {
                 disabled={!isEditable}
                 placeholder="e.g., 3 months"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.duration ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.duration
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.duration && (
                 <p className="mt-1 text-sm text-red-600">{errors.duration}</p>
@@ -256,7 +316,9 @@ const PostInternshipForm = () => {
 
           {/* Description */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Description</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
@@ -265,7 +327,11 @@ const PostInternshipForm = () => {
               rows="4"
               placeholder="Describe the internship..."
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.description ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                ${
+                  errors.description
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
             />
             {errors.description && (
               <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -274,7 +340,9 @@ const PostInternshipForm = () => {
 
           {/* Requirements */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Requirements</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Requirements
+            </label>
             <textarea
               name="requirements"
               value={formData.requirements}
@@ -283,7 +351,11 @@ const PostInternshipForm = () => {
               rows="4"
               placeholder="Skills and qualifications..."
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.requirements ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                ${
+                  errors.requirements
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
             />
             {errors.requirements && (
               <p className="mt-1 text-sm text-red-600">{errors.requirements}</p>
@@ -293,22 +365,31 @@ const PostInternshipForm = () => {
           {/* Deadline & Limit */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Application Deadline</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Deadline
+              </label>
               <input
                 type="date"
                 name="deadline"
                 value={formData.deadline}
+                min={minDate}
                 onChange={handleChange}
                 disabled={!isEditable}
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.deadline ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.deadline
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.deadline && (
                 <p className="mt-1 text-sm text-red-600">{errors.deadline}</p>
               )}
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Application Limit</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Limit
+              </label>
               <input
                 type="number"
                 name="applicationLimit"
@@ -317,10 +398,16 @@ const PostInternshipForm = () => {
                 disabled={!isEditable}
                 placeholder="e.g., 100"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.applicationLimit ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.applicationLimit
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.applicationLimit && (
-                <p className="mt-1 text-sm text-red-600">{errors.applicationLimit}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.applicationLimit}
+                </p>
               )}
             </div>
           </div>

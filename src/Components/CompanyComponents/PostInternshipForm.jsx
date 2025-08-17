@@ -28,7 +28,6 @@ const PostInternshipForm = () => {
     "Blockchain Development Intern",
   ];
 
-  // All Sri Lankan Cities (Alphabetical)
   const sriLankaCities = [
     "Ampara", "Anuradhapura", "Badulla", "Batticaloa", "Colombo",
     "Dambulla", "Galle", "Gampaha", "Hambantota", "Jaffna",
@@ -60,9 +59,7 @@ const PostInternshipForm = () => {
       axios
         .get(
           `http://localhost/InternBackend/company/api/get_internship_details.php?id=${id}`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         )
         .then((res) => {
           if (res.data.success) {
@@ -76,8 +73,9 @@ const PostInternshipForm = () => {
               title: internship.title || "",
               location: internship.location || "",
               internshipType: capitalize(internship.internship_type),
-              salary: internship.salary || "",
-              duration: internship.duration || "",
+              // strip Rs and months if exist
+              salary: internship.salary?.replace(/Rs\s*/i, "") || "",
+              duration: internship.duration?.replace(/\s*months?/i, "") || "",
               description: internship.description || "",
               requirements: internship.requirements || "",
               deadline: internship.deadline || "",
@@ -103,8 +101,15 @@ const PostInternshipForm = () => {
 
   const handleChange = (e) => {
     if (!isEditable) return;
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    let { name, value } = e.target;
+
+    // Allow only numbers in salary and duration
+    if (name === "salary" || name === "duration" || name === "applicationLimit") {
+      value = value.replace(/\D/g, ""); // remove non-digits
+    }
+
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleTypeChange = (type) => {
@@ -141,7 +146,13 @@ const PostInternshipForm = () => {
     }
 
     try {
-      const payload = { ...formData, id: id || null };
+      const payload = {
+        ...formData,
+        id: id || null,
+        salary: formData.salary ? `Rs ${formData.salary}` : "",
+        duration: formData.duration ? `${formData.duration} months` : "",
+      };
+
       const res = await axios.post(
         "http://localhost/InternBackend/company/api/post_internship.php",
         payload,
@@ -181,7 +192,7 @@ const PostInternshipForm = () => {
     );
   }
 
-  const minDate = new Date().toISOString().split("T")[0]; // Current date for deadline validation
+  const minDate = new Date().toISOString().split("T")[0];
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -195,7 +206,7 @@ const PostInternshipForm = () => {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
-          {/* Internship Title Dropdown */}
+          {/* Internship Title */}
           <div>
             <label className="block mb-1 font-semibold text-oxfordblue">
               Internship Title
@@ -212,10 +223,7 @@ const PostInternshipForm = () => {
                     : "border-gray-400 focus:ring-[#2128BD]"
                 }`}
             >
-              <option value="">
-                ------------------------------------------ Select Title
-                ---------------------------------------------
-              </option>
+              <option value="">--- Select Title ---</option>
               {internshipTitles.map((title) => (
                 <option key={title} value={title}>
                   {title}
@@ -240,9 +248,7 @@ const PostInternshipForm = () => {
                 disabled={!isEditable}
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               >
-                <option value="">
-                  ------------------- Select City ----------------------
-                </option>
+                <option value="">--- Select City ---</option>
                 {sriLankaCities.map((city) => (
                   <option key={city} value={city}>
                     {city}
@@ -278,7 +284,7 @@ const PostInternshipForm = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block mb-1 font-semibold text-oxfordblue">
-                Salary
+                Salary (Rs)
               </label>
               <input
                 type="text"
@@ -286,13 +292,13 @@ const PostInternshipForm = () => {
                 value={formData.salary}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., $20/hour"
+                placeholder="e.g., 90000"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               />
             </div>
             <div>
               <label className="block mb-1 font-semibold text-oxfordblue">
-                Duration
+                Duration (months)
               </label>
               <input
                 type="text"
@@ -300,7 +306,7 @@ const PostInternshipForm = () => {
                 value={formData.duration}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., 3 months"
+                placeholder="e.g., 3"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
                   ${
                     errors.duration
@@ -391,7 +397,7 @@ const PostInternshipForm = () => {
                 Application Limit
               </label>
               <input
-                type="number"
+                type="text"
                 name="applicationLimit"
                 value={formData.applicationLimit}
                 onChange={handleChange}

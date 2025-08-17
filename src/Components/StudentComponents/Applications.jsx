@@ -111,7 +111,9 @@ export default function MyApplications() {
           )}
         </div>
       </div>
+      <div className="mt-28">
       <Footer />
+      </div>
     </div>
   );
 }

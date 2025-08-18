@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Building2, Globe, MapPin, Users, Info, X } from "lucide-react";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const ViewCompanyProfile = () => {
   const { companyId } = useParams();
@@ -13,13 +14,13 @@ const ViewCompanyProfile = () => {
   const [alreadyReported, setAlreadyReported] = useState(false);
 
   useEffect(() => {
-    fetch(
-      `http://localhost/InternBackend/students/api/get_company_profile.php?company_id=${companyId}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success)
-          setCompany({ ...data.profile, company_id: companyId });
+    axios
+      .get(
+        `http://localhost/InternBackend/students/api/get_company_profile.php?company_id=${companyId}`
+      )
+      .then((res) => {
+        if (res.data.success)
+          setCompany({ ...res.data.profile, company_id: companyId });
       });
   }, [companyId]);
 
@@ -30,25 +31,18 @@ const ViewCompanyProfile = () => {
     }
     setReporting(true);
     try {
-      // Replace with your API endpoint
-      const res = await fetch(
+      const res = await axios.post(
         `http://localhost/InternBackend/students/api/report_company.php`,
         {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            company_id: company.company_id,
-            reason:
-              reportReason === "other"
-                ? reportDetails || "Other"
-                : `${reportReason}${
-                    reportDetails ? ` — ${reportDetails}` : ""
-                  }`,
-          }),
-        }
+          company_id: company.company_id,
+          reason:
+            reportReason === "other"
+              ? reportDetails || "Other"
+              : `${reportReason}${reportDetails ? ` — ${reportDetails}` : ""}`,
+        },
+        { withCredentials: true }
       );
-      const data = await res.json();
+      const data = res.data;
       if (data.success) {
         setAlreadyReported(true);
         toast.success("Thanks! Your report has been submitted.", {

@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Mail, Phone, User } from "lucide-react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const ViewCompanyContact = () => {
   const { companyId } = useParams();
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
-    fetch(
-      `http://localhost/InternBackend/students/api/get_company_contact.php?company_id=${companyId}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setContacts(data.contacts);
+    axios
+      .get(
+        `http://localhost/InternBackend/students/api/get_company_contact.php?company_id=${companyId}`
+      )
+      .then((res) => {
+        if (res.data.success) setContacts(res.data.contacts);
       });
   }, [companyId]);
 

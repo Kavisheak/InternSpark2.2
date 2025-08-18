@@ -14,6 +14,7 @@ export default function MyApplications() {
   const [applications, setApplications] = useState([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +41,10 @@ export default function MyApplications() {
     .filter((app) =>
       app.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+  const displayedApplications = showAll
+    ? filteredApplications
+    : filteredApplications.slice(0, 10);
 
   const filters = [
     { name: "All", count: applications.length },
@@ -84,13 +89,13 @@ export default function MyApplications() {
 
         {/* Applications List */}
         <div className="space-y-6">
-          {filteredApplications.length === 0 ? (
+          {displayedApplications.length === 0 ? (
             <div className="py-8 text-center text-gray-500">
               No applications found for "{activeFilter}" status
               {searchTerm ? ` and search term "${searchTerm}"` : ""}.
             </div>
           ) : (
-            filteredApplications.map((app) => (
+            displayedApplications.map((app) => (
               <div
                 key={app.Application_Id}
                 className="p-6 transition-all bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md"
@@ -127,6 +132,18 @@ export default function MyApplications() {
                 </div>
               </div>
             ))
+          )}
+
+          {/* See All Button */}
+          {!showAll && filteredApplications.length > 10 && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setShowAll(true)}
+                className="px-6 py-2 font-medium rounded-lg bg-[#002147] text-white hover:bg-[#00152f] transition"
+              >
+                See All Applications
+              </button>
+            </div>
           )}
         </div>
       </div>

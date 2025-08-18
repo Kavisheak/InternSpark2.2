@@ -1,24 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Building2, Globe, MapPin, Users, Info, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 const ViewCompanyProfile = () => {
-  const company = {
-    company_name: "TechNova Solutions",
-    industry: "Information Technology",
-    company_size: "201-500 Employees",
-    location: "Colombo, Sri Lanka",
-    website: "https://www.technova.com",
-    about:
-      "TechNova Solutions is a leading IT company specializing in innovative digital products and enterprise solutions. We are passionate about building scalable software, empowering businesses through technology, and fostering a collaborative environment for growth.",
-    company_id: 123, // example ID
-  };
-
+  const { companyId } = useParams();
+  const [company, setCompany] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
   const [reporting, setReporting] = useState(false);
   const [alreadyReported, setAlreadyReported] = useState(false);
+
+  useEffect(() => {
+    fetch(
+      `http://localhost/InternBackend/students/api/get_company_profile.php?company_id=${companyId}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success)
+          setCompany({ ...data.profile, company_id: companyId });
+      });
+  }, [companyId]);
 
   const submitReport = async () => {
     if (!reportReason) {
@@ -28,18 +31,23 @@ const ViewCompanyProfile = () => {
     setReporting(true);
     try {
       // Replace with your API endpoint
-      const res = await fetch(`http://localhost/InternBackend/students/api/report_company.php`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          company_id: company.company_id,
-          reason:
-            reportReason === "other"
-              ? reportDetails || "Other"
-              : `${reportReason}${reportDetails ? ` — ${reportDetails}` : ""}`,
-        }),
-      });
+      const res = await fetch(
+        `http://localhost/InternBackend/students/api/report_company.php`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            company_id: company.company_id,
+            reason:
+              reportReason === "other"
+                ? reportDetails || "Other"
+                : `${reportReason}${
+                    reportDetails ? ` — ${reportDetails}` : ""
+                  }`,
+          }),
+        }
+      );
       const data = await res.json();
       if (data.success) {
         setAlreadyReported(true);
@@ -59,6 +67,8 @@ const ViewCompanyProfile = () => {
       setReporting(false);
     }
   };
+
+  if (!company) return null; // or a loading spinner, etc.
 
   return (
     <div className="min-h-screen px-4 py-12 bg-gray-50 sm:px-8 lg:px-16">
@@ -98,7 +108,9 @@ const ViewCompanyProfile = () => {
               <Info className="w-5 h-5 text-orange-500" />
               About Us
             </h2>
-            <p className="mt-2 leading-relaxed text-gray-600">{company.about}</p>
+            <p className="mt-2 leading-relaxed text-gray-600">
+              {company.about}
+            </p>
           </section>
 
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -106,7 +118,9 @@ const ViewCompanyProfile = () => {
               <Users className="w-6 h-6 text-orange-500" />
               <div>
                 <p className="text-sm text-gray-500">Company Size</p>
-                <p className="font-medium text-[#002147]">{company.company_size}</p>
+                <p className="font-medium text-[#002147]">
+                  {company.company_size}
+                </p>
               </div>
             </div>
 

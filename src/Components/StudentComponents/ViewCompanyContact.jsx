@@ -1,22 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Phone, User } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const ViewCompanyContact = () => {
-  // Sample contacts data (later you can fetch from backend)
-  const contacts = [
-    {
-      contact_name: "John Doe",
-      contact_email: "john.doe@technova.com",
-      contact_phone: "+94 77 123 4567",
-      contact_type: "primary",
-    },
-    {
-      contact_name: "Jane Smith",
-      contact_email: "jane.smith@technova.com",
-      contact_phone: "+94 76 987 6543",
-      contact_type: "secondary",
-    },
-  ];
+  const { companyId } = useParams();
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    fetch(
+      `http://localhost/InternBackend/students/api/get_company_contact.php?company_id=${companyId}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setContacts(data.contacts);
+      });
+  }, [companyId]);
 
   return (
     <div className="min-h-screen px-4 py-12 bg-gray-50 sm:px-8 lg:px-16">

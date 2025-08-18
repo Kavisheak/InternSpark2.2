@@ -15,6 +15,7 @@ const AvailableInternship = () => {
   const [internships, setInternships] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
   const filters = ['All', 'Remote', 'On-site', 'Hybrid'];
 
@@ -103,6 +104,11 @@ const AvailableInternship = () => {
     });
   }, [internships, activeFilter, debouncedTerm]);
 
+  // Only show 10 unless showAll is true
+  const internshipsToShow = showAll
+    ? filteredInternships
+    : filteredInternships.slice(0, 10);
+
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 py-8 mx-auto max-w-7xl fade-in-up">
@@ -152,8 +158,8 @@ const AvailableInternship = () => {
         </div>
 
         <p className="mb-4 font-medium text-gray-700">
-          Showing {filteredInternships.length}{' '}
-          {filteredInternships.length === 1 ? 'internship' : 'internships'}
+          Showing {internshipsToShow.length}
+          {internshipsToShow.length === 1 ? ' internship' : ' internships'}
         </p>
 
         {error && (
@@ -169,7 +175,7 @@ const AvailableInternship = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {filteredInternships.map((internship) => (
+              {internshipsToShow.map((internship) => (
                 <InternshipCard
                   key={internship.id}
                   internship={internship}
@@ -180,6 +186,17 @@ const AvailableInternship = () => {
                 />
               ))}
             </div>
+
+            {filteredInternships.length > 10 && !showAll && (
+              <div className="flex justify-center mt-8">
+                <button
+                  className="px-6 py-2 font-semibold text-white transition bg-orange-500 rounded hover:bg-orange-600"
+                  onClick={() => setShowAll(true)}
+                >
+                  See All
+                </button>
+              </div>
+            )}
 
             {filteredInternships.length === 0 && (
               <div className="py-12 text-center text-gray-700">

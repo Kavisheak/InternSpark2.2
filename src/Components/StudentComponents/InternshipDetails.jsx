@@ -235,13 +235,13 @@ export default function InternshipDetails() {
                   {/* --- Add Company Profile & Contact Buttons --- */}
                   <div className="flex gap-3 mt-2">
                     <Link
-                      to="/student/companyprofile"
+                      to={`/student/companyprofile/${internship.Company_Id}`}
                       className="px-4 py-2 text-sm font-semibold rounded bg-[#002147] text-white hover:bg-orange-500 hover:text-[#002147] transition"
                     >
                       View Company Profile
                     </Link>
                     <Link
-                      to="/student/companycontact"
+                      to={`/student/companycontact/${internship.Company_Id}`}
                       className="px-4 py-2 text-sm font-semibold rounded bg-orange-500 text-[#002147] hover:bg-[#002147] hover:text-white transition"
                     >
                       View Contact

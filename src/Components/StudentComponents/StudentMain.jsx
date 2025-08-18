@@ -71,8 +71,8 @@ const StudentMain = () => {
         <Route path="applications" element={<MyApplications />} />
         <Route path="applications/:id" element={<AppliedInternshipDetails />} />
         <Route path="bookmarks" element={<Bookmarks />} />
-        <Route path="companyprofile" element={<ViewCompanyProfile />} />
-        <Route path="companycontact" element={<ViewCompanyContact />} />
+        <Route path="companyprofile/:companyId" element={<ViewCompanyProfile />} />
+        <Route path="companycontact/:companyId" element={<ViewCompanyContact />} />
       </Routes>
     </div>
   );

@@ -27,7 +27,11 @@ export default function ApplicationSidebar({
         .toLowerCase()
         .startsWith(searchTerm.toLowerCase()) // ✅ only match from beginning
     )
-    .filter((app) => statusFilter === "All" || app.status === statusFilter);
+    .filter(
+      (app) =>
+        statusFilter === "All" ||
+        app.status?.toLowerCase() === statusFilter.toLowerCase()
+    );
 
   return (
     <div className="w-full h-full p-4 bg-white shadow-md md:w-1/3 rounded-xl">

@@ -21,7 +21,7 @@ export default function ApplicationDetailPanel({
   const [isImageOpen, setIsImageOpen] = useState(false);
   const imageRef = useRef(null);
 
-  const statusOptions = ["Reviewing", "Shortlisted", "Accepted", "Rejected"];
+  const statusOptions = ["Pending","Reviewing", "Shortlisted", "Accepted", "Rejected"];
 
   // Reporting states
   const [menuOpen, setMenuOpen] = useState(false);
@@ -134,7 +134,10 @@ export default function ApplicationDetailPanel({
           </div>
           <div>
             <h2 className="text-2xl font-semibold">{selected.name}</h2>
-            <p className="text-sm text-gray-500">{selected.role}</p>
+            
+            <p className="text-sm font-semibold text-orange-600">
+              Applied for : {selected.internship_title}
+            </p>
           </div>
         </div>
 

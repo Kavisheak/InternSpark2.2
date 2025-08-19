@@ -359,7 +359,7 @@ export default function InternshipDetails() {
                 "You have already applied for this internship."
               ) : (
                 <>
-                  Apply on or before <strong>{internship.deadline}</strong>
+                  Apply before <strong>{internship.deadline}</strong>
                 </>
               )}
             </p>

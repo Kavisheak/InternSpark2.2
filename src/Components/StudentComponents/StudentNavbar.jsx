@@ -1,12 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import StudentNotifications from "./StudentNotifications";
 
 const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(() => {
+    const stored = localStorage.getItem("studentNotifications");
+    return stored
+      ? JSON.parse(stored)
+      : [
+          {
+            id: 1,
+            message: "New internship 'Frontend Developer' posted.",
+            time: "2h ago",
+            read: false,
+          },
+          {
+            id: 2,
+            message: "Your application for 'UI/UX Intern' has been viewed.",
+            time: "5h ago",
+            read: false,
+          },
+          {
+            id: 3,
+            message: "Profile updated successfully.",
+            time: "1d ago",
+            read: true,
+          },
+        ];
+  });
+
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("studentNotifications", JSON.stringify(notifications));
+  }, [notifications]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -21,7 +53,6 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    // Call backend to destroy session
     fetch("http://localhost/InternBackend/api/logout.php", {
       method: "POST",
       credentials: "include",
@@ -29,7 +60,7 @@ const StudentNavbar = () => {
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("notifications");
+    localStorage.removeItem("studentNotifications");
     toast.success(" Logged out successfully!");
     setTimeout(() => navigate("/"), 1000);
   };
@@ -61,7 +92,7 @@ const StudentNavbar = () => {
 
   return (
     <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-oxfordblue">
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-between px-4 py-5">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold">
           Internspark
@@ -73,11 +104,7 @@ const StudentNavbar = () => {
             <li key={item.name}>
               <Link
                 to={item.path}
-                className={`transition ${
-                  isActive(item.path)
-                    ? "underline underline-offset-4"
-                    : "hover:text-white/80"
-                }`}
+                className={`transition ${isActive(item.path) ? "underline underline-offset-4" : "hover:text-white/80"}`}
               >
                 {item.name}
               </Link>
@@ -85,14 +112,22 @@ const StudentNavbar = () => {
           ))}
 
           {/* Notification */}
-          <li>
-            <Link
-              to="/notifications"
-              className="p-1 rounded hover:text-white/80"
-              aria-label="Notifications"
+          <li className="relative">
+            <button
+              className="relative p-1 rounded hover:text-white/80"
+              onClick={() => setShowNotifications((prev) => !prev)}
             >
               <FaBell size={18} />
-            </Link>
+              {notifications.some((n) => !n.read) && (
+                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+              )}
+            </button>
+            {showNotifications && (
+              <StudentNotifications
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
+            )}
           </li>
 
           {/* Logout */}
@@ -123,11 +158,7 @@ const StudentNavbar = () => {
               <Link
                 to={item.path}
                 onClick={() => setMenuOpen(false)}
-                className={`block py-2 transition ${
-                  isActive(item.path)
-                    ? "underline underline-offset-4"
-                    : "hover:text-white/80"
-                }`}
+                className={`block py-2 transition ${isActive(item.path) ? "underline underline-offset-4" : "hover:text-white/80"}`}
               >
                 {item.name}
               </Link>
@@ -135,13 +166,18 @@ const StudentNavbar = () => {
           ))}
 
           <li>
-            <Link
-              to="/notifications"
-              onClick={() => setMenuOpen(false)}
+            <button
+              onClick={() => setShowNotifications((prev) => !prev)}
               className="block py-2 hover:text-white/80"
             >
               Notifications
-            </Link>
+            </button>
+            {showNotifications && (
+              <StudentNotifications
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
+            )}
           </li>
 
           <li>

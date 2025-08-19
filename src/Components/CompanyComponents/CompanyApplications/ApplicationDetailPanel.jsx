@@ -21,7 +21,13 @@ export default function ApplicationDetailPanel({
   const [isImageOpen, setIsImageOpen] = useState(false);
   const imageRef = useRef(null);
 
-  const statusOptions = ["Pending","Reviewing", "Shortlisted", "Accepted", "Rejected"];
+  const statusOptions = [
+    "Pending",
+    "Reviewing",
+    "Shortlisted",
+    "Accepted",
+    "Rejected",
+  ];
 
   // Reporting states
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,13 +75,15 @@ export default function ApplicationDetailPanel({
     setReporting(true);
     try {
       const res = await axios.post(
-         "http://localhost/InternBackend/company/api/report_application.php",
+        "http://localhost/InternBackend/company/api/report_application.php",
         {
           application_id: selected.id,
           reason:
             reportReason === "other"
               ? reportDetails || "Other"
-              : `${reportReason}${reportDetails ? ` — ${reportDetails}` : ""}`,
+              : `${reportReason}${
+                  reportDetails ? ` — ${reportDetails}` : ""
+                }`,
         },
         { withCredentials: true }
       );
@@ -134,7 +142,6 @@ export default function ApplicationDetailPanel({
           </div>
           <div>
             <h2 className="text-2xl font-semibold">{selected.name}</h2>
-            
             <p className="text-sm font-semibold text-orange-600">
               Applied for : {selected.internship_title}
             </p>
@@ -317,7 +324,7 @@ function ReportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="relative w-[92%] max-w-lg bg-white rounded-xl shadow-lg p-6">
+      <div className="relative w-[92%] max-w-lg bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
         <button
           className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
           onClick={onClose}
@@ -386,7 +393,11 @@ function ReportModal({
             disabled={disabled || alreadyReported}
             title={alreadyReported ? "You already reported this student." : ""}
           >
-            {alreadyReported ? "Already Reported" : "Submit Report"}
+            {disabled && !alreadyReported
+              ? "Submitting..."
+              : alreadyReported
+              ? "Already Reported"
+              : "Submit Report"}
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import { toast } from "react-hot-toast";
@@ -9,6 +9,7 @@ const CompanyNavbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const notificationsRef = useRef(null); // Ref for notifications dropdown
 
   const [notifications, setNotifications] = useState(() => {
     const stored = localStorage.getItem("notifications");
@@ -48,17 +49,49 @@ const CompanyNavbar = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.notifications)) {
-          setNotifications(data.notifications.map((n, i) => ({
-            id: i + 1,
-            message: n.message,
-            time: n.time,
-            read: false,
-          })));
+          setNotifications(
+            data.notifications.map((n, i) => ({
+              id: i + 1,
+              message: n.message,
+              time: n.time,
+              read: false,
+            }))
+          );
         }
       });
   }, []);
 
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleLogout = () => {
+    // Call backend to destroy session
+    fetch("http://localhost/InternBackend/api/logout.php", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("notifications");
+    toast.success(" Logged out successfully!");
+    setTimeout(() => navigate("/"), 1000);
+  };
 
   const confirmLogout = () => {
     toast(
@@ -86,20 +119,6 @@ const CompanyNavbar = () => {
       ),
       { duration: 8000 }
     );
-  };
-
-  const handleLogout = () => {
-    // Call backend to destroy session
-    fetch("http://localhost/InternBackend/api/logout.php", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("notifications");
-    toast.success(" Logged out successfully!");
-    setTimeout(() => navigate("/"), 1000);
   };
 
   const navItems = [
@@ -136,7 +155,7 @@ const CompanyNavbar = () => {
           })}
 
           {/* Bell Icon */}
-          <li className="relative">
+          <li className="relative" ref={notificationsRef}>
             <button
               className="relative p-1 rounded hover:text-white/80"
               onClick={() => setShowNotifications((prev) => !prev)}

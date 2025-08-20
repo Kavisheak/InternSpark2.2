@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
@@ -35,10 +35,27 @@ const StudentNavbar = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const notificationsRef = useRef(null); // ref for notifications dropdown
 
   useEffect(() => {
     localStorage.setItem("studentNotifications", JSON.stringify(notifications));
   }, [notifications]);
+
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -112,7 +129,7 @@ const StudentNavbar = () => {
           ))}
 
           {/* Notification */}
-          <li className="relative">
+          <li className="relative" ref={notificationsRef}>
             <button
               className="relative p-1 rounded hover:text-white/80"
               onClick={() => setShowNotifications((prev) => !prev)}
@@ -165,7 +182,7 @@ const StudentNavbar = () => {
             </li>
           ))}
 
-          <li>
+          <li ref={notificationsRef}>
             <button
               onClick={() => setShowNotifications((prev) => !prev)}
               className="block py-2 hover:text-white/80"

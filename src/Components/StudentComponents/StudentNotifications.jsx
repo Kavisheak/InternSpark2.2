@@ -82,11 +82,7 @@ const StudentNotifications = ({ notifications, setNotifications, fetchNotificati
         )}
       </ul>
 
-      {notifications.length > 0 && (
-        <div className="px-4 py-2 text-xs text-center text-blue-600 cursor-pointer hover:underline">
-          View All
-        </div>
-      )}
+     
     </div>
   );
 };

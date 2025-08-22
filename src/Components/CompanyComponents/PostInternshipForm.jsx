@@ -3,16 +3,248 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-
-// Dummy CompanyNavbar component for completeness
-
-
 const PostInternshipForm = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
   const isViewOnlyMode = location.state?.viewOnly === true;
+
+  const internshipTitles = [
+    "AI Research Intern",
+    "AR/VR Development Intern",
+    "Backend Developer Intern",
+    "Big Data Intern",
+    "Blockchain Development Intern",
+    "Business Intelligence Intern",
+    "Cloud Computing Intern",
+    "Computer Graphics Intern",
+    "Computer Vision Intern",
+    "CRM Development Intern",
+    "Cybersecurity Intern",
+    "Data Analyst Intern",
+    "Data Engineering Intern",
+    "Data Science Intern",
+    "Database Administration Intern",
+    "Database Management Intern",
+    "DevOps Intern",
+    "Digital Forensics Intern",
+    "E-Commerce Development Intern",
+    "Embedded Systems Intern",
+    "Enterprise Software Intern",
+    "Full Stack Developer Intern",
+    "Game Development Intern",
+    "Hardware Engineering Intern",
+    "Human-Computer Interaction Intern",
+    "Information Security Intern",
+    "Information Systems Intern",
+    "IT Project Management Intern",
+    "IT Support Intern",
+    "Machine Learning Intern",
+    "Mobile App Developer Intern",
+    "Natural Language Processing Intern",
+    "Network Administration Intern",
+    "Network Security Intern",
+    "Product Management Intern",
+    "QA / Software Testing Intern",
+    "Quantum Computing Intern",
+    "Robotics Intern",
+    "SEO & Digital Marketing Intern",
+    "Site Reliability Engineering Intern",
+    "Software Development Intern",
+    "Software Engineering Intern",
+    "Solutions Architect Intern",
+    "Systems Administration Intern",
+    "Systems Analyst Intern",
+    "Technical Support Intern",
+    "Technical Writing Intern",
+    "UI/UX Design Intern",
+    "Virtualization Intern",
+    "Web Development Intern",
+  ];
+
+  const sriLankaCities = [
+    "Akmeemana",
+    "Akuressa",
+    "Alawwa",
+    "Aluthgama",
+    "Ambalantota",
+    "Ambalangoda",
+    "Ambatenna",
+    "Ampara",
+    "Anamaduwa",
+    "Angoda",
+    "Anuradhapura",
+    "Avissawella",
+    "Baddegama",
+    "Badulla",
+    "Balangoda",
+    "Bandaragama",
+    "Bandarawela",
+    "Battaramulla",
+    "Batticaloa",
+    "Beruwala",
+    "Bibile",
+    "Chavakachcheri",
+    "Chilaw",
+    "Colombo",
+    "Dambulla",
+    "Dehiattakandiya",
+    "Dehiwala-Mount Lavinia",
+    "Delgoda",
+    "Deniyaya",
+    "Deraniyagala",
+    "Devinuwara",
+    "Divulapitiya",
+    "Dodanduwa",
+    "Dompe",
+    "Eheliyagoda",
+    "Ekala",
+    "Embilipitiya",
+    "Eravur",
+    "Eravur Town",
+    "Galagedara",
+    "Galaha",
+    "Galewela",
+    "Galle",
+    "Gampaha",
+    "Gampola",
+    "Girandurukotte",
+    "Giriulla",
+    "Gonagaldeniya",
+    "Habarana",
+    "Hambantota",
+    "Hanwella",
+    "Haputale",
+    "Harispattuwa",
+    "Hatton-Dickoya",
+    "Hettipola",
+    "Hikkaduwa",
+    "Horana",
+    "Homagama",
+    "Horowpothana",
+    "Ibbagamuwa",
+    "Ja-Ela",
+    "Jaffna",
+    "Kadawatha",
+    "Kadugannawa",
+    "Kalawana",
+    "Kalmunai",
+    "Kalpitiya",
+    "Kalutara",
+    "Kaluwanchikudy",
+    "Kamburupitiya",
+    "Kandana",
+    "Kandy",
+    "Karapitiya",
+    "Karativu",
+    "Katana",
+    "Katugastota",
+    "Katunayake",
+    "Kayts",
+    "Kegalle",
+    "Kelaniya",
+    "Keppetipola",
+    "Kilinochchi",
+    "Kiribathgoda",
+    "Kirindiwela",
+    "Kirulapone",
+    "Kitulgala",
+    "Kochchikade",
+    "Kollupitiya",
+    "Kolonnawa",
+    "Kosgoda",
+    "Kottawa",
+    "Kotagala",
+    "Kotahena",
+    "Kotmale",
+    "Kurunegala",
+    "Kuliyapitiya",
+    "Kuruwita",
+    "Lunugala",
+    "Mabola",
+    "Maharagama",
+    "Mahiyanganaya",
+    "Makola",
+    "Malabe",
+    "Mannar",
+    "Marawila",
+    "Matale",
+    "Matara",
+    "Matugama",
+    "Medawachchiya",
+    "Meetiyagoda",
+    "Meegoda",
+    "Minuwangoda",
+    "Mirigama",
+    "Monaragala",
+    "Moratuwa",
+    "Mullaithivu",
+    "Nagoda",
+    "Nallur",
+    "Narammala",
+    "Nattandiya",
+    "Nawalapitiya",
+    "Nawinna",
+    "Nedimala",
+    "Negombo",
+    "Nintavur",
+    "Nugegoda",
+    "Nuwara Eliya",
+    "Padukka",
+    "Panadura",
+    "Pannala",
+    "Paranakanda",
+    "Peliyagoda",
+    "Peradeniya",
+    "Point Pedro",
+    "Polgahawela",
+    "Polonnaruwa",
+    "Poruthota",
+    "Pothuhera",
+    "Puttalam",
+    "Ragama",
+    "Rakwana",
+    "Rambukkana",
+    "Ratnapura",
+    "Rideegama",
+    "Seeduwa",
+    "Seethawakapura",
+    "Seruwila",
+    "Sigiriya",
+    "Siyanepura",
+    "Sitawaka",
+    "Talawakele-Lindula",
+    "Tangalle",
+    "Teldeniya",
+    "Thalawathugoda",
+    "Thissamaharama",
+    "Trincomalee",
+    "Tudella",
+    "Udawalawe",
+    "Ukuwela",
+    "Unawatuna",
+    "Uragasmanhandiya",
+    "Valachchenai",
+    "Valvettithurai",
+    "Vavuniya",
+    "Veyangoda",
+    "Wadduwa",
+    "Waga",
+    "Walapane",
+    "Warakapola",
+    "Warakapitiya",
+    "Wariyapola",
+    "Wattala",
+    "Weligama",
+    "Weligampola",
+    "Wellampitiya",
+    "Wellawaya",
+    "Wennappuwa",
+    "Wirawila",
+    "Yakkala",
+    "Yatiyantota",
+  ].sort();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,30 +260,31 @@ const PostInternshipForm = () => {
 
   const [isEditable, setIsEditable] = useState(!isViewOnlyMode && !id);
   const [loading, setLoading] = useState(false);
-
-  // For field validation error messages
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (id) {
       setLoading(true);
       axios
-        .get(`http://localhost/InternBackend/company/api/get_internship_details.php?id=${id}`, {
-          withCredentials: true,
-        })
+        .get(
+          `http://localhost/InternBackend/company/api/get_internship_details.php?id=${id}`,
+          { withCredentials: true }
+        )
         .then((res) => {
           if (res.data.success) {
             const internship = res.data.internship;
-
             const capitalize = (str) =>
-              str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "On-site";
+              str
+                ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+                : "On-site";
 
             setFormData({
               title: internship.title || "",
               location: internship.location || "",
               internshipType: capitalize(internship.internship_type),
-              salary: internship.salary || "",
-              duration: internship.duration || "",
+              // strip Rs and months if exist
+              salary: internship.salary?.replace(/Rs\s*/i, "") || "",
+              duration: internship.duration?.replace(/\s*months?/i, "") || "",
               description: internship.description || "",
               requirements: internship.requirements || "",
               deadline: internship.deadline || "",
@@ -60,7 +293,9 @@ const PostInternshipForm = () => {
 
             setIsEditable(!isViewOnlyMode);
           } else {
-            toast.error("Failed to load internship details: " + res.data.message);
+            toast.error(
+              "Failed to load internship details: " + res.data.message
+            );
             navigate("/company/internships");
           }
         })
@@ -77,8 +312,19 @@ const PostInternshipForm = () => {
 
   const handleChange = (e) => {
     if (!isEditable) return;
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // Clear error on change
+    let { name, value } = e.target;
+
+    // Allow only numbers in salary and duration
+    if (
+      name === "salary" ||
+      name === "duration" ||
+      name === "applicationLimit"
+    ) {
+      value = value.replace(/\D/g, ""); // remove non-digits
+    }
+
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleTypeChange = (type) => {
@@ -87,20 +333,21 @@ const PostInternshipForm = () => {
     setErrors({ ...errors, internshipType: "" });
   };
 
-  // Validate required fields on submit
   const validate = () => {
     const newErrors = {};
-
-    if (!formData.title.trim()) newErrors.title = "Please fill out this field";
-    if (!formData.duration.trim()) newErrors.duration = "Please fill out this field";
-    if (!formData.description.trim()) newErrors.description = "Please fill out this field";
-    if (!formData.requirements.trim()) newErrors.requirements = "Please fill out this field";
-    if (!formData.deadline.trim()) newErrors.deadline = "Please fill out this field";
-    if (!formData.applicationLimit.toString().trim()) newErrors.applicationLimit = "Please fill out this field";
+    if (!formData.title.trim()) newErrors.title = "Please select a title";
+    if (!formData.duration.trim())
+      newErrors.duration = "Please fill out this field";
+    if (!formData.description.trim())
+      newErrors.description = "Please fill out this field";
+    if (!formData.requirements.trim())
+      newErrors.requirements = "Please fill out this field";
+    if (!formData.deadline.trim())
+      newErrors.deadline = "Please select a deadline";
+    if (!formData.applicationLimit.toString().trim())
+      newErrors.applicationLimit = "Please fill out this field";
 
     setErrors(newErrors);
-
-    // Return true if no errors
     return Object.keys(newErrors).length === 0;
   };
 
@@ -117,6 +364,8 @@ const PostInternshipForm = () => {
       const payload = {
         ...formData,
         id: id || null,
+        salary: formData.salary ? `Rs ${formData.salary}` : "",
+        duration: formData.duration ? `${formData.duration} months` : "",
       };
 
       const res = await axios.post(
@@ -126,7 +375,9 @@ const PostInternshipForm = () => {
       );
 
       if (res.data.success) {
-        toast.success(id ? "Changes Updated" : "Internship posted successfully!");
+        toast.success(
+          id ? "Changes Updated" : "Internship posted successfully!"
+        );
         if (!id) {
           setFormData({
             title: "",
@@ -158,28 +409,44 @@ const PostInternshipForm = () => {
     );
   }
 
+  const minDate = new Date().toISOString().split("T")[0];
+
   return (
     <div className="min-h-screen bg-gray-100">
-      
       <div className="max-w-3xl px-6 py-10 mx-auto my-10 bg-white border border-gray-300 rounded-lg shadow-lg">
         <h1 className="mb-6 text-3xl font-bold text-center text-oxfordblue">
-          {id ? (isEditable ? "Edit Internship" : "Internship Details") : "Post a New Internship"}
+          {id
+            ? isEditable
+              ? "Edit Internship"
+              : "Internship Details"
+            : "Post a New Internship"}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
           {/* Internship Title */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Internship Title</label>
-            <input
-              type="text"
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Internship Title
+            </label>
+            <select
               name="title"
               value={formData.title}
               onChange={handleChange}
               disabled={!isEditable}
-              placeholder="e.g., Frontend Developer Intern"
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.title ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
-            />
+                ${
+                  errors.title
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
+            >
+              <option value="">--- Select Title ---</option>
+              {internshipTitles.map((title) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
+              ))}
+            </select>
             {errors.title && (
               <p className="mt-1 text-sm text-red-600">{errors.title}</p>
             )}
@@ -188,20 +455,28 @@ const PostInternshipForm = () => {
           {/* Location & Type */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Location</label>
-              <input
-                type="text"
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Location
+              </label>
+              <select
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., San Francisco, CA"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
-              />
+              >
+                <option value="">--- Select City ---</option>
+                {sriLankaCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
             </div>
-
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Internship Type</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Internship Type
+              </label>
               <div className="flex space-x-2">
                 {["On-site", "Remote", "Hybrid"].map((type) => (
                   <button
@@ -225,28 +500,36 @@ const PostInternshipForm = () => {
           {/* Salary & Duration */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Salary</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Salary (Rs)
+              </label>
               <input
                 type="text"
                 name="salary"
                 value={formData.salary}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., $20/hour"
+                placeholder="e.g., 90000"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               />
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Duration</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Duration (months)
+              </label>
               <input
                 type="text"
                 name="duration"
                 value={formData.duration}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., 3 months"
+                placeholder="e.g., 3"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.duration ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.duration
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.duration && (
                 <p className="mt-1 text-sm text-red-600">{errors.duration}</p>
@@ -256,7 +539,9 @@ const PostInternshipForm = () => {
 
           {/* Description */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Description</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
@@ -265,7 +550,11 @@ const PostInternshipForm = () => {
               rows="4"
               placeholder="Describe the internship..."
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.description ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                ${
+                  errors.description
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
             />
             {errors.description && (
               <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -274,7 +563,9 @@ const PostInternshipForm = () => {
 
           {/* Requirements */}
           <div>
-            <label className="block mb-1 font-semibold text-oxfordblue">Requirements</label>
+            <label className="block mb-1 font-semibold text-oxfordblue">
+              Requirements
+            </label>
             <textarea
               name="requirements"
               value={formData.requirements}
@@ -283,7 +574,11 @@ const PostInternshipForm = () => {
               rows="4"
               placeholder="Skills and qualifications..."
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${errors.requirements ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                ${
+                  errors.requirements
+                    ? "border-red-600 focus:ring-red-400"
+                    : "border-gray-400 focus:ring-[#2128BD]"
+                }`}
             />
             {errors.requirements && (
               <p className="mt-1 text-sm text-red-600">{errors.requirements}</p>
@@ -293,34 +588,49 @@ const PostInternshipForm = () => {
           {/* Deadline & Limit */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Application Deadline</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Deadline
+              </label>
               <input
                 type="date"
                 name="deadline"
                 value={formData.deadline}
+                min={minDate}
                 onChange={handleChange}
                 disabled={!isEditable}
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.deadline ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.deadline
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.deadline && (
                 <p className="mt-1 text-sm text-red-600">{errors.deadline}</p>
               )}
             </div>
             <div>
-              <label className="block mb-1 font-semibold text-oxfordblue">Application Limit</label>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Application Limit
+              </label>
               <input
-                type="number"
+                type="text"
                 name="applicationLimit"
                 value={formData.applicationLimit}
                 onChange={handleChange}
                 disabled={!isEditable}
                 placeholder="e.g., 100"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                  ${errors.applicationLimit ? "border-red-600 focus:ring-red-400" : "border-gray-400 focus:ring-[#2128BD]"}`}
+                  ${
+                    errors.applicationLimit
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
               />
               {errors.applicationLimit && (
-                <p className="mt-1 text-sm text-red-600">{errors.applicationLimit}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.applicationLimit}
+                </p>
               )}
             </div>
           </div>

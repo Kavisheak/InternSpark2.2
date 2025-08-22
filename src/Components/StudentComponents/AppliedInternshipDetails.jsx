@@ -1,60 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-
-const applications = [
-  {
-    title: "Frontend Developer Intern",
-    company: "TechCorp Inc.",
-    location: "San Francisco, CA",
-    appliedDate: "5/20/2024",
-    deadline: "6/15/2024",
-    status: "Shortlisted",
-    jobType: "On-site",
-    stipend: "$1000/month",
-    duration: "6 months",
-    description: "Work with React and REST APIs to build intuitive user interfaces. Collaborate with a cross-functional team to develop scalable web applications.",
-    skills: ["React", "JavaScript", "REST APIs", "Git"],
-  },
-  {
-    title: "UI/UX Design Intern",
-    company: "DesignStudio",
-    location: "Remote",
-    appliedDate: "5/18/2024",
-    deadline: "6/10/2024",
-    status: "Interviewing",
-    interviewDate: "7/30/2024",
-    jobType: "Remote",
-    stipend: "Unpaid",
-    duration: "3 months",
-    description: "Assist in designing user flows, wireframes, and visual mockups. Conduct user research and usability testing.",
-    skills: ["Figma", "Adobe XD", "User Research", "Wireframing"],
-  },
-  {
-    title: "Data Science Intern",
-    company: "DataFlow Systems",
-    location: "New York, NY",
-    appliedDate: "5/15/2024",
-    deadline: "6/20/2024",
-    status: "Accepted",
-    jobType: "Hybrid",
-    stipend: "$1500/month",
-    duration: "4 months",
-    description: "Build data pipelines and predictive models using Python. Work with large datasets to drive insights for the product team.",
-    skills: ["Python", "Pandas", "Machine Learning", "SQL"],
-  },
-  {
-    title: "Marketing Intern",
-    company: "Growth Co.",
-    location: "Austin, TX",
-    appliedDate: "5/10/2024",
-    deadline: "6/5/2024",
-    status: "Rejected",
-    jobType: "On-site",
-    stipend: "Unpaid",
-    duration: "2 months",
-    description: "Assist in creating social media content, analyzing campaign metrics, and conducting market research.",
-    skills: ["SEO", "Canva", "Analytics", "Communication"],
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { X } from "lucide-react";
 
 const statusColors = {
   Shortlisted: "bg-yellow-100 text-yellow-800",
@@ -66,22 +14,65 @@ const statusColors = {
 export default function AppliedInternshipDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const application = applications[id];
+  const [application, setApplication] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [cancelModal, setCancelModal] = useState(false);
+  const [canceling, setCanceling] = useState(false);
 
-  if (!application) {
-    return (
-      <div className="p-8 font-semibold text-center text-red-600">
-        Internship not found.
-      </div>
-    );
-  }
+  useEffect(() => {
+    let active = true;
+
+    axios
+      .get("http://localhost/InternBackend/students/api/get_applications.php", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (!active) return;
+        if (res.data.success && Array.isArray(res.data.applications)) {
+          const app = res.data.applications.find(
+            (a) => String(a.Application_Id) === String(id)
+          );
+          setApplication(app || null);
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to load application.");
+      })
+      .finally(() => active && setLoading(false));
+
+    return () => { active = false; };
+  }, [id]);
+
+  const handleCancelApplication = async () => {
+    if (!application) return;
+    setCanceling(true);
+    try {
+      const res = await axios.post(
+        "http://localhost/InternBackend/students/api/delete_application.php",
+        { application_id: application.Application_Id },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success("Your application has been cancelled!");
+        navigate("/student/applications");
+      } else {
+        toast.error(res.data.message || "Failed to cancel application.");
+      }
+    } catch {
+      toast.error("Failed to cancel application.");
+    } finally {
+      setCanceling(false);
+      setCancelModal(false);
+    }
+  };
+
+  if (loading) return <div className="p-8 text-center text-gray-600">Loading...</div>;
+  if (!application) return <div className="p-8 text-center text-red-600">Internship not found.</div>;
 
   return (
-    <div className="max-w-4xl p-8 mx-auto mt-8 bg-white rounded-lg shadow-md space-y-6">
+    <div className="max-w-4xl p-8 mx-auto mt-8 space-y-6 bg-white rounded-lg shadow-md">
       <div>
-        <h1 className="mb-1 text-3xl font-bold text-[#002147]">
-          {application.title}
-        </h1>
+        <h1 className="mb-1 text-3xl font-bold text-[#002147]">{application.title}</h1>
         <p className="text-lg font-medium text-gray-700">{application.company}</p>
         <p className="text-sm text-gray-500">{application.location}</p>
       </div>
@@ -92,9 +83,6 @@ export default function AppliedInternshipDetails() {
         <p>💼 <strong>Job Type:</strong> {application.jobType}</p>
         <p>💰 <strong>Stipend:</strong> {application.stipend}</p>
         <p>📆 <strong>Duration:</strong> {application.duration}</p>
-        {application.status === "Interviewing" && (
-          <p>🗓️ <strong>Interview Date:</strong> {application.interviewDate}</p>
-        )}
         <p>
           🏷️ <strong>Status:</strong>{" "}
           <span
@@ -113,7 +101,7 @@ export default function AppliedInternshipDetails() {
       <div>
         <h3 className="text-lg font-semibold text-[#002147] mb-2">Required Skills</h3>
         <ul className="flex flex-wrap gap-2">
-          {application.skills.map((skill, index) => (
+          {application.skills?.map((skill, index) => (
             <li
               key={index}
               className="px-3 py-1 text-sm text-[#002147] bg-gray-100 rounded-full"
@@ -126,13 +114,7 @@ export default function AppliedInternshipDetails() {
 
       <div className="flex gap-4 pt-4">
         <button
-          onClick={() => {
-            const confirmCancel = window.confirm("Are you sure you want to cancel this application?");
-            if (confirmCancel) {
-              alert("Your application has been cancelled.");
-              navigate("/student/applications");
-            }
-          }}
+          onClick={() => setCancelModal(true)}
           className="px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
         >
           Cancel Application
@@ -143,6 +125,48 @@ export default function AppliedInternshipDetails() {
         >
           Back to Applications
         </button>
+      </div>
+
+      {/* Cancel Confirmation Modal */}
+      {cancelModal && (
+        <ConfirmModal
+          title="Cancel Application"
+          message={`Are you sure you want to cancel your application for "${application.title}"?`}
+          confirmText={canceling ? "Cancelling..." : "Yes, Cancel"}
+          confirmClass="bg-red-600 hover:bg-red-700"
+          onCancel={() => setCancelModal(false)}
+          onConfirm={handleCancelApplication}
+          disabled={canceling}
+        />
+      )}
+    </div>
+  );
+}
+
+function ConfirmModal({ title, message, confirmText, confirmClass, onCancel, onConfirm, disabled }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="relative p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center">
+        <button className="absolute text-gray-400 top-4 right-4 hover:text-gray-600" onClick={onCancel}>
+          <X className="w-5 h-5" />
+        </button>
+        <h2 className="text-xl font-semibold text-[#002147] mb-4">{title}</h2>
+        <p className="mb-6 text-sm text-gray-600">{message}</p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={disabled}
+            className={`px-4 py-2 text-sm font-medium text-white rounded ${confirmClass} disabled:opacity-60`}
+          >
+            {confirmText}
+          </button>
+        </div>
       </div>
     </div>
   );

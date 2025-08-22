@@ -1,16 +1,38 @@
 // components/Notification/StudentNotifications.jsx
 import React from "react";
+import axios from "axios";
 
-const StudentNotifications = ({ notifications, setNotifications }) => {
+const StudentNotifications = ({ notifications, setNotifications, fetchNotifications }) => {
   const markAllAsRead = () => {
-    const updated = notifications.map((n) => ({ ...n, read: true }));
-    setNotifications(updated);
-    localStorage.setItem("student_notifications", JSON.stringify(updated));
+    axios
+      .post(
+        "http://localhost/InternBackend/students/api/mark_notifications_read.php",
+        {},
+        { withCredentials: true }
+      )
+      .then(() => {
+        if (fetchNotifications) fetchNotifications();
+      })
+      .catch((err) => {
+        alert("Failed to mark all as read.");
+        console.error(err);
+      });
   };
 
   const clearAll = () => {
-    setNotifications([]);
-    localStorage.setItem("student_notifications", JSON.stringify([]));
+    axios
+      .post(
+        "http://localhost/InternBackend/students/api/clear_notifications.php",
+        {},
+        { withCredentials: true }
+      )
+      .then(() => {
+        if (fetchNotifications) fetchNotifications();
+      })
+      .catch((err) => {
+        alert("Failed to clear notifications.");
+        console.error(err);
+      });
   };
 
   return (
@@ -38,13 +60,23 @@ const StudentNotifications = ({ notifications, setNotifications }) => {
         ) : (
           notifications.map((n) => (
             <li
-              key={n.id}
+              key={n.SNID || n.id}
               className={`px-4 py-3 text-sm ${
-                !n.read ? "bg-blue-50" : ""
+                !n.seen ? "bg-blue-50" : ""
               } hover:bg-gray-50 transition`}
             >
-              <div className="text-gray-800">{n.message}</div>
-              <div className="mt-1 text-xs text-gray-500">{n.time}</div>
+              <div
+                className={`text-gray-800 ${
+                  n.type === "report_warning" ? "text-red-600 font-bold" : ""
+                }`}
+              >
+                {n.message}
+              </div>
+              <div className="mt-1 text-xs text-gray-500">
+                {n.created_at
+                  ? new Date(n.created_at).toLocaleString()
+                  : n.time || ""}
+              </div>
             </li>
           ))
         )}

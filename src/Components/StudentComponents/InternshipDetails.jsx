@@ -221,5 +221,4 @@ function Section({ title, children }) {
       <h3 className="mb-3 text-xl font-semibold text-[#002147]">{title}</h3>
       <div>{children}</div>
     </div>
-  );
-
+  );}

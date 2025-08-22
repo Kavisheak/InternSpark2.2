@@ -85,46 +85,55 @@ const AvailableInternship = () => {
         }
       })
       .catch((err) => {
-        console.error('Failed to fetch internships', err);
         setError('Failed to fetch internships. Please try again later.');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
 
-    const saved = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
-    setBookmarkedInternships(saved);
+    // Fetch bookmarks from backend
+    axios
+      .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
+      .then((res) => {
+        if (res.data.success) setBookmarkedInternships(res.data.internships);
+      });
 
     return () => { cancelled = true; };
   }, []);
 
-  const handleBookmarkToggle = (internship) => {
-    const exists = bookmarkedInternships.some((i) => i.id === internship.id);
-    const updated = exists
-      ? bookmarkedInternships.filter((i) => i.id !== internship.id)
-      : [...bookmarkedInternships, internship];
-
-    setBookmarkedInternships(updated);
-    localStorage.setItem('bookmarkedInternships', JSON.stringify(updated));
+  const handleBookmarkToggle = async (internship) => {
+    try {
+      const res = await axios.post(
+        'http://localhost/InternBackend/students/api/toggle_bookmark.php',
+        { internship_id: internship.Internship_Id || internship.id },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        // Refetch bookmarks after toggle
+        const bookmarksRes = await axios.get(
+          'http://localhost/InternBackend/students/api/get_bookmarked_internships.php',
+          { withCredentials: true }
+        );
+        if (bookmarksRes.data.success) setBookmarkedInternships(bookmarksRes.data.internships);
+      }
+    } catch (err) {
+      // Handle error
+    }
   };
 
   const filteredInternships = useMemo(() => {
     const today = new Date();
     return internships.filter((internship) => {
       if (internship.deadline && new Date(internship.deadline) < today) return false;
-
       if (
         typeof internship.application_limit === 'number' &&
         typeof internship.application_count === 'number' &&
         internship.application_count >= internship.application_limit
       ) return false;
-
       const matchesFilter =
-        activeFilter === 'All' || normalize(internship.workType) === normalize(activeFilter);
-
+        activeFilter === 'All' || normalize(internship.internship_type || internship.workType) === normalize(activeFilter);
       const matchesTitle =
         selectedTitle === '' || internship.title === selectedTitle;
-
       return matchesFilter && matchesTitle;
     });
   }, [internships, activeFilter, selectedTitle]);
@@ -194,9 +203,15 @@ const AvailableInternship = () => {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {internshipsToShow.map((internship) => (
                 <InternshipCard
-                  key={internship.id}
-                  internship={internship}
-                  isBookmarked={bookmarkedInternships.some((item) => item.id === internship.id)}
+                  key={internship.Internship_Id || internship.id}
+                  internship={{
+                    ...internship,
+                    id: internship.Internship_Id || internship.id,
+                    company: internship.company_name || internship.company,
+                    workType: internship.internship_type || internship.workType,
+                    pay: internship.salary || internship.pay,
+                  }}
+                  isBookmarked={bookmarkedInternships.some((item) => (item.Internship_Id || item.id) === (internship.Internship_Id || internship.id))}
                   onBookmarkToggle={handleBookmarkToggle}
                 />
               ))}

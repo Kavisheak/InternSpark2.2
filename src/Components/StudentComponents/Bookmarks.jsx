@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, Bookmark, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
 
 const Bookmarks = () => {
   const [bookmarkedInternships, setBookmarkedInternships] = useState([]);
@@ -10,8 +11,15 @@ const Bookmarks = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedBookmarks = JSON.parse(localStorage.getItem('bookmarkedInternships') || '[]');
-    setBookmarkedInternships(savedBookmarks);
+    axios
+      .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
+      .then((res) => {
+        console.log("Bookmarks Response:", res.data);
+        if (res.data.success) setBookmarkedInternships(res.data.internships);
+      })
+      .catch((err) => {
+        console.error("Error fetching bookmarks:", err);
+      });
   }, []);
 
   const confirmRemove = (internship) => {
@@ -19,29 +27,40 @@ const Bookmarks = () => {
     setShowModal(true);
   };
 
-  const handleRemoveBookmark = () => {
-    const updatedBookmarks = bookmarkedInternships.filter(
-      (item) => item.id !== selectedInternship.id
-    );
-    setBookmarkedInternships(updatedBookmarks);
-    localStorage.setItem('bookmarkedInternships', JSON.stringify(updatedBookmarks));
+  const handleRemoveBookmark = async () => {
+    try {
+      await axios.post(
+        'http://localhost/InternBackend/students/api/toggle_bookmark.php',
+        { internship_id: selectedInternship.Internship_Id || selectedInternship.id },
+        { withCredentials: true }
+      );
+      // Refetch bookmarks after removal
+      const res = await axios.get(
+        'http://localhost/InternBackend/students/api/get_bookmarked_internships.php',
+        { withCredentials: true }
+      );
+      if (res.data.success) setBookmarkedInternships(res.data.internships);
 
-    toast.success(`Removed "${selectedInternship.title}" from bookmarks`, {
-      style: {
-        background: '#002147',
-        color: 'white',
-      },
-      iconTheme: {
-        primary: '#FCA311',
-        secondary: 'white',
-      },
-    });
+      toast.success(`Removed "${selectedInternship.title}" from bookmarks`, {
+        style: {
+          background: '#002147',
+          color: 'white',
+        },
+        iconTheme: {
+          primary: '#FCA311',
+          secondary: 'white',
+        },
+      });
 
-    setShowModal(false);
-    setSelectedInternship(null);
+      setShowModal(false);
+      setSelectedInternship(null);
+    } catch (err) {
+      console.error("Error removing bookmark:", err);
+    }
   };
 
   const getWorkTypeStyle = (type) => {
+    if (!type) return 'bg-orange-100 text-orange-700';
     switch (type.toLowerCase()) {
       case 'hybrid':
         return 'bg-orange-100 text-orange-700';
@@ -53,6 +72,16 @@ const Bookmarks = () => {
         return 'bg-orange-100 text-orange-700';
     }
   };
+
+  // Normalize data safely
+  const normalizedBookmarks = bookmarkedInternships.map((internship) => ({
+    ...internship,
+    id: internship.Internship_Id || internship.id,
+    company: internship.company_name || internship.company || "Unknown Company",
+    workType: internship.internship_type || internship.workType || "Not specified",
+    pay: internship.salary || internship.pay || "Unpaid",
+    status: internship.status || "open",
+  }));
 
   if (bookmarkedInternships.length === 0) {
     return (
@@ -80,17 +109,17 @@ const Bookmarks = () => {
           </p>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {bookmarkedInternships.map((internship) => (
+            {normalizedBookmarks.map((internship) => (
               <div key={internship.id} className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#002147]">
                       <span className="text-lg font-bold text-white">
-                        {internship.company.charAt(0)}
+                        {internship.company ? internship.company.charAt(0) : "?"}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-[#002147]">{internship.title}</h3>
+                      <h3 className="text-lg font-semibold text-[#002147]">{internship.title || "Untitled"}</h3>
                       <p className="text-gray-600">{internship.company}</p>
                     </div>
                   </div>
@@ -106,11 +135,11 @@ const Bookmarks = () => {
                 <div className="mb-4 space-y-2">
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{internship.location}</span>
+                    <span className="text-sm">{internship.location || "Location not specified"}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Clock className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{internship.duration}</span>
+                    <span className="text-sm">{internship.duration || "Duration not specified"}</span>
                   </div>
                 </div>
 
@@ -125,7 +154,7 @@ const Bookmarks = () => {
                   <span className="font-medium text-green-600">{internship.pay}</span>
                 </div>
 
-                <p className="mb-4 text-sm text-gray-700 line-clamp-3">{internship.description}</p>
+                <p className="mb-4 text-sm text-gray-700 line-clamp-3">{internship.description || "No description available."}</p>
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-red-500">
@@ -147,7 +176,7 @@ const Bookmarks = () => {
       {/* Modal */}
       {showModal && selectedInternship && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center">
+          <div className="p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center relative">
             <button
               className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
               onClick={() => setShowModal(false)}
@@ -160,7 +189,7 @@ const Bookmarks = () => {
             <p className="mb-6 text-sm text-gray-600">
               Are you sure you want to remove{' '}
               <span className="font-semibold text-[#FCA311]">
-                "{selectedInternship.title}"
+                "{selectedInternship.title || "Untitled"}"
               </span>{' '}
               from your bookmarks?
             </p>

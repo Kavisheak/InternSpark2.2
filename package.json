@@ -21,10 +21,10 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.2",
     "react-toast": "^1.0.3",
-<<<<<<< HEAD
-=======
+
+
     "react-toastify": "^11.0.5",
->>>>>>> 965d8742002de2fbccd3b8b9f3353ffe5da3f288
+
     "swiper": "^11.2.10"
   },
   "devDependencies": {

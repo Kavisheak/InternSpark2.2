@@ -7,6 +7,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // 👈 NEW
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
     try {
       const response = await axios.post(
         "http://localhost/InternBackend/api/login.php",
-        { email, password },
+        { email, password, rememberMe }, // 👈 send rememberMe
         { withCredentials: true }
       );
 
@@ -27,10 +28,13 @@ const LoginPage = ({ onNavigateToRegister }) => {
 
       if (data.success) {
         const { role, user_id, username } = data;
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ username, role, user_id })
-        );
+
+        // Store in localStorage OR sessionStorage
+        if (rememberMe) {
+          localStorage.setItem("user", JSON.stringify({ username, role, user_id }));
+        } else {
+          sessionStorage.setItem("user", JSON.stringify({ username, role, user_id }));
+        }
 
         if (role === "student") navigate("/student");
         else if (role === "company") navigate("/company");
@@ -93,6 +97,20 @@ const LoginPage = ({ onNavigateToRegister }) => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+          </div>
+
+          {/* ✅ Remember Me */}
+          <div className="flex items-center">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="rememberMe" className="ml-2 text-sm text-blue-800">
+              Remember Me
+            </label>
           </div>
 
           {message && <p className="text-sm text-red-600">{message}</p>}

@@ -82,7 +82,7 @@ const StudentNotifications = ({ notifications, setNotifications, fetchNotificati
         )}
       </ul>
 
-     
+      
     </div>
   );
 };

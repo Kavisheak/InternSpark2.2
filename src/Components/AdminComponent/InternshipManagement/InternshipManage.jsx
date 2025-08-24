@@ -32,7 +32,21 @@ export default function InternshipManagement() {
     expired: internships.filter((i) => i.status === "expired").length,
   };
 
-  const handleRemove = (id) => alert(`Remove internship: ${id}`);
+  const handleRemove = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this internship?")) return;
+    const res = await fetch("http://localhost/InternBackend/company/api/delete_internship.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `id=${id}&user_id=YOUR_USER_ID`
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(data.message);
+      setInternships(internships.filter(item => item.id !== id));
+    } else {
+      alert(data.message);
+    }
+  };
   const handleExport = () => alert("Exporting listings...");
 
   const getWorkTypeBadgeColor = (workType) => {
@@ -49,21 +63,14 @@ export default function InternshipManagement() {
   };
 
   const viewDetails = async (id) => {
-    try {
-      const res = await fetch(
-        `http://localhost/InternBackend/admin/api/view_internship.php?id=${id}`
-      );
-      const data = await res.json();
-      if (data.success) {
-        console.log("Internship Details:", data.data);
-        // Set state to show details in a modal or details section
-        // setSelectedInternship(data.data);
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong");
+    const res = await fetch(
+      `http://localhost/InternBackend/admin/api/view_internship.php?id=${id}`
+    );
+    const data = await res.json();
+    if (data.success) {
+      setSelectedInternship(data.data);
+    } else {
+      alert(data.message);
     }
   };
 
@@ -180,8 +187,8 @@ export default function InternshipManagement() {
                   View Details
                 </button>
                 <button
-                  onClick={() => handleRemove(item.id)}
                   className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
+                  onClick={() => handleRemove(item.id)}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Remove Listing
@@ -190,6 +197,47 @@ export default function InternshipManagement() {
             </div>
           ))}
         </div>
+
+        {/* View-only modal for internship details */}
+        {selectedInternship && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+              <h2 className="text-xl font-bold mb-2">
+                {selectedInternship.title}
+              </h2>
+              <p>
+                <strong>Company:</strong> {selectedInternship.company_name}
+              </p>
+              <p>
+                <strong>Location:</strong> {selectedInternship.location}
+              </p>
+              <p>
+                <strong>Duration:</strong> {selectedInternship.duration}
+              </p>
+              <p>
+                <strong>Salary:</strong> {selectedInternship.salary}
+              </p>
+              <p>
+                <strong>Type:</strong> {selectedInternship.internship_type}
+              </p>
+              <p>
+                <strong>Deadline:</strong> {selectedInternship.deadline}
+              </p>
+              <p>
+                <strong>Requirements:</strong> {selectedInternship.requirements}
+              </p>
+              <p>
+                <strong>Description:</strong> {selectedInternship.description}
+              </p>
+              <button
+                className="mt-4 bg-orange-500 text-white px-3 py-1 rounded"
+                onClick={() => setSelectedInternship(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

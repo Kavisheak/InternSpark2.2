@@ -35,6 +35,9 @@ export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [users, setUsers] = useState([]);
+  const [reportPreview, setReportPreview] = useState([]);
+  const [showReportsModal, setShowReportsModal] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost/InternBackend/admin/api/users.php")
@@ -92,8 +95,16 @@ export default function UserManagement() {
     alert(`Suspending account for user ${id}`);
   };
 
-  const handleViewReports = (id) => {
-    alert(`Viewing reports for user ${id}`);
+  const handleViewReports = async (companyId) => {
+    const res = await fetch(`http://localhost/InternBackend/admin/api/company_reports.php?company_id=${companyId}`);
+    const data = await res.json();
+    if (data.success) {
+      setReportPreview(data.data);
+      setSelectedCompany(companyId);
+      setShowReportsModal(true);
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
@@ -229,6 +240,33 @@ export default function UserManagement() {
           </Card>
         ))}
       </div>
+
+      {showReportsModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+      <h2 className="text-xl font-bold mb-4">Company Reports</h2>
+      {reportPreview.length === 0 ? (
+        <p>No reports found for this company.</p>
+      ) : (
+        <ul className="space-y-4">
+          {reportPreview.map(report => (
+            <li key={report.id} className="border-b pb-2">
+              <p><strong>Reason:</strong> {report.reason}</p>
+              <p><strong>Reported At:</strong> {report.reported_at}</p>
+              <p><strong>Student:</strong> {report.student_name} ({report.student_email})</p>
+            </li>
+          ))}
+        </ul>
+      )}
+      <button
+        className="mt-4 bg-orange-500 text-white px-3 py-1 rounded"
+        onClick={() => setShowReportsModal(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }

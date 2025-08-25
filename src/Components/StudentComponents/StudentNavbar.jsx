@@ -1,12 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import StudentNotifications from "./StudentNotifications";
 
 const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
   const location = useLocation();
   const navigate = useNavigate();
+  const notificationsRef = useRef(null);
+
+  const fetchNotifications = () => {
+    axios
+      .get("http://localhost/InternBackend/students/api/get_company_notifications.php", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          const fixed = res.data.notifications.map((n) => ({
+            ...n,
+            seen: Number(n.seen),
+          }));
+          setNotifications(fixed);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch notifications:", err);
+        // Optionally show a toast or alert
+      });
+  };
+
+  useEffect(() => {
+    const fetchAndCheck = async () => {
+      try {
+        await axios.get(
+          "http://localhost/InternBackend/students/api/check_bookmark_deadlines.php",
+          { withCredentials: true }
+        );
+        await axios.get(
+          "http://localhost/InternBackend/students/api/check_student_reports.php",
+          { withCredentials: true }
+        );
+        fetchNotifications();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchAndCheck();
+
+    const interval = setInterval(fetchAndCheck, 60000); // auto-check every 1 min
+    return () => clearInterval(interval);
+  }, []);
+
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -21,7 +86,6 @@ const StudentNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    // Call backend to destroy session
     fetch("http://localhost/InternBackend/api/logout.php", {
       method: "POST",
       credentials: "include",
@@ -29,7 +93,7 @@ const StudentNavbar = () => {
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("notifications");
+    localStorage.removeItem("studentNotifications");
     toast.success(" Logged out successfully!");
     setTimeout(() => navigate("/"), 1000);
   };
@@ -37,7 +101,9 @@ const StudentNavbar = () => {
   const confirmLogout = () => {
     toast((t) => (
       <div className="p-3">
-        <p className="mb-2 font-semibold text-white">Are you sure you want to logout?</p>
+        <p className="mb-2 font-semibold text-white">
+          Are you sure you want to logout?
+        </p>
         <div className="flex justify-end space-x-2">
           <button
             onClick={() => toast.dismiss(t.id)}
@@ -61,7 +127,7 @@ const StudentNavbar = () => {
 
   return (
     <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-oxfordblue">
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-between px-4 py-5">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold">
           Internspark
@@ -85,14 +151,23 @@ const StudentNavbar = () => {
           ))}
 
           {/* Notification */}
-          <li>
-            <Link
-              to="/notifications"
-              className="p-1 rounded hover:text-white/80"
-              aria-label="Notifications"
+          <li className="relative" ref={notificationsRef}>
+            <button
+              className="relative p-1 rounded hover:text-white/80"
+              onClick={() => setShowNotifications((prev) => !prev)}
             >
               <FaBell size={18} />
-            </Link>
+              {notifications.some((n) => !n.seen) && (
+                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+              )}
+            </button>
+            {showNotifications && (
+              <StudentNotifications
+                notifications={notifications}
+                setNotifications={setNotifications}
+                fetchNotifications={fetchNotifications}
+              />
+            )}
           </li>
 
           {/* Logout */}
@@ -134,14 +209,20 @@ const StudentNavbar = () => {
             </li>
           ))}
 
-          <li>
-            <Link
-              to="/notifications"
-              onClick={() => setMenuOpen(false)}
+          <li ref={notificationsRef}>
+            <button
+              onClick={() => setShowNotifications((prev) => !prev)}
               className="block py-2 hover:text-white/80"
             >
               Notifications
-            </Link>
+            </button>
+            {showNotifications && (
+              <StudentNotifications
+                notifications={notifications}
+                setNotifications={setNotifications}
+                fetchNotifications={fetchNotifications}
+              />
+            )}
           </li>
 
           <li>

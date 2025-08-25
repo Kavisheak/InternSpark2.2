@@ -4,6 +4,7 @@ import axios from 'axios';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 
+
 const AuthPage = ({ initialIsLogin = true }) => {
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const navigate = useNavigate();

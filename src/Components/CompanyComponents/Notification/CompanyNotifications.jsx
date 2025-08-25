@@ -4,19 +4,27 @@ import axios from "axios";
 const API_BASE = "http://localhost/InternBackend/company/api";
 
 const CompanyNotifications = ({ notifications, fetchNotifications }) => {
+  // Mark all notifications as read
   const markAllAsRead = async () => {
     try {
       await axios.post(`${API_BASE}/markAsRead.php`, {}, { withCredentials: true });
-      fetchNotifications();
+      fetchNotifications(); // Refresh after marking read
     } catch (err) {
       console.error("Error marking as read:", err);
     }
   };
 
+  // Clear all notifications
   const clearAll = async () => {
     try {
-      await axios.post(`${API_BASE}/clearAll.php`, {}, { withCredentials: true });
-      fetchNotifications();
+      // Only clear if necessary
+      const unreadExists = notifications.some((n) => parseInt(n.seen) === 0);
+      if (!unreadExists) {
+        await axios.post(`${API_BASE}/clearAll.php`, {}, { withCredentials: true });
+        fetchNotifications();
+      } else {
+        alert("Please mark notifications as read before clearing.");
+      }
     } catch (err) {
       console.error("Error clearing:", err);
     }
@@ -38,16 +46,20 @@ const CompanyNotifications = ({ notifications, fetchNotifications }) => {
 
       <ul className="overflow-y-auto divide-y divide-gray-100 max-h-64">
         {notifications.length === 0 ? (
-          <li className="px-4 py-4 text-sm text-center text-gray-500">No notifications</li>
+          <li className="px-4 py-4 text-sm text-center text-gray-500">
+            No notifications
+          </li>
         ) : (
           notifications.map((n) => (
             <li
               key={n.Company_Notif_Id}
-              className={`px-4 py-3 text-sm ${n.seen === 0 ? "bg-blue-50" : ""} hover:bg-gray-50 transition`}
+              className={`px-4 py-3 text-sm ${parseInt(n.seen) === 0 ? "bg-blue-50" : ""} hover:bg-gray-50 transition`}
             >
               <div className="text-gray-800">{n.message}</div>
               <div className="mt-1 text-xs text-gray-500">
-                {new Date(n.created_at).toLocaleString()}
+                {n.created_at
+                  ? new Date(n.created_at).toLocaleString()
+                  : "Just now"}
               </div>
             </li>
           ))
@@ -59,8 +71,6 @@ const CompanyNotifications = ({ notifications, fetchNotifications }) => {
           View All
         </div>
       )}
-
-     
     </div>
   );
 };

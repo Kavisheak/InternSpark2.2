@@ -24,7 +24,11 @@ const RegisterPage = ({ onNavigateToLogin }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Validation functions
+  // New states for modals
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+
+  // Validation functions (same as your code) ...
   const validateUsername = (username) => {
     if (!username.trim()) return 'Username is required';
     if (username.length < 3) return 'Username must be at least 3 characters';
@@ -63,24 +67,16 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     });
   };
 
-  const isPasswordStrong = () => {
-    return Object.values(passwordCriteria).every(criteria => criteria);
-  };
+  const isPasswordStrong = () => Object.values(passwordCriteria).every(criteria => criteria);
 
   const validateField = (name, value) => {
     let error = '';
-    
     switch (name) {
-      case 'username':
-        error = validateUsername(value);
-        break;
-      case 'email':
-        error = validateEmail(value);
-        break;
+      case 'username': error = validateUsername(value); break;
+      case 'email': error = validateEmail(value); break;
       case 'password':
         error = validatePassword(value);
         updatePasswordCriteria(value);
-        // Re-validate confirm password if it exists
         if (formData.confirmPassword) {
           setErrors(prev => ({
             ...prev,
@@ -88,35 +84,18 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           }));
         }
         break;
-      case 'confirmPassword':
-        error = validateConfirmPassword(value, formData.password);
-        break;
-      case 'agreeToTerms':
-        error = !value ? 'You must agree to the Terms of Service and Privacy Policy' : '';
-        break;
-      default:
-        break;
+      case 'confirmPassword': error = validateConfirmPassword(value, formData.password); break;
+      case 'agreeToTerms': error = !value ? 'You must agree to the Terms of Service and Privacy Policy' : ''; break;
+      default: break;
     }
-
-    setErrors(prev => ({
-      ...prev,
-      [name]: error
-    }));
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const fieldValue = type === 'checkbox' ? checked : value;
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: fieldValue,
-    }));
-
-    // Clear any existing error messages
+    setFormData(prev => ({ ...prev, [name]: fieldValue }));
     setMessage('');
-
-    // Validate field on change
     validateField(name, fieldValue);
   };
 
@@ -127,36 +106,29 @@ const RegisterPage = ({ onNavigateToLogin }) => {
   };
 
   const validateAllFields = () => {
-    const newErrors = {};
-    
-    newErrors.username = validateUsername(formData.username);
-    newErrors.email = validateEmail(formData.email);
-    newErrors.password = validatePassword(formData.password);
-    newErrors.confirmPassword = validateConfirmPassword(formData.confirmPassword, formData.password);
-    newErrors.agreeToTerms = !formData.agreeToTerms ? 'You must agree to the Terms of Service and Privacy Policy' : '';
-
+    const newErrors = {
+      username: validateUsername(formData.username),
+      email: validateEmail(formData.email),
+      password: validatePassword(formData.password),
+      confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password),
+      agreeToTerms: !formData.agreeToTerms ? 'You must agree to the Terms of Service and Privacy Policy' : ''
+    };
     setErrors(newErrors);
-    
-    // Check if there are any errors
     return Object.values(newErrors).every(error => !error);
   };
 
-  const sanitizeInput = (input) => {
-    return input.trim().replace(/<[^>]*>?/gm, ''); // Remove HTML tags
-  };
+  const sanitizeInput = (input) => input.trim().replace(/<[^>]*>?/gm, '');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setIsSubmitting(true);
 
-    // Validate all fields
     if (!validateAllFields()) {
       setMessage('Please fix all validation errors before submitting.');
       setIsSubmitting(false);
       return;
     }
-
     if (!isPasswordStrong()) {
       setMessage('Please ensure your password meets all requirements.');
       setIsSubmitting(false);
@@ -164,28 +136,19 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     }
 
     try {
-      // Sanitize inputs before sending
       const sanitizedData = {
         username: sanitizeInput(formData.username),
         email: sanitizeInput(formData.email.toLowerCase()),
         role: formData.role,
-        password: formData.password, // Don't sanitize password
+        password: formData.password,
       };
-
       const response = await fetch('http://localhost/InternBackend/api/register.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sanitizedData),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-
       if (data.success) {
         alert('Account created successfully! Please sign in.');
         onNavigateToLogin();
@@ -194,31 +157,23 @@ const RegisterPage = ({ onNavigateToLogin }) => {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      if (error.message.includes('HTTP error')) {
-        setMessage('Server error. Please try again later.');
-      } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        setMessage('Network error. Please check your connection and try again.');
-      } else {
-        setMessage('An unexpected error occurred. Please try again.');
-      }
+      if (error.message.includes('HTTP error')) setMessage('Server error. Please try again later.');
+      else if (error.name === 'TypeError' && error.message.includes('fetch')) setMessage('Network error. Please check your connection.');
+      else setMessage('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const getInputClass = (fieldName) => {
-    const baseClass = "w-full px-4 py-3 bg-blue-50 border text-blue-900 placeholder-blue-400 rounded-lg focus:outline-none focus:ring-2 transition-colors";
-    const errorClass = errors[fieldName] ? "border-red-400 focus:ring-red-400" : "border-blue-300 focus:ring-blue-400";
-    return `${baseClass} ${errorClass}`;
+    const base = "w-full px-4 py-3 bg-blue-50 border text-blue-900 placeholder-blue-400 rounded-lg focus:outline-none focus:ring-2 transition-colors";
+    const err = errors[fieldName] ? "border-red-400 focus:ring-red-400" : "border-blue-300 focus:ring-blue-400";
+    return `${base} ${err}`;
   };
 
   const PasswordCriteriaItem = ({ met, text }) => (
     <div className={`flex items-center space-x-2 text-sm ${met ? 'text-green-600' : 'text-gray-500'}`}>
-      {met ? (
-        <Check className="w-4 h-4 text-green-600" />
-      ) : (
-        <X className="w-4 h-4 text-gray-400" />
-      )}
+      {met ? <Check className="w-4 h-4 text-green-600" /> : <X className="w-4 h-4 text-gray-400" />}
       <span>{text}</span>
     </div>
   );
@@ -226,6 +181,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-10 bg-gray-300">
       <div className="w-full max-w-md p-10 bg-white border border-blue-200 shadow-2xl rounded-2xl">
+        {/* Header */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-blue-700 rounded-full">
@@ -233,104 +189,53 @@ const RegisterPage = ({ onNavigateToLogin }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12H8m8 4H8m4 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4" />
               </svg>
             </div>
-            <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">
-              Internspark
-            </span>
+            <span className="ml-2 text-2xl font-semibold tracking-wide text-blue-800">Internspark</span>
           </div>
           <h2 className="mb-1 text-3xl font-bold text-blue-800">Create Account</h2>
           <p className="text-sm text-blue-500">Join thousands of aspiring interns</p>
         </div>
 
-        <div onSubmit={handleSubmit} className="space-y-5">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Username */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-blue-800">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter your username"
-              className={getInputClass('username')}
-              maxLength="30"
-              required
-            />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
-            )}
+            <label className="block mb-1 text-sm font-medium text-blue-800">Username</label>
+            <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur}
+              placeholder="Enter your username" className={getInputClass('username')} maxLength="30" required />
+            {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-blue-800">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Enter your email"
-              className={getInputClass('email')}
-              maxLength="100"
-              required
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-            )}
+            <label className="block mb-1 text-sm font-medium text-blue-800">Email Address</label>
+            <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur}
+              placeholder="Enter your email" className={getInputClass('email')} maxLength="100" required />
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
 
+          {/* Role */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-blue-800">
-              Role
-            </label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className={getInputClass('role')}
-              required
-            >
+            <label className="block mb-1 text-sm font-medium text-blue-800">Role</label>
+            <select name="role" value={formData.role} onChange={handleChange} className={getInputClass('role')} required>
               <option value="student">Student</option>
               <option value="company">Company</option>
             </select>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-blue-800">
-              Password
-            </label>
+            <label className="block mb-1 text-sm font-medium text-blue-800">Password</label>
             <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Enter your password"
-                className={`${getInputClass('password')} pr-12`}
-                maxLength="128"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-blue-600 hover:text-blue-800"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+              <input type={showPassword ? "text" : "password"} name="password" value={formData.password}
+                onChange={handleChange} onBlur={handleBlur} placeholder="Enter your password"
+                className={`${getInputClass('password')} pr-12`} maxLength="128" required />
+              <button type="button" onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-blue-600 hover:text-blue-800">
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-            )}
-            
-            {/* Password Criteria */}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+
             {formData.password && (
               <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
                 <div className="mb-2">
@@ -339,18 +244,12 @@ const RegisterPage = ({ onNavigateToLogin }) => {
                     <span>{formData.password.length} characters</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1">
-                    <div 
-                      className={`h-1 rounded-full transition-all duration-300 ${
-                        Object.values(passwordCriteria).filter(Boolean).length >= 4 
-                          ? 'bg-green-500' 
-                          : Object.values(passwordCriteria).filter(Boolean).length >= 2 
-                          ? 'bg-yellow-500' 
-                          : 'bg-red-500'
+                    <div className={`h-1 rounded-full transition-all duration-300 ${
+                        Object.values(passwordCriteria).filter(Boolean).length >= 4 ? 'bg-green-500'
+                        : Object.values(passwordCriteria).filter(Boolean).length >= 2 ? 'bg-yellow-500'
+                        : 'bg-red-500'
                       }`}
-                      style={{ 
-                        width: `${(Object.values(passwordCriteria).filter(Boolean).length / 5) * 100}%` 
-                      }}
-                    />
+                      style={{ width: `${(Object.values(passwordCriteria).filter(Boolean).length / 5) * 100}%` }} />
                   </div>
                 </div>
                 <div className="space-y-1">
@@ -364,98 +263,153 @@ const RegisterPage = ({ onNavigateToLogin }) => {
             )}
           </div>
 
+          {/* Confirm Password */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-blue-800">
-              Confirm Password
-            </label>
+            <label className="block mb-1 text-sm font-medium text-blue-800">Confirm Password</label>
             <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Confirm your password"
-                className={`${getInputClass('confirmPassword')} pr-12`}
-                maxLength="128"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-blue-600 hover:text-blue-800"
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+              <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword"
+                value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur}
+                placeholder="Confirm your password" className={`${getInputClass('confirmPassword')} pr-12`}
+                maxLength="128" required />
+              <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-blue-600 hover:text-blue-800">
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-            )}
+            {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
           </div>
 
+          {/* Terms Agreement */}
           <div>
             <div className="flex items-start text-sm text-blue-700">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`mt-1 mr-2 ${errors.agreeToTerms ? 'border-red-400' : ''}`}
-                required
-              />
+              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms}
+                onChange={handleChange} onBlur={handleBlur}
+                className={`mt-1 mr-2 ${errors.agreeToTerms ? 'border-red-400' : ''}`} required />
               <span>
                 I agree to the{' '}
-                <button type="button" className="text-blue-600 underline hover:text-blue-800">
-                  Terms of Service
-                </button>{' '}
+                <button type="button" onClick={() => setShowTerms(true)}
+                  className="text-blue-600 underline hover:text-blue-800">Terms of Service</button>{' '}
                 and{' '}
-                <button type="button" className="text-blue-600 underline hover:text-blue-800">
-                  Privacy Policy
-                </button>
+                <button type="button" onClick={() => setShowPrivacy(true)}
+                  className="text-blue-600 underline hover:text-blue-800">Privacy Policy</button>
               </span>
             </div>
-            {errors.agreeToTerms && (
-              <p className="mt-1 text-sm text-red-600">{errors.agreeToTerms}</p>
-            )}
+            {errors.agreeToTerms && <p className="mt-1 text-sm text-red-600">{errors.agreeToTerms}</p>}
           </div>
 
+          {/* Message */}
           {message && (
             <div className={`p-3 rounded-lg ${message.includes('successfully') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
               <p className="text-sm">{message}</p>
             </div>
           )}
 
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
+          {/* Submit */}
+          <button type="submit" disabled={isSubmitting}
             className={`w-full py-3 font-semibold text-white transition duration-300 rounded-lg ${
-              isSubmitting
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-500 focus:ring-2 focus:ring-blue-400'
-            }`}
-          >
+              isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 focus:ring-2 focus:ring-blue-400'
+            }`}>
             {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </button>
-        </div>
+        </form>
 
+        {/* Footer */}
         <div className="mt-6 text-center">
           <span className="text-blue-700">Already have an account? </span>
-          <button
-            onClick={onNavigateToLogin}
-            className="font-medium text-blue-600 underline hover:text-blue-800"
-          >
+          <button onClick={onNavigateToLogin} className="font-medium text-blue-600 underline hover:text-blue-800">
             Sign in
           </button>
         </div>
       </div>
+
+      {/* Terms Modal */}
+      {showTerms && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl relative overflow-y-auto max-h-[90vh]">
+            <h2 className="text-3xl font-bold text-blue-800 mb-4">Terms of Service</h2>
+            <p className="text-gray-700 mb-4">Welcome to Internspark. By using our platform, you agree to the following:</p>
+            <h3 className='text-2xl font-bold text-blue-600'>General Terms</h3>
+            <h3 className="font-semibold text-blue-700 mt-4">For Students</h3>
+            <p className='text-gray-700 mb-4'>
+            Job Seekers and recruiters are responsible for ensuring that advertising content, text, images, graphics, cv ("Content") 
+            uploaded for inclusion on InternSpark complies with all applicable laws. InternSpark assumes no responsibility for any illegality 
+            or any inaccuracy of the content.Job Seekers and recruiters guarantee that their content do not violate any copyright, intellectual 
+            property rights or other rights of any person or entity, and agrees to release InternSpark from all obligations, liabilities and claims 
+            arising in connection with the use of (or the inability to use) the service.
+            </p>
+            <h3 className="font-semibold text-blue-700 mt-4">For Companies</h3>
+            <p className='text-gray-700 mb-4'>
+            Organizations must register with valid details and undergo admin verification before posting internships. All postings must clearly specify 
+            the role, eligibility criteria, duration, location (or remote), and stipend (if applicable). Misleading, fake, or discriminatory postings are 
+            strictly prohibited. Organizations are required to provide a fair selection process and constructive feedback to students, ensure timely payment 
+            of agreed stipends (for paid internships), and maintain professionalism throughout the internship. Additionally, they must provide a safe, 
+            harassment-free environment and are strictly forbidden from misusing student data for purposes unrelated to internships.
+            </p>
+            <h3 className='text-2xl font-bold text-blue-600'>License</h3>
+            <p className='text-gray-700 mb-4'>
+            Unless otherwise stated, InternSpark and/or it's licensors own the intellectual property rights for all material on InternSpark. All intellectual 
+            property rights are reserved. You may view and/or print pages from InternSpark for your own personal use subject to restrictions set in these terms 
+            and conditions. You must not:
+            </p>
+            <ul className='list-disc ml-6 space-y-1 text-gray-700'>
+              <li>republish material from InternSpark</li>
+              <li>reproduce, duplicate or copy material from InterSpark</li>
+              <li>view, extract or copy material for competitive purposes</li>
+            </ul> 
+            <h3 className='text-2xl font-bold text-blue-600 mt-4'>Modifications</h3>
+            <p className='text-gray-700 mb-4'>
+            InternSpark reserves the right to modify these Terms and Conditions. Such modifications shall be effective immediately upon posting on InternSpark. 
+            You are responsible for the reviewing of such modifications. Your continued access or use of InternSpark shall be deemed your acceptance of the modified 
+            terms and conditions.
+            </p>
+            <h3 className='text-2xl font-bold text-blue-600 mt-4'>Contact Us</h3>
+            <p className='text-gray-700 mb-4'>If you have any question about this Agreement,Please contact us at support@internspark.com</p>
+            <button onClick={() => setShowTerms(false)} className="absolute top-3 right-3 text-gray-600 hover:text-black">✖</button>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Modal */}
+      {showPrivacy && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl relative overflow-y-auto max-h-[90vh]">
+            <h2 className="text-2xl font-bold text-blue-800 mb-4">Privacy Policy</h2>
+            <p className="text-gray-700 mb-4">We value your privacy. This explains how Internspark collects and protects your data.</p>
+            <h3 className="font-semibold text-blue-700 mt-4">Information We Collect</h3>
+            <ul className="list-disc ml-6 space-y-1">
+              <li>Personal details (name, email, university ID).</li>
+              <li>Login info (username, password).</li>
+              <li>Technical data (IP, cookies).</li>
+            </ul>
+            <h3 className="font-semibold text-blue-700 mt-4">How We Use Your Information</h3>
+            <ul className="list-disc ml-6 space-y-1">
+              <li>To provide and improve our services.</li>
+              <li>To communicate important updates and offers.</li>
+              <li>To ensure security and prevent fraudulent activities.</li>
+            </ul>
+            <h3 className="font-semibold text-blue-700 mt-4">Data Protection</h3>
+            <ul className="list-disc ml-6 space-y-1">
+              <li>We store data securely using encryption and access controls.</li>
+              <li>We do not sell or share personal information with third parties without consent.</li>
+              <li>Users can request deletion of their data anytime.</li>
+            </ul>
+            <h3 className="font-semibold text-blue-700 mt-4">Cookies</h3>
+            <p className="ml-6 mb-4">We use cookies to enhance user experience and track usage patterns.</p>
+            <h3 className="font-semibold text-blue-700 mt-4">Contact Us</h3>
+            <p className="ml-6 mb-4">If you have questions about this Privacy Policy, you can contact us at support@internspark.com.</p>
+
+            <button
+              onClick={() => setShowPrivacy(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-black"
+            >
+              ✖
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default RegisterPage;
+ 

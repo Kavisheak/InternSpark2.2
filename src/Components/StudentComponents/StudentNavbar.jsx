@@ -16,7 +16,7 @@ const StudentNavbar = () => {
 
   const fetchNotifications = () => {
     axios
-      .get("http://localhost/InternBackend/students/api/get_company_notifications.php", {
+      .get("http://localhost/InternBackend/students/api/get_notifications.php", {
         withCredentials: true,
       })
       .then((res) => {

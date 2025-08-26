@@ -84,14 +84,13 @@ const AvailableInternship = () => {
           setError('Failed to load internships.');
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setError('Failed to fetch internships. Please try again later.');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
 
-    // Fetch bookmarks from backend
     axios
       .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
       .then((res) => {
@@ -109,15 +108,14 @@ const AvailableInternship = () => {
         { withCredentials: true }
       );
       if (res.data.success) {
-        // Refetch bookmarks after toggle
         const bookmarksRes = await axios.get(
           'http://localhost/InternBackend/students/api/get_bookmarked_internships.php',
           { withCredentials: true }
         );
         if (bookmarksRes.data.success) setBookmarkedInternships(bookmarksRes.data.internships);
       }
-    } catch (err) {
-      // Handle error
+    } catch {
+      // ignore
     }
   };
 
@@ -146,11 +144,14 @@ const AvailableInternship = () => {
         <div className="flex flex-col items-start justify-between gap-4 mb-8 sm:flex-row sm:items-center">
           <h1 className="text-3xl font-bold text-oxfordblue">Available Internships</h1>
 
-          <div className="relative w-full sm:w-auto">
+          {/* Dropdown + Clear Button */}
+          <div className="relative w-full sm:w-80">
             <select
               value={selectedTitle}
               onChange={(e) => setSelectedTitle(e.target.value)}
-              className="w-full py-2 pl-3 pr-10 border border-gray-300 rounded-lg sm:w-80 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className={`w-full py-2 pl-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                selectedTitle ? "appearance-none" : ""  // hide dropdown arrow if X shown
+              }`}
             >
               <option value="">All Titles</option>
               {internshipTitles.map((title) => (
@@ -159,13 +160,15 @@ const AvailableInternship = () => {
                 </option>
               ))}
             </select>
+
+            {/* Show clear button only when a title is selected */}
             {selectedTitle && (
               <button
                 aria-label="Clear selection"
                 onClick={() => setSelectedTitle('')}
-                className="absolute -translate-y-1/2 right-3 top-1/2"
+                className="absolute flex items-center justify-center w-6 h-6 text-gray-600 transition -translate-y-1/2 rounded-full right-2 top-1/2 hover:bg-gray-200"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -211,7 +214,11 @@ const AvailableInternship = () => {
                     workType: internship.internship_type || internship.workType,
                     pay: internship.salary || internship.pay,
                   }}
-                  isBookmarked={bookmarkedInternships.some((item) => (item.Internship_Id || item.id) === (internship.Internship_Id || internship.id))}
+                  isBookmarked={bookmarkedInternships.some(
+                    (item) =>
+                      (item.Internship_Id || item.id) ===
+                      (internship.Internship_Id || internship.id)
+                  )}
                   onBookmarkToggle={handleBookmarkToggle}
                 />
               ))}

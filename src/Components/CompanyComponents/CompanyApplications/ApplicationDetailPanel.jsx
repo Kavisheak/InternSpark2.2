@@ -227,28 +227,32 @@ export default function ApplicationDetailPanel({
           <FiPhone className="text-gray-500" /> {selected.phone}
         </p>
         <p className="flex items-center gap-2 text-sm text-gray-700">
-          <FiGithub className="text-gray-500" />{" "}
-          <a
-            href={`https://github.com/${selected.name
-              .split(" ")[0]
-              .toLowerCase()}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            github.com/{selected.name.split(" ")[0].toLowerCase()}
-          </a>
+          <FiGithub className="text-gray-500" />
+          {selected.github && selected.github.trim() ? (
+            <a
+              href={selected.github.startsWith("http") ? selected.github : `https://github.com/${selected.github}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {selected.github}
+            </a>
+          ) : (
+            <span className="text-gray-400">Not provided</span>
+          )}
         </p>
         <p className="flex items-center gap-2 text-sm text-gray-700">
-          <FiLinkedin className="text-gray-500" />{" "}
-          <a
-            href={`https://linkedin.com/in/${selected.name
-              .replace(" ", "")
-              .toLowerCase()}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            linkedin.com/in/{selected.name.replace(" ", "").toLowerCase()}
-          </a>
+          <FiLinkedin className="text-gray-500" />
+          {selected.linkedin && selected.linkedin.trim() ? (
+            <a
+              href={selected.linkedin.startsWith("http") ? selected.linkedin : `https://linkedin.com/in/${selected.linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {selected.linkedin}
+            </a>
+          ) : (
+            <span className="text-gray-400">Not provided</span>
+          )}
         </p>
       </div>
 

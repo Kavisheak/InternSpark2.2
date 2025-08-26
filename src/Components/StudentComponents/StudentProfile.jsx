@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 
 export default function StudentProfile() {
-  const [formData, setFormData] = useState({
+  const [savedData, setSavedData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -17,7 +17,11 @@ export default function StudentProfile() {
     phone: "",
     github: "",
     linkedin: "",
+    profile_img: "",
+    cv_file: "",
   });
+
+  const [formData, setFormData] = useState({ ...savedData });
   const [skillsList, setSkillsList] = useState([]);
   const [newSkill, setNewSkill] = useState("");
   const [profileImage, setProfileImage] = useState(null);
@@ -26,14 +30,13 @@ export default function StudentProfile() {
   // Fetch existing student profile
   useEffect(() => {
     axios
-      .get(
-        "http://localhost/InternBackend/students/api/get_student_profile.php",
-        { withCredentials: true }
-      )
+      .get("http://localhost/InternBackend/students/api/get_student_profile.php", {
+        withCredentials: true,
+      })
       .then((res) => {
         if (res.data.success && res.data.student) {
           const st = res.data.student;
-          setFormData({
+          const profile = {
             firstName: st.fname || "",
             lastName: st.lname || "",
             email: st.email || "",
@@ -45,9 +48,12 @@ export default function StudentProfile() {
             linkedin: st.linkedin || "",
             profile_img: st.profile_img || "",
             cv_file: st.cv_file || "",
-          });
+          };
+          setSavedData(profile);
+          setFormData(profile);
           setSkillsList(st.skills ?? []);
         } else if (res.data.success && !res.data.student) {
+          setSavedData((prev) => ({ ...prev, email: res.data.email }));
           setFormData((prev) => ({ ...prev, email: res.data.email }));
         } else {
           toast.error(res.data.message || "Failed to fetch profile");
@@ -75,15 +81,13 @@ export default function StudentProfile() {
     toast(`❌ Removed "${skill}"`, { icon: "🗑️" });
   };
 
-  // Sri Lankan phone number validation
   const isValidSriLankanPhone = (phone) => {
-    const localPattern = /^07\d{8}$/; // e.g., 0712345678
-    const intlPattern = /^\+947\d{8}$/; // e.g., +94712345678
+    const localPattern = /^07\d{8}$/;
+    const intlPattern = /^\+947\d{8}$/;
     return localPattern.test(phone) || intlPattern.test(phone);
   };
 
   const handleSave = async () => {
-    // Validate phone
     if (!isValidSriLankanPhone(formData.phone)) {
       toast.error("❌ Invalid phone number");
       return;
@@ -108,8 +112,12 @@ export default function StudentProfile() {
         data,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
-      if (res.data.success) toast.success("Profile saved successfully!");
-      else toast.error(res.data.message || "Save failed");
+      if (res.data.success) {
+        toast.success("Profile saved successfully!");
+        setSavedData({ ...formData });
+      } else {
+        toast.error(res.data.message || "Save failed");
+      }
     } catch {
       toast.error("Server error saving profile");
     }
@@ -121,15 +129,15 @@ export default function StudentProfile() {
         <h1 className="mb-8 text-3xl font-bold">My Profile</h1>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Sidebar */}
-          <div className="p-6 border border-[#D1D5DB] shadow-md bg-[#F8FAFC] rounded-2xl">
+          <div className="p-6 border border-[#D1D5DB] shadow-md bg-[#F8FAFC] rounded-2xl overflow-hidden">
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-24 h-24 mb-4">
-                {profileImage || formData.profile_img ? (
+                {profileImage || savedData.profile_img ? (
                   <img
                     src={
                       profileImage
                         ? URL.createObjectURL(profileImage)
-                        : `http://localhost/InternBackend/${formData.profile_img}`
+                        : `http://localhost/InternBackend/${savedData.profile_img}`
                     }
                     alt="Profile"
                     className="object-cover w-24 h-24 rounded-full"
@@ -152,20 +160,22 @@ export default function StudentProfile() {
                   className="hidden"
                 />
               </div>
-              <h2 className="text-xl font-semibold">
-                {formData.firstName} {formData.lastName}
+              <h2 className="max-w-full text-xl font-semibold text-center break-words">
+                {savedData.firstName} {savedData.lastName}
               </h2>
-              <p className="text-sm text-gray-600">{formData.email}</p>
+              <p className="max-w-full text-sm text-center text-gray-600 break-all">
+                {savedData.email}
+              </p>
             </div>
 
             <div className="mb-6 space-y-4">
-              <Info label="Email" value={formData.email} />
-              <Info label="Phone" value={formData.phone} />
-              <Info label="Gender" value={formData.gender} />
-              <Info label="Education" value={formData.education} />
-              <Info label="Experience" value={formData.experience} />
-              <Info label="GitHub" value={formData.github} />
-              <Info label="LinkedIn" value={formData.linkedin} />
+              <Info label="Email" value={savedData.email} />
+              <Info label="Phone" value={savedData.phone} />
+              <Info label="Gender" value={savedData.gender} />
+              <Info label="Education" value={savedData.education} />
+              <Info label="Experience" value={savedData.experience} />
+              <Info label="GitHub" value={savedData.github} />
+              <Info label="LinkedIn" value={savedData.linkedin} />
             </div>
 
             <div>
@@ -174,7 +184,7 @@ export default function StudentProfile() {
                 {skillsList.map((s, i) => (
                   <span
                     key={i}
-                    className="flex items-center gap-1 px-3 py-1 text-xs text-white rounded-full bg-oxfordblue"
+                    className="flex items-center max-w-full gap-1 px-3 py-1 text-xs text-white break-words rounded-full bg-oxfordblue"
                   >
                     {s}
                     <button
@@ -188,13 +198,13 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            {formData.cv_file && (
+            {savedData.cv_file && (
               <div className="mt-4">
                 <a
-                  href={`http://localhost/InternBackend/${formData.cv_file}`}
+                  href={`http://localhost/InternBackend/${savedData.cv_file}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-blue-600 underline"
+                  className="text-sm text-blue-600 underline break-all"
                 >
                   View/Download CV
                 </a>
@@ -211,9 +221,10 @@ export default function StudentProfile() {
               <InputField label="Last Name" id="lastName" value={formData.lastName} onChange={handleChange} />
               <InputField label="Email" id="email" value={formData.email} onChange={handleChange} disabled />
 
-              {/* Gender Dropdown */}
               <div>
-                <label htmlFor="gender" className="block mb-1 text-sm font-medium">Gender</label>
+                <label htmlFor="gender" className="block mb-1 text-sm font-medium">
+                  Gender
+                </label>
                 <div className="relative">
                   <select
                     id="gender"
@@ -226,10 +237,7 @@ export default function StudentProfile() {
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                  <FiChevronDown
-                    className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-2 top-1/2"
-                    size={20}
-                  />
+                  <FiChevronDown className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-2 top-1/2" size={20} />
                 </div>
               </div>
 
@@ -243,7 +251,6 @@ export default function StudentProfile() {
               <InputField label="Experience" id="experience" value={formData.experience} onChange={handleChange} />
             </div>
 
-            {/* Add skill */}
             <div className="mt-6">
               <label className="block mb-1 text-sm font-medium">Add Skill</label>
               <div className="flex gap-2">
@@ -264,7 +271,6 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            {/* Upload CV */}
             <div className="mt-6">
               <label htmlFor="cv" className="block mb-1 text-sm font-medium">Upload CV (PDF)</label>
               <input
@@ -293,9 +299,9 @@ export default function StudentProfile() {
 
 function Info({ label, value }) {
   return (
-    <div>
+    <div className="max-w-full">
       <p className="mb-1 text-sm font-medium">{label}</p>
-      <p className="text-sm text-gray-600">{value}</p>
+      <p className="max-w-full text-sm text-gray-600 break-words break-all">{value || "-"}</p>
     </div>
   );
 }

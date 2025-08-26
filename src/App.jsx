@@ -32,6 +32,7 @@ function App() {
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        
 
         {/* Main Dashboards */}
         <Route path="/company/*" element={<CompanyMain />} />

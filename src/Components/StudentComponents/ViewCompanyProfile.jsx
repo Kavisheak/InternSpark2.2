@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Building2, Globe, MapPin, Users, Info, X } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
@@ -21,6 +21,16 @@ const ViewCompanyProfile = () => {
       .then((res) => {
         if (res.data.success)
           setCompany({ ...res.data.profile, company_id: companyId });
+      });
+
+    // Check if already reported
+    axios
+      .get(
+        `http://localhost/InternBackend/students/api/get_company_report_status.php?company_id=${companyId}`,
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setAlreadyReported(res.data.alreadyReported);
       });
   }, [companyId]);
 
@@ -89,7 +99,12 @@ const ViewCompanyProfile = () => {
                 setShowReportModal(true);
               }
             }}
-            className="px-4 py-2 text-sm font-semibold text-red-600 bg-white rounded hover:bg-red-50"
+            className={`px-4 py-2 text-sm font-semibold rounded ${
+              alreadyReported
+                ? "text-gray-400 bg-gray-100 cursor-not-allowed"
+                : "text-red-600 bg-white hover:bg-red-50"
+            }`}
+            disabled={alreadyReported}
           >
             {alreadyReported ? "Reported" : "Report Company"}
           </button>
@@ -121,7 +136,7 @@ const ViewCompanyProfile = () => {
             <div className="flex items-center gap-3">
               <MapPin className="w-6 h-6 text-orange-500" />
               <div>
-                <p className="text-sm text-gray-500">Location</p>
+                <p className="text-sm text-gray-500">Address</p>
                 <p className="font-medium text-[#002147]">{company.location}</p>
               </div>
             </div>

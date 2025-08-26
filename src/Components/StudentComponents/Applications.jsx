@@ -39,7 +39,9 @@ export default function MyApplications() {
       activeFilter === "All" ? true : app.status === activeFilter
     )
     .filter((app) =>
-      app.title.toLowerCase().includes(searchTerm.toLowerCase())
+       app.title
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase())
     );
 
   const displayedApplications = showAll

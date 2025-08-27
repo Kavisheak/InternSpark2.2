@@ -13,6 +13,8 @@ const statusColors = {
 export default function MyApplications() {
   const [applications, setApplications] = useState([]);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,10 +34,19 @@ export default function MyApplications() {
     return acc;
   }, {});
 
-  const filteredApplications =
-    activeFilter === "All"
-      ? applications
-      : applications.filter((app) => app.status === activeFilter);
+  const filteredApplications = applications
+    .filter((app) =>
+      activeFilter === "All" ? true : app.status === activeFilter
+    )
+    .filter((app) =>
+       app.title
+        .toLowerCase()
+        .startsWith(searchTerm.toLowerCase())
+    );
+
+  const displayedApplications = showAll
+    ? filteredApplications
+    : filteredApplications.slice(0, 10);
 
   const filters = [
     { name: "All", count: applications.length },
@@ -45,12 +56,23 @@ export default function MyApplications() {
     { name: "Rejected", count: statusCounts.Rejected || 0 },
   ];
 
- 
-
   return (
     <div>
       <div className="max-w-5xl p-6 mx-auto fade-in-up">
         <h1 className="mb-6 text-3xl font-bold text-gray-800">My Applications</h1>
+
+        {/* Search Bar */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by internship title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#002147] focus:border-transparent"
+          />
+        </div>
+
+        {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-6 text-sm">
           {filters.map((filter) => (
             <button
@@ -66,13 +88,16 @@ export default function MyApplications() {
             </button>
           ))}
         </div>
+
+        {/* Applications List */}
         <div className="space-y-6">
-          {filteredApplications.length === 0 ? (
+          {displayedApplications.length === 0 ? (
             <div className="py-8 text-center text-gray-500">
-              No applications found for "{activeFilter}" status.
+              No applications found for "{activeFilter}" status
+              {searchTerm ? ` and search term "${searchTerm}"` : ""}.
             </div>
           ) : (
-            filteredApplications.map((app, index) => (
+            displayedApplications.map((app) => (
               <div
                 key={app.Application_Id}
                 className="p-6 transition-all bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md"
@@ -98,20 +123,36 @@ export default function MyApplications() {
                       {app.status}
                     </span>
                     <button
-                      onClick={() => navigate(`/student/applications/${app.Application_Id}`)}
+                      onClick={() =>
+                        navigate(`/student/applications/${app.Application_Id}`)
+                      }
                       className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#002147] text-white hover:bg-[#00152f] transition"
                     >
                       View Details
                     </button>
-                 
                   </div>
                 </div>
               </div>
             ))
           )}
+
+          {/* See All Button */}
+          {!showAll && filteredApplications.length > 10 && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setShowAll(true)}
+                className="px-6 py-2 font-medium rounded-lg bg-[#002147] text-white hover:bg-[#00152f] transition"
+              >
+                See All Applications
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      <Footer />
+
+      <div className="mt-28">
+        <Footer />
+      </div>
     </div>
   );
 }

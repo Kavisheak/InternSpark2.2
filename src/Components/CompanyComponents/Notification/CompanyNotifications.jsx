@@ -1,16 +1,33 @@
-// components/CompanyNotifications.jsx
 import React from "react";
+import axios from "axios";
 
-const CompanyNotifications = ({ notifications, setNotifications }) => {
-  const markAllAsRead = () => {
-    const updated = notifications.map((n) => ({ ...n, read: true }));
-    setNotifications(updated);
-    localStorage.setItem("notifications", JSON.stringify(updated));
+const API_BASE = "http://localhost/InternBackend/company/api";
+
+const CompanyNotifications = ({ notifications, fetchNotifications }) => {
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      await axios.post(`${API_BASE}/markAsRead.php`, {}, { withCredentials: true });
+      fetchNotifications(); // Refresh after marking read
+    } catch (err) {
+      console.error("Error marking as read:", err);
+    }
   };
 
-  const clearAll = () => {
-    setNotifications([]);
-    localStorage.setItem("notifications", JSON.stringify([]));
+  // Clear all notifications
+  const clearAll = async () => {
+    try {
+      // Only clear if necessary
+      const unreadExists = notifications.some((n) => parseInt(n.seen) === 0);
+      if (!unreadExists) {
+        await axios.post(`${API_BASE}/clearAll.php`, {}, { withCredentials: true });
+        fetchNotifications();
+      } else {
+        alert("Please mark notifications as read before clearing.");
+      }
+    } catch (err) {
+      console.error("Error clearing:", err);
+    }
   };
 
   return (
@@ -18,10 +35,7 @@ const CompanyNotifications = ({ notifications, setNotifications }) => {
       <div className="flex items-center justify-between px-4 py-2 text-sm font-semibold border-b text-royalblue">
         <span>🔔 Notifications</span>
         <div className="space-x-2 text-xs font-normal">
-          <button
-            onClick={markAllAsRead}
-            className="text-blue-500 hover:underline"
-          >
+          <button onClick={markAllAsRead} className="text-blue-500 hover:underline">
             Mark all as read
           </button>
           <button onClick={clearAll} className="text-red-500 hover:underline">
@@ -38,13 +52,15 @@ const CompanyNotifications = ({ notifications, setNotifications }) => {
         ) : (
           notifications.map((n) => (
             <li
-              key={n.id}
-              className={`px-4 py-3 text-sm ${
-                !n.read ? "bg-blue-50" : ""
-              } hover:bg-gray-50 transition`}
+              key={n.Company_Notif_Id}
+              className={`px-4 py-3 text-sm ${parseInt(n.seen) === 0 ? "bg-blue-50" : ""} hover:bg-gray-50 transition`}
             >
               <div className="text-gray-800">{n.message}</div>
-              <div className="mt-1 text-xs text-gray-500">{n.time}</div>
+              <div className="mt-1 text-xs text-gray-500">
+                {n.created_at
+                  ? new Date(n.created_at).toLocaleString()
+                  : "Just now"}
+              </div>
             </li>
           ))
         )}

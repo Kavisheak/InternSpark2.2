@@ -22,6 +22,31 @@ const Bookmarks = () => {
       });
   }, []);
 
+  // Remove expired bookmarks on component mount
+  useEffect(() => {
+    axios
+      .get('http://localhost/InternBackend/students/api/remove_expired_bookmarks.php', { withCredentials: true })
+      .then((res) => {
+        if (res.data.expired && res.data.expired.length > 0) {
+          res.data.expired.forEach(title => {
+            toast(`Your bookmarked internship "${title}" has expired and was removed.`, {
+              style: { background: "#002147", color: "white" },
+              iconTheme: { primary: "#FCA311", secondary: "white" },
+            });
+          });
+        }
+        // Now fetch bookmarks after expired ones are removed
+        axios
+          .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
+          .then((res) => {
+            if (res.data.success) setBookmarkedInternships(res.data.internships);
+          })
+          .catch((err) => {
+            console.error("Error fetching bookmarks:", err);
+          });
+      });
+  }, []);
+
   const confirmRemove = (internship) => {
     setSelectedInternship(internship);
     setShowModal(true);

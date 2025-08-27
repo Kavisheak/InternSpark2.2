@@ -13,25 +13,25 @@ const CompanyNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const notificationsRef = useRef(null);
-
   const [notifications, setNotifications] = useState([]);
 
   // Fetch notifications from backend
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost/InternBackend/company/api/get_company_notifications.php",
-        { withCredentials: true }
-      );
+      const res = await axios.get(`${API_BASE}/get_company_notifications.php`, {
+        withCredentials: true,
+      });
       if (res.data.success && Array.isArray(res.data.notifications)) {
         setNotifications(res.data.notifications);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
     fetchNotifications();
-    // Optionally poll every X seconds for real-time updates
+    // Optional polling for real-time updates
     // const interval = setInterval(fetchNotifications, 30000);
     // return () => clearInterval(interval);
   }, []);
@@ -46,56 +46,52 @@ const CompanyNavbar = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const handleLogout = () => {
-    fetch("http://localhost/InternBackend/api/logout.php", {
-      method: "POST",
-      credentials: "include",
-    });
-    toast.success("Logged out successfully!");
-    setTimeout(() => navigate("/"), 1000);
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost/InternBackend/api/logout.php", {}, { withCredentials: true });
+      toast.success("Logged out successfully!");
+      setTimeout(() => navigate("/"), 1000);
+    } catch (err) {
+      toast.error("Logout failed");
+    }
   };
 
   const confirmLogout = () => {
-    toast(
-      (t) => (
-        <div className="p-3">
-          <p className="mb-2 font-semibold text-white">
-            Are you sure you want to logout?
-          </p>
-          <div className="flex justify-end space-x-2">
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                handleLogout();
-              }}
-              className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
+    toast((t) => (
+      <div className="p-3">
+        <p className="mb-2 font-semibold text-white">
+          Are you sure you want to logout?
+        </p>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              handleLogout();
+            }}
+            className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
         </div>
-      ),
-      { duration: 8000 }
-    );
+      </div>
+    ), { duration: 8000 });
   };
 
   const markNotificationsAsRead = async () => {
     try {
+      // Only mark as read, do NOT clear to prevent regeneration
       await axios.post(`${API_BASE}/markAsRead.php`, {}, { withCredentials: true });
-      await axios.post(`${API_BASE}/clearAll.php`, {}, { withCredentials: true });
       fetchNotifications(); // Refresh notifications
     } catch (err) {
       console.error(err);
@@ -122,9 +118,7 @@ const CompanyNavbar = () => {
                 <Link
                   to={item.path}
                   className={`text-sm font-medium transition ${
-                    isActive
-                      ? "underline underline-offset-4"
-                      : "hover:text-white/80"
+                    isActive ? "underline underline-offset-4" : "hover:text-white/80"
                   }`}
                 >
                   {item.name}
@@ -132,11 +126,13 @@ const CompanyNavbar = () => {
               </li>
             );
           })}
-          {/* Bell Icon */}
           <li className="relative" ref={notificationsRef}>
             <button
               className="relative p-1 rounded hover:text-white/80"
-              onClick={() => setShowNotifications((prev) => !prev)}
+              onClick={() => {
+                setShowNotifications((prev) => !prev);
+                markNotificationsAsRead();
+              }}
             >
               <FaBell size={18} />
               {notifications.some((n) => parseInt(n.seen) === 0) && (
@@ -151,7 +147,6 @@ const CompanyNavbar = () => {
               />
             )}
           </li>
-          {/* Logout */}
           <li>
             <button
               onClick={confirmLogout}
@@ -161,7 +156,6 @@ const CompanyNavbar = () => {
             </button>
           </li>
         </ul>
-        {/* Mobile Toggle */}
         <button
           onClick={toggleMenu}
           className="text-2xl text-white md:hidden focus:outline-none"
@@ -169,7 +163,6 @@ const CompanyNavbar = () => {
           {menuOpen ? "✕" : "☰"}
         </button>
       </div>
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="px-6 pb-4 space-y-2 text-white bg-oxfordblue md:hidden">
           {navItems.map((item) => {
@@ -179,9 +172,7 @@ const CompanyNavbar = () => {
                 key={item.name}
                 to={item.path}
                 className={`block text-sm font-medium transition ${
-                  isActive
-                    ? "underline underline-offset-4"
-                    : "hover:text-white/80"
+                  isActive ? "underline underline-offset-4" : "hover:text-white/80"
                 }`}
                 onClick={() => setMenuOpen(false)}
               >

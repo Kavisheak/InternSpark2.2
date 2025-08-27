@@ -327,7 +327,8 @@ function ReportModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+     <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm">
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg rounded-xl shadow-lg p-6 animate-fadeIn">
       <div className="relative w-[92%] max-w-lg bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
         <button
           className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
@@ -405,6 +406,7 @@ function ReportModal({
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }

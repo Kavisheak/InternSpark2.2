@@ -21,9 +21,30 @@ const CompanyProfileForm = () => {
     about: "",
   });
 
-  const [savedData, setSavedData] = useState({}); // To hold last saved data for display
+  const [savedData, setSavedData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [isProfileExists, setIsProfileExists] = useState(false); // Button control
+  const [isProfileExists, setIsProfileExists] = useState(false);
+
+  // ICT industries list in srilanka
+  const industries = [
+ "Software Development & Services",
+  "IT Consulting & Business Process Management (BPM/BPO)",
+  "Telecommunications",
+  "Networking & Infrastructure Services",
+  "Computer Hardware & Electronics Distribution",
+  "Cybersecurity Services",
+  "Cloud Computing & Hosting Services",
+  "Big Data & Analytics",
+  "Artificial Intelligence (AI) & Machine Learning (ML)",
+  "Internet of Things (IoT)",
+  "FinTech & Digital Payments",
+  "E-Government & Digital Transformation Projects",
+  "E-Commerce & Digital Marketing",
+  "Educational Technology (EdTech)",
+  "HealthTech & Telemedicine Solutions",
+  "Robotics & Automation",
+  "Digital Media, Animation & Game Development"
+  ];
 
   useEffect(() => {
     let isMounted = true;
@@ -83,7 +104,7 @@ const CompanyProfileForm = () => {
             : "Company profile saved successfully!",
           { id: "save-success" }
         );
-        setSavedData(formData); // Only update card after saving
+        setSavedData(formData);
         setIsProfileExists(true);
       } else {
         toast.error("Error: " + response.data.message, { id: "save-error" });
@@ -101,12 +122,7 @@ const CompanyProfileForm = () => {
       type: "text",
       placeholder: "e.g. TechCorp Solutions",
     },
-    {
-      label: "Industry",
-      name: "industry",
-      type: "text",
-      placeholder: "e.g. Information Technology",
-    },
+    // industry field will be handled separately as dropdown
     {
       label: "Company Size",
       name: "companySize",
@@ -114,7 +130,7 @@ const CompanyProfileForm = () => {
       placeholder: "e.g. 50-200",
     },
     {
-      label: "Location",
+      label: "Address",
       name: "location",
       type: "text",
       placeholder: "e.g. San Francisco, CA",
@@ -161,7 +177,7 @@ const CompanyProfileForm = () => {
             <div className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-oxfordblue" />
               <span>
-                <strong>Location:</strong> {savedData.location || "N/A"}
+                <strong>Address:</strong> {savedData.location || "N/A"}
               </span>
             </div>
             <div className="flex items-center gap-2 break-all">
@@ -219,6 +235,26 @@ const CompanyProfileForm = () => {
                 />
               </div>
             ))}
+
+            {/* Industry Dropdown */}
+            <div>
+              <label className="block mb-1 text-sm font-semibold text-gray-700">
+                Industry
+              </label>
+              <select
+                name="industry"
+                value={formData.industry}
+                onChange={handleChange}
+                className="w-full px-3 py-2 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-oxfordblue"
+              >
+                <option value="">Select an industry</option>
+                {industries.map((ind, idx) => (
+                  <option key={idx} value={ind}>
+                    {ind}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="mt-4">

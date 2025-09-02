@@ -17,8 +17,6 @@ export default function StudentProfile() {
     phone: "",
     github: "",
     linkedin: "",
-    profile_img: "",
-    cv_file: "",
   });
   const [skillsList, setSkillsList] = useState([]);
   const [newSkill, setNewSkill] = useState("");
@@ -28,9 +26,10 @@ export default function StudentProfile() {
   // Fetch existing student profile
   useEffect(() => {
     axios
-      .get("http://localhost/InternBackend/students/api/get_student_profile.php", {
-        withCredentials: true,
-      })
+      .get(
+        "http://localhost/InternBackend/students/api/get_student_profile.php",
+        { withCredentials: true }
+      )
       .then((res) => {
         if (res.data.success && res.data.student) {
           const st = res.data.student;
@@ -109,11 +108,9 @@ export default function StudentProfile() {
         data,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
-
       if (res.data.success) toast.success("Profile saved successfully!");
       else toast.error(res.data.message || "Save failed");
-    } catch (err) {
-      console.error("Error saving profile:", err);
+    } catch {
       toast.error("Server error saving profile");
     }
   };
@@ -205,7 +202,7 @@ export default function StudentProfile() {
             )}
           </div>
 
-          {/* Main Form */}
+          {/* Main content */}
           <div className="p-6 bg-white border border-gray-200 shadow-md lg:col-span-2 rounded-2xl">
             <SectionHeader title="Personal Information" subtitle="Update your personal details" />
 
@@ -248,7 +245,7 @@ export default function StudentProfile() {
 
             {/* Add skill */}
             <div className="mt-6">
-              <label className="block mb-1 text-sm font-medium text-[#14213D]">Add Skill</label>
+              <label className="block mb-1 text-sm font-medium">Add Skill</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -269,9 +266,7 @@ export default function StudentProfile() {
 
             {/* Upload CV */}
             <div className="mt-6">
-              <label htmlFor="cv" className="block mb-1 text-sm font-medium text-[#14213D]">
-                Upload CV (PDF)
-              </label>
+              <label htmlFor="cv" className="block mb-1 text-sm font-medium">Upload CV (PDF)</label>
               <input
                 type="file"
                 id="cv"
@@ -296,7 +291,6 @@ export default function StudentProfile() {
   );
 }
 
-// Helper components
 function Info({ label, value }) {
   return (
     <div>
@@ -309,13 +303,15 @@ function Info({ label, value }) {
 function InputField({ label, id, value, onChange, disabled }) {
   return (
     <div>
-      <label htmlFor={id} className="block mb-1 text-sm font-medium text-[#14213D]">{label}</label>
+      <label htmlFor={id} className="block mb-1 text-sm font-medium">{label}</label>
       <input
         id={id}
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FCA311] ${disabled ? "bg-gray-100" : ""}`}
+        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FCA311] ${
+          disabled ? "bg-gray-100" : ""
+        }`}
       />
     </div>
   );

@@ -21,7 +21,7 @@ function App() {
       <ScrollToTop />
 
       {/* Global Toast Notifications */}
-
+      <Toaster position="top-center" />
 
       {/* Main Route Handling */}
       <Routes>

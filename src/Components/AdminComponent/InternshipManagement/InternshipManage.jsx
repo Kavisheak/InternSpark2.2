@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 import { Search, Eye, Trash2, MapPin, Calendar, Building2 } from "lucide-react";
 
 export default function InternshipManagement() {
@@ -32,22 +33,98 @@ export default function InternshipManagement() {
     expired: internships.filter((i) => i.status === "expired").length,
   };
 
-  const handleRemove = async (id) => {
-    if (!window.confirm("Are you sure you want to remove this internship?")) return;
-    const res = await fetch("http://localhost/InternBackend/company/api/delete_internship.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `id=${id}&user_id=YOUR_USER_ID`
-    });
-    const data = await res.json();
-    if (data.success) {
-      alert(data.message);
-      setInternships(internships.filter(item => item.id !== id));
-    } else {
-      alert(data.message);
+  const checkSession = async () => {
+    try {
+      const res = await fetch('http://localhost/InternBackend/admin/api/session_info.php', { credentials: 'include' });
+      const data = await res.json();
+      return data.session || {};
+    } catch (err) {
+      console.error('session check failed', err);
+      return null;
     }
   };
-  const handleExport = () => alert("Exporting listings...");
+
+  const handleRemove = async (id) => {
+    // ask user first using a toast confirmation (Yes / No)
+    const confirmed = await new Promise((resolve) => {
+      toast((t) => (
+        <div className="p-3">
+          <div className="mb-2 font-medium">Are you sure you want to delete this internship?</div>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve(false); }}
+              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
+            >
+              No
+            </button>
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve(true); }}
+              className="px-3 py-1 rounded bg-red-600 text-white"
+            >
+              Yes, remove
+            </button>
+          </div>
+        </div>
+      ), { duration: 60000 });
+    });
+
+    if (!confirmed) return;
+
+    // then verify session
+    const sess = await checkSession();
+    let devPayload = null;
+  if (!sess || (!sess.user_id && !sess.role && !sess.company_id)) {
+      // try fallback from storage (localStorage or sessionStorage)
+      const stored = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+      if (stored && (stored.user_id || stored.role || stored.company_id)) {
+        devPayload = stored; // contains user_id, role, company_id
+      } else {
+    toast.error('Not authenticated');
+        return;
+      }
+    }
+
+    try {
+      const form = new FormData();
+      form.append('id', id);
+      if (devPayload) {
+        form.append('dev', '1');
+        if (devPayload.user_id) form.append('user_id', devPayload.user_id);
+        if (devPayload.role) form.append('role', devPayload.role);
+        if (devPayload.company_id) form.append('company_id', devPayload.company_id);
+      }
+      // debug: log payload keys
+      console.debug('Deleting internship, form keys:', Array.from(form.keys()));
+      const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
+        method: 'POST',
+        body: form,
+        credentials: 'include'
+      });
+      const text = await res.text();
+      let payload;
+  try {
+        payload = JSON.parse(text);
+      } catch {
+        console.error('Non-JSON response from server:', text);
+        toast.error('Server error: ' + text);
+        return;
+      }
+      if (!res.ok) {
+        toast.error(payload.message || 'Server returned an error');
+        return;
+      }
+      if (payload.success) {
+        setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
+        toast.success(payload.message || 'Deleted');
+      } else {
+        toast.error(payload.message || 'Failed to delete');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Delete request failed: ' + (err.message || err));
+    }
+  };
+  // export functionality placeholder
 
   const getWorkTypeBadgeColor = (workType) => {
     switch (workType) {
@@ -63,16 +140,24 @@ export default function InternshipManagement() {
   };
 
   const viewDetails = async (id) => {
-    const res = await fetch(
-      `http://localhost/InternBackend/admin/api/view_internship.php?id=${id}`
-    );
-    const data = await res.json();
-    if (data.success) {
-      setSelectedInternship(data.data);
-    } else {
-      alert(data.message);
+    try {
+      const res = await fetch(
+        `http://localhost/InternBackend/admin/api/view_internship.php?id=${id}`
+      );
+      const data = await res.json();
+      if (data.success) {
+    // show details in modal
+    setSelectedInternship(data.data);
+      } else {
+        toast.error(data.message || 'Failed to load details');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
     }
   };
+
+  const closeModal = () => setSelectedInternship(null);
 
   return (
     <div className="bg-white">
@@ -187,8 +272,8 @@ export default function InternshipManagement() {
                   View Details
                 </button>
                 <button
-                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
                   onClick={() => handleRemove(item.id)}
+                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Remove Listing
@@ -197,48 +282,69 @@ export default function InternshipManagement() {
             </div>
           ))}
         </div>
-
-        {/* View-only modal for internship details */}
+        {/* Internship details modal */}
         {selectedInternship && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
-              <h2 className="text-xl font-bold mb-2">
-                {selectedInternship.title}
-              </h2>
-              <p>
-                <strong>Company:</strong> {selectedInternship.company_name}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedInternship.location}
-              </p>
-              <p>
-                <strong>Duration:</strong> {selectedInternship.duration}
-              </p>
-              <p>
-                <strong>Salary:</strong> {selectedInternship.salary}
-              </p>
-              <p>
-                <strong>Type:</strong> {selectedInternship.internship_type}
-              </p>
-              <p>
-                <strong>Deadline:</strong> {selectedInternship.deadline}
-              </p>
-              <p>
-                <strong>Requirements:</strong> {selectedInternship.requirements}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedInternship.description}
-              </p>
-              <button
-                className="mt-4 bg-orange-500 text-white px-3 py-1 rounded"
-                onClick={() => setSelectedInternship(null)}
-              >
-                Close
-              </button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="w-full max-w-3xl mx-4">
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="flex items-start justify-between p-6 border-b">
+                  <div>
+                    <h3 className="text-xl font-semibold">{selectedInternship.title}</h3>
+                    <div className="text-sm text-gray-600">{selectedInternship.company} • {selectedInternship.location}</div>
+                  </div>
+                  <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+                    <div>
+                      <div className="text-xs text-gray-500">Duration</div>
+                      <div className="font-medium">{selectedInternship.duration}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Type</div>
+                      <div className="font-medium">{selectedInternship.internship_type}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Salary</div>
+                      <div className="font-medium">{selectedInternship.salary || '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Deadline</div>
+                      <div className="font-medium">{selectedInternship.deadline || '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Application Limit</div>
+                      <div className="font-medium">{selectedInternship.application_limit ?? '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Posted</div>
+                      <div className="font-medium">{selectedInternship.created_at}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Description</div>
+                    <div className="text-gray-800">{selectedInternship.description}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Requirements</div>
+                    <div className="text-gray-800 whitespace-pre-wrap">{selectedInternship.requirements}</div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-medium">Company Details</h4>
+                    <div className="text-sm text-gray-700">{selectedInternship.company} — {selectedInternship.company_location}</div>
+                    {selectedInternship.website && <div className="text-xs text-blue-600">{selectedInternship.website}</div>}
+                    {selectedInternship.about && <p className="mt-2 text-gray-700">{selectedInternship.about}</p>}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
-      </div>
+  <Toaster position="top-center" />
+  </div>
     </div>
   );
 }

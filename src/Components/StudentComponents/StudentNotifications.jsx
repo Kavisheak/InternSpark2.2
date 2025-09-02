@@ -1,9 +1,8 @@
 // components/Notification/StudentNotifications.jsx
 import React from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
 
-const StudentNotifications = ({ notifications, fetchNotifications }) => {
+const StudentNotifications = ({ notifications, setNotifications, fetchNotifications }) => {
   const markAllAsRead = () => {
     axios
       .post(
@@ -15,10 +14,11 @@ const StudentNotifications = ({ notifications, fetchNotifications }) => {
         if (fetchNotifications) fetchNotifications();
       })
       .catch((err) => {
-        toast.error("Failed to mark all as read.");
+        alert("Failed to mark all as read.");
         console.error(err);
       });
   };
+
   const clearAll = () => {
     axios
       .post(
@@ -30,7 +30,7 @@ const StudentNotifications = ({ notifications, fetchNotifications }) => {
         if (fetchNotifications) fetchNotifications();
       })
       .catch((err) => {
-        toast.error("Failed to clear notifications.");
+        alert("Failed to clear notifications.");
         console.error(err);
       });
   };
@@ -51,6 +51,7 @@ const StudentNotifications = ({ notifications, fetchNotifications }) => {
           </button>
         </div>
       </div>
+
       <ul className="overflow-y-auto divide-y divide-gray-100 max-h-64">
         {notifications.length === 0 ? (
           <li className="px-4 py-4 text-sm text-center text-gray-500">
@@ -80,6 +81,8 @@ const StudentNotifications = ({ notifications, fetchNotifications }) => {
           ))
         )}
       </ul>
+
+      
     </div>
   );
 };

@@ -8,6 +8,8 @@ import CompanyMain from "./Components/CompanyComponents/CompanyMain";
 import StudentMain from "./Components/StudentComponents/StudentMain";
 import AdminMain from "./Components/AdminComponent/AdminMain";
 import ScrollToTop from "./Components/ScrollToTop";
+import ForgotPasswordPage from "./Components/Login_Register/ForgotPasswordPage";
+import ResetPasswordPage from "./Components/Login_Register/ResetPasswordPage";
 
 // Swiper styles
 import "swiper/css";
@@ -28,6 +30,9 @@ function App() {
         <Route path="/" element={<AdvertismentPage />} />
         <Route path="/login" element={<AuthPage initialIsLogin={true} />} />
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        
 
         {/* Main Dashboards */}
         <Route path="/company/*" element={<CompanyMain />} />

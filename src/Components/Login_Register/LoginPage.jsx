@@ -28,13 +28,12 @@ const LoginPage = ({ onNavigateToRegister }) => {
 
       if (data.success) {
         const { role, user_id, username } = data;
-  const company_id = data.company_id ?? null;
 
         // Store in localStorage OR sessionStorage
         if (rememberMe) {
-          localStorage.setItem("user", JSON.stringify({ username, role, user_id, company_id }));
+          localStorage.setItem("user", JSON.stringify({ username, role, user_id }));
         } else {
-          sessionStorage.setItem("user", JSON.stringify({ username, role, user_id, company_id }));
+          sessionStorage.setItem("user", JSON.stringify({ username, role, user_id }));
         }
 
         if (role === "student") navigate("/student");

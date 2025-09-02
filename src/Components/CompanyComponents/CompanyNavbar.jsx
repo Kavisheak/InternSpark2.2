@@ -56,7 +56,7 @@ const CompanyNavbar = () => {
       await axios.post("http://localhost/InternBackend/api/logout.php", {}, { withCredentials: true });
       toast.success("Logged out successfully!");
       setTimeout(() => navigate("/"), 1000);
-    } catch {
+    } catch (err) {
       toast.error("Logout failed");
     }
   };

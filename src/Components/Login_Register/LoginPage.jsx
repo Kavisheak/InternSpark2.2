@@ -37,7 +37,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
         }
 
         if (role === "student") navigate("/student");
-        else if (role === "company") navigate("/company");
+        else if (role === "company") navigate("/company/");
         else if (role === "admin") navigate("/admin");
         else setMessage("Unknown user role.");
       } else {
@@ -92,7 +92,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-blue-600 hover:text-blue-800 focus:outline-none"
+                className="absolute inset-y-0 flex items-center text-blue-600 right-3 hover:text-blue-800 focus:outline-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>

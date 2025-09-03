@@ -5,6 +5,7 @@ import {
   FiPhone,
   FiGithub,
   FiLinkedin,
+  FiUser,
 } from "react-icons/fi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { X } from "lucide-react";
@@ -107,7 +108,7 @@ export default function ApplicationDetailPanel({
   };
 
   return (
-    <div className="relative w-full p-6 text-gray-800 bg-white shadow-md md:w-2/3 rounded-xl">
+    <div className="relative w-full p-6 text-gray-800 bg-white shadow-md md:w-full rounded-xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
@@ -144,6 +145,17 @@ export default function ApplicationDetailPanel({
             <h2 className="text-2xl font-semibold">{selected.name}</h2>
             <p className="text-sm font-semibold text-orange-600">
               Applied for : {selected.internship_title}
+            </p>
+            {/* Gender */}
+            <p className="flex items-center gap-2 mt-1 text-sm text-gray-700">
+              <FiUser className="text-gray-500" />
+              {selected.gender
+                ? selected.gender === "M"
+                  ? "Male"
+                  : selected.gender === "F"
+                  ? "Female"
+                  : selected.gender
+                : "Not provided"}
             </p>
           </div>
         </div>
@@ -230,7 +242,11 @@ export default function ApplicationDetailPanel({
           <FiGithub className="text-gray-500" />
           {selected.github && selected.github.trim() ? (
             <a
-              href={selected.github.startsWith("http") ? selected.github : `https://github.com/${selected.github}`}
+              href={
+                selected.github.startsWith("http")
+                  ? selected.github
+                  : `https://github.com/${selected.github}`
+              }
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -244,7 +260,11 @@ export default function ApplicationDetailPanel({
           <FiLinkedin className="text-gray-500" />
           {selected.linkedin && selected.linkedin.trim() ? (
             <a
-              href={selected.linkedin.startsWith("http") ? selected.linkedin : `https://linkedin.com/in/${selected.linkedin}`}
+              href={
+                selected.linkedin.startsWith("http")
+                  ? selected.linkedin
+                  : `https://linkedin.com/in/${selected.linkedin}`
+              }
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -327,86 +347,86 @@ function ReportModal({
   ];
 
   return (
-     <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm">
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg rounded-xl shadow-lg p-6 animate-fadeIn">
-      <div className="relative w-[92%] max-w-lg bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
-        <button
-          className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
-          onClick={onClose}
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <div className="relative w-[92%] max-w-lg bg-white rounded-xl shadow-lg p-6 animate-fadeIn">
+          <button
+            className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
+            onClick={onClose}
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        <h2 className="text-xl font-semibold text-[#002147] mb-2">
-          Report Student
-        </h2>
-        <p className="mb-4 text-sm text-gray-600">
-          Help us keep the community safe. Select a reason below. Your report is
-          confidential and may be reviewed by admins.
-        </p>
+          <h2 className="text-xl font-semibold text-[#002147] mb-2">
+            Report Student
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">
+            Help us keep the community safe. Select a reason below. Your report
+            is confidential and may be reviewed by admins.
+          </p>
 
-        <div className="mb-4 space-y-2">
-          {reasons.map((r) => (
-            <label
-              key={r.id}
-              className={`flex items-center gap-3 p-2 rounded-lg border ${
-                reportReason === r.id ? "border-[#002147]" : "border-gray-200"
-              } cursor-pointer`}
-            >
-              <input
-                type="radio"
-                name="report_reason"
-                className="cursor-pointer"
-                value={r.id}
-                checked={reportReason === r.id}
-                onChange={(e) => setReportReason(e.target.value)}
-                disabled={disabled}
-              />
-              <span className="text-sm">{r.label}</span>
+          <div className="mb-4 space-y-2">
+            {reasons.map((r) => (
+              <label
+                key={r.id}
+                className={`flex items-center gap-3 p-2 rounded-lg border ${
+                  reportReason === r.id ? "border-[#002147]" : "border-gray-200"
+                } cursor-pointer`}
+              >
+                <input
+                  type="radio"
+                  name="report_reason"
+                  className="cursor-pointer"
+                  value={r.id}
+                  checked={reportReason === r.id}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  disabled={disabled}
+                />
+                <span className="text-sm">{r.label}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sm font-medium text-[#002147]">
+              Additional details (optional)
             </label>
-          ))}
-        </div>
+            <textarea
+              className="w-full p-3 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-[#002147]/30"
+              rows={4}
+              placeholder="Provide any context that would help admins investigate…"
+              value={reportDetails}
+              onChange={(e) => setReportDetails(e.target.value)}
+              disabled={disabled}
+              maxLength={1000}
+            />
+            <div className="mt-1 text-xs text-gray-400">
+              {reportDetails.length}/1000
+            </div>
+          </div>
 
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-[#002147]">
-            Additional details (optional)
-          </label>
-          <textarea
-            className="w-full p-3 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-[#002147]/30"
-            rows={4}
-            placeholder="Provide any context that would help admins investigate…"
-            value={reportDetails}
-            onChange={(e) => setReportDetails(e.target.value)}
-            disabled={disabled}
-            maxLength={1000}
-          />
-          <div className="mt-1 text-xs text-gray-400">
-            {reportDetails.length}/1000
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Close
+            </button>
+            <button
+              onClick={onSubmit}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 disabled:opacity-60"
+              disabled={disabled || alreadyReported}
+              title={alreadyReported ? "You already reported this student." : ""}
+            >
+              {disabled && !alreadyReported
+                ? "Submitting..."
+                : alreadyReported
+                ? "Already Reported"
+                : "Submit Report"}
+            </button>
           </div>
         </div>
-
-        <div className="flex items-center justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            Close
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 disabled:opacity-60"
-            disabled={disabled || alreadyReported}
-            title={alreadyReported ? "You already reported this student." : ""}
-          >
-            {disabled && !alreadyReported
-              ? "Submitting..."
-              : alreadyReported
-              ? "Already Reported"
-              : "Submit Report"}
-          </button>
-        </div>
       </div>
-    </div>
     </div>
   );
 }

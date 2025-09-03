@@ -7,6 +7,7 @@ export default function ApplicationSidebar({
   setSelectedId,
   searchTerm,
   setSearchTerm,
+  detailHeight,
 }) {
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -25,7 +26,7 @@ export default function ApplicationSidebar({
     .filter((app) =>
       app.internship_title
         .toLowerCase()
-        .startsWith(searchTerm.toLowerCase()) // ✅ only match from beginning
+        .startsWith(searchTerm.toLowerCase())
     )
     .filter(
       (app) =>
@@ -34,7 +35,12 @@ export default function ApplicationSidebar({
     );
 
   return (
-    <div className="w-full h-full p-4 bg-white shadow-md md:w-1/3 rounded-xl">
+    <div
+      className="flex flex-col p-4 bg-white shadow-md rounded-xl flex-[2] min-h-0"
+      style={{
+        maxHeight: detailHeight ? `${detailHeight}px` : "auto",
+      }}
+    >
       <h2 className="mb-4 text-xl font-semibold text-gray-800">
         Recent Applications
       </h2>
@@ -68,7 +74,7 @@ export default function ApplicationSidebar({
       </div>
 
       {/* Application List */}
-      <ul className="space-y-2">
+      <ul className="flex-1 min-h-0 space-y-2 overflow-y-auto">
         {filtered.length > 0 ? (
           filtered.map((app) => (
             <li
@@ -92,10 +98,10 @@ export default function ApplicationSidebar({
               <div className="flex-grow">
                 <p className="font-medium text-gray-800">{app.name}</p>
                 <p className="text-xs text-gray-400">
-                  Applied on : {app.applied}
+                  Applied on: {app.applied}
                 </p>
                 <p className="text-xs text-gray-400">
-                  Applied for : {app.internship_title}
+                  Applied for: {app.internship_title}
                 </p>
               </div>
               <span

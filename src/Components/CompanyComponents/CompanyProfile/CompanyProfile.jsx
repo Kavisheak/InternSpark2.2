@@ -50,10 +50,10 @@ const CompanyProfile = () => {
 const TabButton = ({ active, children, onClick }) => (
   <button
     onClick={onClick}
-    className={`px-6 py-3 text-lg font-semibold transition-colors duration-200 focus:outline-none ${
+    className={`px-6 py-1 text-lg font-semibold transition-colors duration-200 focus:outline-none ${
       active
         ? "bg-oxfordblue text-white"
-        : "bg-transparent text-oxfordblue hover:bg-orange-100"
+        : "bg-transparent text-oxfordblue hover:bg-blue-100"
     }`}
     style={{
       borderRight: active ? "none" : "1px solid #002147",

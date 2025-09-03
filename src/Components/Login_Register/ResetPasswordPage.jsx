@@ -68,23 +68,23 @@ const ResetPassword = () => {
         setError(response.data.message || "Error resetting password.");
       }
     } catch (err) {
-      setError("Server error. Try again later.");
+      setError("Server error. Try again later.",err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-300 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-blue-600 mb-2">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-300">
+      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
+        <div className="mb-8 text-center">
+          <h1 className="mb-2 text-3xl font-semibold text-blue-600">
             Reset Password
           </h1>
-          <p className="text-blue-500 text-sm">Create a secure new password</p>
+          <p className="text-sm text-blue-500">Create a secure new password</p>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-blue-600 font-medium mb-2">
+            <label className="block mb-2 font-medium text-blue-600">
               New Password
             </label>
             <div className="relative">
@@ -93,12 +93,12 @@ const ResetPassword = () => {
                 value={password}
                 onChange={(e) => handlePasswordChange(e.target.value)}
                 placeholder="Enter your new password"
-                className="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-600 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 text-blue-600 placeholder-blue-400 border border-blue-200 rounded-lg bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 hover:text-blue-600"
+                className="absolute text-blue-400 transform -translate-y-1/2 right-3 top-1/2 hover:text-blue-600"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -113,7 +113,7 @@ const ResetPassword = () => {
           </div>
 
           <div>
-            <label className="block text-blue-600 font-medium mb-2">
+            <label className="block mb-2 font-medium text-blue-600">
               Confirm Password
             </label>
             <div className="relative">
@@ -122,12 +122,12 @@ const ResetPassword = () => {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="Confirm your new password"
-                className="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-600 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 text-blue-600 placeholder-blue-400 border border-blue-200 rounded-lg bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-400 hover:text-blue-600"
+                className="absolute text-blue-400 transform -translate-y-1/2 right-3 top-1/2 hover:text-blue-600"
               >
                 {showConfirm ? "Hide" : "Show"}
               </button>
@@ -137,27 +137,27 @@ const ResetPassword = () => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+            className="w-full px-6 py-3 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             Reset Password
           </button>
         </div>
 
         {error && (
-          <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-200">
-            <p className="text-red-600 text-sm text-center">{error}</p>
+          <div className="p-3 mt-4 border border-red-200 rounded-lg bg-red-50">
+            <p className="text-sm text-center text-red-600">{error}</p>
           </div>
         )}
 
         {message && (
-          <div className="mt-4 p-3 rounded-lg bg-green-50 border border-green-200">
-            <p className="text-green-600 text-sm text-center">{message}</p>
+          <div className="p-3 mt-4 border border-green-200 rounded-lg bg-green-50">
+            <p className="text-sm text-center text-green-600">{message}</p>
           </div>
         )}
 
-        <div className="text-center mt-6">
+        <div className="mt-6 text-center">
           <span className="text-blue-500">Remember your password? </span>
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
+          <a href="/login" className="font-medium text-blue-600 hover:underline">
             Sign in
           </a>
         </div>

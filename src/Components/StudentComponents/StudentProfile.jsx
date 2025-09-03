@@ -417,7 +417,7 @@ export default function StudentProfile() {
               <img
                 src={previewImage}
                 alt="Profile Preview"
-                className="object-cover w-48 h-48 mb-4 border-4 border-blue-200 rounded-full"
+               className="object-cover w-24 h-24 mb-4 border-4 border-blue-200 rounded-full md:w-48 md:h-48"
               />
             ) : (
               <div className="flex items-center justify-center w-48 h-48 mb-4 bg-gray-200 rounded-full">

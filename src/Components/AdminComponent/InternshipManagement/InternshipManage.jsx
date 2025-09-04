@@ -17,20 +17,52 @@ export default function InternshipManagement() {
   }, []);
 
   const filtered = internships.filter((item) => {
+    // compute status based on deadline as well as backend status
+    const computedStatus = (() => {
+      try {
+        if (item.deadline) {
+          const dl = new Date(item.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return 'expired';
+        }
+      } catch {
+        // ignore parse errors
+      }
+      return item.status || 'active';
+    })();
     const search = searchQuery.toLowerCase();
     const match =
       item.title.toLowerCase().includes(search) ||
       item.company.toLowerCase().includes(search) ||
       item.location.toLowerCase().includes(search);
-    if (activeTab === "active") return item.status === "active" && match;
-    if (activeTab === "expired") return item.status === "expired" && match;
+    if (activeTab === "active") return computedStatus === "active" && match;
+    if (activeTab === "expired") return computedStatus === "expired" && match;
     return match;
   });
 
   const stats = {
     all: internships.length,
-    active: internships.filter((i) => i.status === "active").length,
-    expired: internships.filter((i) => i.status === "expired").length,
+    active: internships.filter((i) => {
+      try {
+        if (i.deadline) {
+          const dl = new Date(i.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return false;
+        }
+      } catch {
+        // ignore
+      }
+      return (i.status || 'active') === 'active';
+    }).length,
+    expired: internships.filter((i) => {
+      try {
+        if (i.deadline) {
+          const dl = new Date(i.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return true;
+        }
+      } catch {
+        // ignore
+      }
+      return (i.status || 'active') === 'expired';
+    }).length,
   };
 
   const checkSession = async () => {
@@ -50,16 +82,16 @@ export default function InternshipManagement() {
       toast((t) => (
         <div className="p-3">
           <div className="mb-2 font-medium">Are you sure you want to delete this internship?</div>
-          <div className="flex justify-end gap-2">
+          <div className="flex gap-2 justify-end">
             <button
               onClick={() => { toast.dismiss(t.id); resolve(false); }}
-              className="px-3 py-1 text-gray-800 bg-gray-100 border rounded"
+              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
             >
               No
             </button>
             <button
               onClick={() => { toast.dismiss(t.id); resolve(true); }}
-              className="px-3 py-1 text-white bg-red-600 rounded"
+              className="px-3 py-1 rounded bg-red-600 text-white"
             >
               Yes, remove
             </button>
@@ -84,45 +116,122 @@ export default function InternshipManagement() {
       }
     }
 
-    try {
-      const form = new FormData();
-      form.append('id', id);
-      if (devPayload) {
-        form.append('dev', '1');
-        if (devPayload.user_id) form.append('user_id', devPayload.user_id);
-        if (devPayload.role) form.append('role', devPayload.role);
-        if (devPayload.company_id) form.append('company_id', devPayload.company_id);
+    // helper that performs the actual delete request; accepts an optional devPayload
+    const deleteRequest = async (useDevPayload) => {
+      try {
+        const form = new FormData();
+        form.append('id', id);
+        if (useDevPayload) {
+          form.append('dev', '1');
+          if (useDevPayload.user_id) form.append('user_id', useDevPayload.user_id);
+          if (useDevPayload.role) form.append('role', useDevPayload.role);
+          // derive company id from internship item if needed
+          let companyIdToSend = useDevPayload.company_id;
+          if (!companyIdToSend) {
+            const internshipItem = internships.find(it => String(it.id) === String(id));
+            if (internshipItem) {
+              companyIdToSend = internshipItem.company_id || internshipItem.Company_Id || internshipItem.CompanyId || internshipItem.companyId || internshipItem.Com_Id || internshipItem.ComId;
+            }
+          }
+          if (companyIdToSend) form.append('company_id', companyIdToSend);
+        }
+        console.debug('Deleting internship, form keys:', Array.from(form.keys()));
+        const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
+          method: 'POST',
+          body: form,
+          credentials: 'include'
+        });
+        const text = await res.text();
+        let payload;
+        try { payload = JSON.parse(text); } catch {
+          console.error('Non-JSON response from server:', text);
+          toast.error('Server error: ' + text);
+          return;
+        }
+        if (!res.ok) {
+          toast.error(payload.message || 'Server returned an error');
+          return;
+        }
+        if (payload.success) {
+          setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
+          toast.success(payload.message || 'Deleted');
+        } else {
+          toast.error(payload.message || 'Failed to delete');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Delete request failed: ' + (err.message || err));
       }
-      // debug: log payload keys
-      console.debug('Deleting internship, form keys:', Array.from(form.keys()));
-      const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
-        method: 'POST',
-        body: form,
-        credentials: 'include'
-      });
-      const text = await res.text();
-      let payload;
-  try {
-        payload = JSON.parse(text);
-      } catch {
-        console.error('Non-JSON response from server:', text);
-        toast.error('Server error: ' + text);
-        return;
-      }
-      if (!res.ok) {
-        toast.error(payload.message || 'Server returned an error');
-        return;
-      }
-      if (payload.success) {
-        setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
-        toast.success(payload.message || 'Deleted');
-      } else {
-        toast.error(payload.message || 'Failed to delete');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Delete request failed: ' + (err.message || err));
+    };
+
+    // If server session exists, proceed and rely on server-side auth.
+    const sessionHasIdentity = sess && (sess.user_id || sess.role || sess.company_id);
+    if (sessionHasIdentity) {
+      // live authenticated session — perform delete without dev payload
+      await deleteRequest(null);
+      return;
     }
+
+    // No server session: try devPayload. If it's missing or a student, show a small dev helper toast
+    const needsDevHelp = !devPayload || devPayload.role === 'student' || (devPayload.role === 'company' && !devPayload.company_id);
+    if (!needsDevHelp) {
+      // devPayload looks usable
+      await deleteRequest(devPayload);
+      return;
+    }
+
+    // Show dev helper options: set admin, set company (derived), or cancel
+    await new Promise((resolve) => {
+      toast.custom((t) => (
+        <div className="p-3 bg-white rounded shadow-md w-full max-w-sm">
+          <div className="mb-2 font-medium">No valid session found for delete</div>
+          <div className="text-sm text-gray-600 mb-3">You can set a temporary dev identity to proceed (local dev only).</div>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve('cancel'); }}
+              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                // set temporary admin dev identity
+                const payload = { user_id: 1, role: 'admin', company_id: null };
+                localStorage.setItem('user', JSON.stringify(payload));
+                toast.dismiss(t.id);
+                await deleteRequest(payload);
+                resolve('done');
+              }}
+              className="px-3 py-1 rounded bg-orange-500 text-white"
+            >
+              Use dev admin
+            </button>
+            <button
+              onClick={async () => {
+                // try to derive company id from the internship and set company dev identity
+                const internshipItem = internships.find(it => String(it.id) === String(id));
+                const derivedCompany = internshipItem && (internshipItem.company_id || internshipItem.Company_Id || internshipItem.CompanyId || internshipItem.companyId || internshipItem.Com_Id || internshipItem.ComId);
+                if (!derivedCompany) {
+                  // can't derive — inform user
+                  toast.dismiss(t.id);
+                  toast.error('Could not derive company id from the internship; set dev payload manually');
+                  resolve('cancel');
+                  return;
+                }
+                const payload = { user_id: 2, role: 'company', company_id: derivedCompany };
+                localStorage.setItem('user', JSON.stringify(payload));
+                toast.dismiss(t.id);
+                await deleteRequest(payload);
+                resolve('done');
+              }}
+              className="px-3 py-1 rounded bg-green-600 text-white"
+            >
+              Use dev company
+            </button>
+          </div>
+        </div>
+      ));
+    });
   };
   // export functionality placeholder
 
@@ -162,12 +271,12 @@ export default function InternshipManagement() {
   return (
     <div className="bg-white">
       <div className="absolute inset-0" />
-      <div className="relative z-10 max-w-6xl p-6 mx-auto">
+      <div className="relative z-10 p-6 max-w-6xl mx-auto">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Internship Management</h1>
         </div>
 
-        <div className="mb-4 font-bold text-orange-600">
+        <div className="mb-4 text-orange-600 font-bold">
           View and manage all internship postings (read-only with removal option)
         </div>
 
@@ -175,7 +284,7 @@ export default function InternshipManagement() {
           <div className="relative w-80">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
             <input
-              className="w-full py-2 pl-10 pr-3 text-gray-800 placeholder-orange-500 bg-orange-100 border border-orange-600 rounded"
+              className="pl-10 pr-3 py-2 w-full rounded bg-orange-100 text-gray-800 border border-orange-600 placeholder-orange-500"
               placeholder="Search internships..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -183,7 +292,7 @@ export default function InternshipManagement() {
           </div>
         </div>
 
-        <div className="flex mb-6 space-x-4">
+        <div className="flex space-x-4 mb-6">
           {["all", "active", "expired"].map((tab) => (
             <button
               key={tab}
@@ -203,7 +312,7 @@ export default function InternshipManagement() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="p-6 bg-white border border-orange-500 rounded shadow-sm"
+              className="border border-orange-500 bg-white rounded p-6 shadow-sm"
             >
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
@@ -212,21 +321,37 @@ export default function InternshipManagement() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="flex items-center text-black">
-                      <Building2 className="w-4 h-4 mr-1" />
+                    <p className="text-black flex items-center">
+                      <Building2 className="h-4 w-4 mr-1" />
                       {item.company}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <span
-                    className={`text-sm px-2 py-1 rounded border ${
-                      item.status === "active"
-                        ? "bg-orange-500 text-white"
-                        : "bg-red-400 text-white"
-                    }`}
+                    className={`text-sm px-2 py-1 rounded border ${(() => {
+                      try {
+                        if (item.deadline) {
+                          const dl = new Date(item.deadline);
+                          if (!isNaN(dl.getTime()) && dl < new Date()) return 'bg-red-400 text-white';
+                        }
+                      } catch {
+                        // ignore
+                      }
+                      return (item.status === "active") ? 'bg-orange-500 text-white' : 'bg-red-400 text-white';
+                    })()}`}
                   >
-                    {item.status}
+                    {(() => {
+                      try {
+                        if (item.deadline) {
+                          const dl = new Date(item.deadline);
+                          if (!isNaN(dl.getTime()) && dl < new Date()) return 'expired';
+                        }
+                      } catch {
+                        // ignore
+                      }
+                      return item.status;
+                    })()}
                   </span>
                   <span
                     className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(
@@ -238,16 +363,16 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 mb-4 text-sm text-gray-800">
+              <div className="grid grid-cols-4 gap-4 text-sm text-gray-800 mb-4">
                 <div>
                   <span className="flex items-center mb-1">
-                    <MapPin className="w-4 h-4 mr-1 text-gray-800" /> Location:
+                    <MapPin className="text-gray-800 h-4 w-4 mr-1" /> Location:
                   </span>
                   <p className="text-orange-600">{item.location}</p>
                 </div>
                 <div>
                   <span className="flex items-center mb-1">
-                    <Calendar className="w-4 h-4 mr-1" /> Duration:
+                    <Calendar className="h-4 w-4 mr-1" /> Duration:
                   </span>
                   <p className="text-orange-600">{item.duration}</p>
                 </div>
@@ -261,21 +386,21 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <p className="mb-4 text-gray-800">{item.description}</p>
+              <p className="text-gray-800 mb-4">{item.description}</p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => viewDetails(item.id)}
-                  className="flex items-center px-4 py-2 text-white bg-orange-500 border rounded hover:bg-gray-400"
+                  className="flex items-center px-4 py-2 rounded border bg-orange-500 hover:bg-gray-400 text-white"
                 >
-                  <Eye className="w-4 h-4 mr-2" />
+                  <Eye className="h-4 w-4 mr-2" />
                   View Details
                 </button>
                 <button
                   onClick={() => handleRemove(item.id)}
-                  className="flex items-center px-4 py-2 text-white bg-red-600 rounded hover:bg-purple-400"
+                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2" />
                   Remove Listing
                 </button>
               </div>
@@ -286,7 +411,7 @@ export default function InternshipManagement() {
         {selectedInternship && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
             <div className="w-full max-w-3xl mx-4">
-              <div className="overflow-hidden bg-white rounded-lg shadow-lg">
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div className="flex items-start justify-between p-6 border-b">
                   <div>
                     <h3 className="text-xl font-semibold">{selectedInternship.title}</h3>

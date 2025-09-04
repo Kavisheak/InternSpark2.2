@@ -17,20 +17,52 @@ export default function InternshipManagement() {
   }, []);
 
   const filtered = internships.filter((item) => {
+    // compute status based on deadline as well as backend status
+    const computedStatus = (() => {
+      try {
+        if (item.deadline) {
+          const dl = new Date(item.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return 'expired';
+        }
+      } catch {
+        // ignore parse errors
+      }
+      return item.status || 'active';
+    })();
     const search = searchQuery.toLowerCase();
     const match =
       item.title.toLowerCase().includes(search) ||
       item.company.toLowerCase().includes(search) ||
       item.location.toLowerCase().includes(search);
-    if (activeTab === "active") return item.status === "active" && match;
-    if (activeTab === "expired") return item.status === "expired" && match;
+    if (activeTab === "active") return computedStatus === "active" && match;
+    if (activeTab === "expired") return computedStatus === "expired" && match;
     return match;
   });
 
   const stats = {
     all: internships.length,
-    active: internships.filter((i) => i.status === "active").length,
-    expired: internships.filter((i) => i.status === "expired").length,
+    active: internships.filter((i) => {
+      try {
+        if (i.deadline) {
+          const dl = new Date(i.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return false;
+        }
+      } catch {
+        // ignore
+      }
+      return (i.status || 'active') === 'active';
+    }).length,
+    expired: internships.filter((i) => {
+      try {
+        if (i.deadline) {
+          const dl = new Date(i.deadline);
+          if (!isNaN(dl.getTime()) && dl < new Date()) return true;
+        }
+      } catch {
+        // ignore
+      }
+      return (i.status || 'active') === 'expired';
+    }).length,
   };
 
   const checkSession = async () => {
@@ -84,45 +116,122 @@ export default function InternshipManagement() {
       }
     }
 
-    try {
-      const form = new FormData();
-      form.append('id', id);
-      if (devPayload) {
-        form.append('dev', '1');
-        if (devPayload.user_id) form.append('user_id', devPayload.user_id);
-        if (devPayload.role) form.append('role', devPayload.role);
-        if (devPayload.company_id) form.append('company_id', devPayload.company_id);
+    // helper that performs the actual delete request; accepts an optional devPayload
+    const deleteRequest = async (useDevPayload) => {
+      try {
+        const form = new FormData();
+        form.append('id', id);
+        if (useDevPayload) {
+          form.append('dev', '1');
+          if (useDevPayload.user_id) form.append('user_id', useDevPayload.user_id);
+          if (useDevPayload.role) form.append('role', useDevPayload.role);
+          // derive company id from internship item if needed
+          let companyIdToSend = useDevPayload.company_id;
+          if (!companyIdToSend) {
+            const internshipItem = internships.find(it => String(it.id) === String(id));
+            if (internshipItem) {
+              companyIdToSend = internshipItem.company_id || internshipItem.Company_Id || internshipItem.CompanyId || internshipItem.companyId || internshipItem.Com_Id || internshipItem.ComId;
+            }
+          }
+          if (companyIdToSend) form.append('company_id', companyIdToSend);
+        }
+        console.debug('Deleting internship, form keys:', Array.from(form.keys()));
+        const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
+          method: 'POST',
+          body: form,
+          credentials: 'include'
+        });
+        const text = await res.text();
+        let payload;
+        try { payload = JSON.parse(text); } catch {
+          console.error('Non-JSON response from server:', text);
+          toast.error('Server error: ' + text);
+          return;
+        }
+        if (!res.ok) {
+          toast.error(payload.message || 'Server returned an error');
+          return;
+        }
+        if (payload.success) {
+          setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
+          toast.success(payload.message || 'Deleted');
+        } else {
+          toast.error(payload.message || 'Failed to delete');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Delete request failed: ' + (err.message || err));
       }
-      // debug: log payload keys
-      console.debug('Deleting internship, form keys:', Array.from(form.keys()));
-      const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
-        method: 'POST',
-        body: form,
-        credentials: 'include'
-      });
-      const text = await res.text();
-      let payload;
-  try {
-        payload = JSON.parse(text);
-      } catch {
-        console.error('Non-JSON response from server:', text);
-        toast.error('Server error: ' + text);
-        return;
-      }
-      if (!res.ok) {
-        toast.error(payload.message || 'Server returned an error');
-        return;
-      }
-      if (payload.success) {
-        setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
-        toast.success(payload.message || 'Deleted');
-      } else {
-        toast.error(payload.message || 'Failed to delete');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Delete request failed: ' + (err.message || err));
+    };
+
+    // If server session exists, proceed and rely on server-side auth.
+    const sessionHasIdentity = sess && (sess.user_id || sess.role || sess.company_id);
+    if (sessionHasIdentity) {
+      // live authenticated session — perform delete without dev payload
+      await deleteRequest(null);
+      return;
     }
+
+    // No server session: try devPayload. If it's missing or a student, show a small dev helper toast
+    const needsDevHelp = !devPayload || devPayload.role === 'student' || (devPayload.role === 'company' && !devPayload.company_id);
+    if (!needsDevHelp) {
+      // devPayload looks usable
+      await deleteRequest(devPayload);
+      return;
+    }
+
+    // Show dev helper options: set admin, set company (derived), or cancel
+    await new Promise((resolve) => {
+      toast.custom((t) => (
+        <div className="p-3 bg-white rounded shadow-md w-full max-w-sm">
+          <div className="mb-2 font-medium">No valid session found for delete</div>
+          <div className="text-sm text-gray-600 mb-3">You can set a temporary dev identity to proceed (local dev only).</div>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve('cancel'); }}
+              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                // set temporary admin dev identity
+                const payload = { user_id: 1, role: 'admin', company_id: null };
+                localStorage.setItem('user', JSON.stringify(payload));
+                toast.dismiss(t.id);
+                await deleteRequest(payload);
+                resolve('done');
+              }}
+              className="px-3 py-1 rounded bg-orange-500 text-white"
+            >
+              Use dev admin
+            </button>
+            <button
+              onClick={async () => {
+                // try to derive company id from the internship and set company dev identity
+                const internshipItem = internships.find(it => String(it.id) === String(id));
+                const derivedCompany = internshipItem && (internshipItem.company_id || internshipItem.Company_Id || internshipItem.CompanyId || internshipItem.companyId || internshipItem.Com_Id || internshipItem.ComId);
+                if (!derivedCompany) {
+                  // can't derive — inform user
+                  toast.dismiss(t.id);
+                  toast.error('Could not derive company id from the internship; set dev payload manually');
+                  resolve('cancel');
+                  return;
+                }
+                const payload = { user_id: 2, role: 'company', company_id: derivedCompany };
+                localStorage.setItem('user', JSON.stringify(payload));
+                toast.dismiss(t.id);
+                await deleteRequest(payload);
+                resolve('done');
+              }}
+              className="px-3 py-1 rounded bg-green-600 text-white"
+            >
+              Use dev company
+            </button>
+          </div>
+        </div>
+      ));
+    });
   };
   // export functionality placeholder
 
@@ -220,13 +329,29 @@ export default function InternshipManagement() {
                 </div>
                 <div className="flex gap-2">
                   <span
-                    className={`text-sm px-2 py-1 rounded border ${
-                      item.status === "active"
-                        ? "bg-orange-500 text-white"
-                        : "bg-red-400 text-white"
-                    }`}
+                    className={`text-sm px-2 py-1 rounded border ${(() => {
+                      try {
+                        if (item.deadline) {
+                          const dl = new Date(item.deadline);
+                          if (!isNaN(dl.getTime()) && dl < new Date()) return 'bg-red-400 text-white';
+                        }
+                      } catch {
+                        // ignore
+                      }
+                      return (item.status === "active") ? 'bg-orange-500 text-white' : 'bg-red-400 text-white';
+                    })()}`}
                   >
-                    {item.status}
+                    {(() => {
+                      try {
+                        if (item.deadline) {
+                          const dl = new Date(item.deadline);
+                          if (!isNaN(dl.getTime()) && dl < new Date()) return 'expired';
+                        }
+                      } catch {
+                        // ignore
+                      }
+                      return item.status;
+                    })()}
                   </span>
                   <span
                     className={`text-sm px-2 py-1 rounded border ${getWorkTypeBadgeColor(

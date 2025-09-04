@@ -1,16 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Eye, EyeOff } from "lucide-react"; // 👈 import icons
+import { Eye, EyeOff } from "lucide-react";
 
 const LoginPage = ({ onNavigateToRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false); // 👈 NEW
+  const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // 🔹 Autofill if previously saved
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("rememberUser"));
+    if (saved?.email) {
+      setEmail(saved.email);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +29,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
     try {
       const response = await axios.post(
         "http://localhost/InternBackend/api/login.php",
-        { email, password, rememberMe }, // 👈 send rememberMe
+        { email, password, rememberMe },
         { withCredentials: true }
       );
 
@@ -29,13 +38,24 @@ const LoginPage = ({ onNavigateToRegister }) => {
       if (data.success) {
         const { role, user_id, username } = data;
 
-        // Store in localStorage OR sessionStorage
+        // ✅ store email for autofill next time
+        if (rememberMe) {
+          localStorage.setItem(
+            "rememberUser",
+            JSON.stringify({ email, username, user_id, role })
+          );
+        } else {
+          localStorage.removeItem("rememberUser");
+        }
+
+        // Session vs local for the current login
         if (rememberMe) {
           localStorage.setItem("user", JSON.stringify({ username, role, user_id }));
         } else {
           sessionStorage.setItem("user", JSON.stringify({ username, role, user_id }));
         }
 
+        // redirect by role
         if (role === "student") navigate("/student");
         else if (role === "company") navigate("/company");
         else if (role === "admin") navigate("/admin");
@@ -44,11 +64,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
         setMessage(data.message || "Login failed.");
       }
     } catch (error) {
-      if (error.response) {
-        setMessage(error.response.data.message || "Login error.");
-      } else {
-        setMessage("Server error. Please try again later.");
-      }
+      setMessage(error.response?.data?.message || "Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -57,13 +73,11 @@ const LoginPage = ({ onNavigateToRegister }) => {
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gray-300">
       <div className="w-full max-w-md p-10 bg-white border border-blue-200 shadow-2xl rounded-2xl">
-        {/* Header */}
         <div className="mb-8 text-center">
           <h2 className="mb-1 text-3xl font-bold text-blue-800">Welcome Back</h2>
           <p className="text-sm text-blue-500">Sign in to fuel your future team</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block mb-1 text-sm text-blue-800">Email Address</label>
@@ -77,7 +91,6 @@ const LoginPage = ({ onNavigateToRegister }) => {
             />
           </div>
 
-          {/* Password with eye icon */}
           <div>
             <label className="block mb-1 text-sm text-blue-800">Password</label>
             <div className="relative">
@@ -99,7 +112,6 @@ const LoginPage = ({ onNavigateToRegister }) => {
             </div>
           </div>
 
-          {/* ✅ Remember Me */}
           <div className="flex items-center">
             <input
               id="rememberMe"
@@ -124,7 +136,6 @@ const LoginPage = ({ onNavigateToRegister }) => {
           </button>
         </form>
 
-        {/* Forgot password + register */}
         <div className="mt-4 text-center">
           <button
             type="button"

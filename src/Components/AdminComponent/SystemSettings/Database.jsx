@@ -1,5 +1,22 @@
 import React, { useState } from "react";
 import { Globe } from "lucide-react";
+import toast from 'react-hot-toast';
+
+// helper to update multiple system settings
+async function saveSystemSettings(payload) {
+  try {
+    const res = await fetch('http://localhost/InternBackend/admin/api/set_system_setting.php', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+}
 
 export default function SystemSettings() {
   const [siteName, setSiteName] = useState("InternSpark");
@@ -7,13 +24,41 @@ export default function SystemSettings() {
   const [userRegistration, setUserRegistration] = useState(true);
   const [companyRegistration, setCompanyRegistration] = useState(true);
 
+  React.useEffect(() => {
+    // fetch current system settings
+    (async () => {
+      try {
+        const res = await fetch('http://localhost/InternBackend/admin/api/get_system_settings.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data && data.success && data.settings) {
+          const s = data.settings;
+          if (s.site_name !== null && s.site_name !== '') setSiteName(s.site_name);
+          if (s.maintenance_mode !== null) setMaintenanceMode(s.maintenance_mode === '1' || String(s.maintenance_mode).toLowerCase() === 'true');
+          if (s.user_registration !== null) setUserRegistration(s.user_registration === '1' || String(s.user_registration).toLowerCase() === 'true');
+          if (s.company_registration !== null) setCompanyRegistration(s.company_registration === '1' || String(s.company_registration).toLowerCase() === 'true');
+        }
+      } catch (e) {
+        console.debug('Could not fetch system settings', e);
+      }
+    })();
+  }, []);
+
   const handleSaveSettings = () => {
-    console.log("Settings saved:", {
-      siteName,
-      maintenanceMode,
-      userRegistration,
-      companyRegistration,
-    });
+    // Save multiple settings at once
+    const payload = {
+      maintenance_mode: maintenanceMode ? '1' : '0',
+      user_registration: userRegistration ? '1' : '0',
+      company_registration: companyRegistration ? '1' : '0',
+      site_name: siteName
+    };
+    toast.promise(
+      saveSystemSettings(payload),
+      {
+        loading: 'Saving settings...',
+        success: (data) => (data && data.success) ? 'Settings saved' : (data.message || 'Failed'),
+        error: (err) => err.message || 'Failed to save'
+      }
+    );
   };
 
   return (
@@ -57,7 +102,7 @@ export default function SystemSettings() {
                 onChange: () => setMaintenanceMode((prev) => !prev),
               },
               {
-                label: "User Registration",
+                label: "Student Registration",
                 description: "Allow new student registrations",
                 value: userRegistration,
                 onChange: () => setUserRegistration((prev) => !prev),

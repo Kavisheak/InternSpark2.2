@@ -23,7 +23,6 @@ const ViewCompanyProfile = () => {
           setCompany({ ...res.data.profile, company_id: companyId });
       });
 
-    // Check if already reported
     axios
       .get(
         `http://localhost/InternBackend/students/api/get_company_report_status.php?company_id=${companyId}`,
@@ -72,22 +71,13 @@ const ViewCompanyProfile = () => {
     }
   };
 
-  if (!company) return null; // or a loading spinner, etc.
+  if (!company) return null;
 
   return (
-    <div className="min-h-screen px-4 py-12 bg-gray-50 sm:px-8 lg:px-16">
-      {/* Card */}
-      <div className="max-w-4xl mx-auto overflow-hidden bg-white border border-gray-200 shadow-lg rounded-2xl">
-        {/* Header */}
-        <div className="bg-[#002147] px-8 py-6 flex justify-between items-start">
-          <div>
-            <h1 className="flex items-center gap-3 text-3xl font-bold text-white">
-              <Building2 className="w-8 h-8 text-orange-500" />
-              {company.company_name}
-            </h1>
-            <p className="mt-2 text-gray-300">{company.industry}</p>
-          </div>
-          {/* Report Button */}
+    <div className="min-h-screen px-4 py-12 bg-gradient-to-br from-blue-50 via-white to-orange-50 sm:px-8 lg:px-16">
+      <div className="max-w-3xl mx-auto overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
+        {/* Report Button at Top */}
+        <div className="flex justify-end px-8 pt-6">
           <button
             onClick={() => {
               if (alreadyReported) {
@@ -99,7 +89,7 @@ const ViewCompanyProfile = () => {
                 setShowReportModal(true);
               }
             }}
-            className={`px-4 py-2 text-sm font-semibold rounded ${
+            className={`px-4 py-2 text-sm font-semibold rounded transition ${
               alreadyReported
                 ? "text-gray-400 bg-gray-100 cursor-not-allowed"
                 : "text-red-600 bg-white hover:bg-red-50"
@@ -109,56 +99,79 @@ const ViewCompanyProfile = () => {
             {alreadyReported ? "Reported" : "Report Company"}
           </button>
         </div>
-
+        {/* Logo Preview */}
+        <div className="flex flex-col items-center pt-8 pb-2 bg-white">
+          <div className="relative mb-2 w-28 h-28">
+            {company.logo_img ? (
+              <img
+                src={`http://localhost/InternBackend/${company.logo_img}`}
+                alt="Company Logo"
+                className="object-cover border-4 border-orange-400 rounded-full shadow-lg w-28 h-28"
+              />
+            ) : (
+              <div className="flex items-center justify-center text-5xl text-gray-400 bg-gray-200 border-4 border-orange-400 rounded-full shadow-lg w-28 h-28">
+                <Building2 className="w-16 h-16" />
+              </div>
+            )}
+          </div>
+          <h1 className="mt-2 text-3xl font-bold text-[#002147] text-center break-words">
+            {company.company_name}
+          </h1>
+          <p className="mt-1 text-base text-center text-gray-500">
+            {company.industry}
+          </p>
+        </div>
         {/* Body */}
-        <div className="p-8 space-y-6">
+        <div className="px-8 pb-8 space-y-8">
           <section>
             <h2 className="text-xl font-semibold text-[#002147] flex items-center gap-2">
               <Info className="w-5 h-5 text-orange-500" />
               About Us
             </h2>
-            <p className="mt-2 leading-relaxed text-gray-600">
-              {company.about}
+            <p className="mt-2 leading-relaxed text-gray-700 whitespace-pre-line">
+              {company.about || "No description provided."}
             </p>
           </section>
-
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="flex items-center gap-3">
               <Users className="w-6 h-6 text-orange-500" />
               <div>
                 <p className="text-sm text-gray-500">Company Size</p>
                 <p className="font-medium text-[#002147]">
-                  {company.company_size}
+                  {company.company_size || "N/A"}
                 </p>
               </div>
             </div>
-
             <div className="flex items-center gap-3">
               <MapPin className="w-6 h-6 text-orange-500" />
               <div>
                 <p className="text-sm text-gray-500">Address</p>
-                <p className="font-medium text-[#002147]">{company.location}</p>
+                <p className="font-medium text-[#002147]">
+                  {company.location || "N/A"}
+                </p>
               </div>
             </div>
-
             <div className="flex items-center gap-3">
               <Globe className="w-6 h-6 text-orange-500" />
               <div>
                 <p className="text-sm text-gray-500">Website</p>
-                <a
-                  href={company.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-orange-500 hover:underline"
-                >
-                  {company.website}
-                </a>
+                {company.website ? (
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-orange-500 break-all hover:underline"
+                  >
+                    {company.website}
+                  </a>
+                ) : (
+                  <span className="font-medium text-[#002147]">N/A</span>
+                )}
               </div>
             </div>
           </section>
         </div>
       </div>
-
       {/* Report Modal */}
       {showReportModal && (
         <ReportModal
@@ -203,7 +216,6 @@ function ReportModal({
         >
           <X className="w-5 h-5" />
         </button>
-
         <h2 className="text-xl font-semibold text-[#002147] mb-2">
           Report Company
         </h2>
@@ -211,7 +223,6 @@ function ReportModal({
           Help us keep the community safe. Select a reason below. Your report is
           confidential and may be reviewed by admins.
         </p>
-
         <div className="mb-4 space-y-2">
           {reasons.map((r) => (
             <label
@@ -233,7 +244,6 @@ function ReportModal({
             </label>
           ))}
         </div>
-
         <div className="mb-4">
           <label className="block mb-1 text-sm font-medium text-[#002147]">
             Additional details (optional)
@@ -251,7 +261,6 @@ function ReportModal({
             {reportDetails.length}/1000
           </div>
         </div>
-
         <div className="flex items-center justify-end gap-3">
           <button
             onClick={onClose}

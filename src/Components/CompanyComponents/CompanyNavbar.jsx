@@ -57,7 +57,7 @@ const CompanyNavbar = () => {
       toast.success("Logged out successfully!");
       setTimeout(() => navigate("/"), 1000);
     } catch (err) {
-      toast.error("Logout failed");
+      toast.error("Logout failed",err);
     }
   };
 

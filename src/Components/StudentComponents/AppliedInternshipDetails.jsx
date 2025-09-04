@@ -71,10 +71,23 @@ export default function AppliedInternshipDetails() {
 
   return (
     <div className="max-w-4xl p-8 mx-auto mt-8 space-y-6 bg-white rounded-lg shadow-md">
-      <div>
-        <h1 className="mb-1 text-3xl font-bold text-[#002147]">{application.title}</h1>
-        <p className="text-lg font-medium text-gray-700">{application.company}</p>
-        <p className="text-sm text-gray-500">{application.location}</p>
+      <div className="flex items-center mb-4">
+        {application.logo_img ? (
+          <img
+            src={`http://localhost/InternBackend/${application.logo_img}`}
+            alt={application.company}
+            className="object-cover mr-4 bg-white border-2 border-orange-400 rounded-full w-14 h-14"
+          />
+        ) : (
+          <div className="flex items-center justify-center mr-4 text-2xl font-bold text-white bg-orange-500 rounded-full w-14 h-14">
+            {application.company?.[0] || "?"}
+          </div>
+        )}
+        <div>
+          <h1 className="mb-1 text-3xl font-bold text-[#002147]">{application.title}</h1>
+          <p className="text-lg font-medium text-gray-700">{application.company}</p>
+          <p className="text-sm text-gray-500">{application.location}</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">

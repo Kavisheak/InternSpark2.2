@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 import { Search, Eye, Trash2, MapPin, Calendar, Building2 } from "lucide-react";
 
 export default function InternshipManagement() {
@@ -32,8 +33,98 @@ export default function InternshipManagement() {
     expired: internships.filter((i) => i.status === "expired").length,
   };
 
-  const handleRemove = (id) => alert(`Remove internship: ${id}`);
-  const handleExport = () => alert("Exporting listings...");
+  const checkSession = async () => {
+    try {
+      const res = await fetch('http://localhost/InternBackend/admin/api/session_info.php', { credentials: 'include' });
+      const data = await res.json();
+      return data.session || {};
+    } catch (err) {
+      console.error('session check failed', err);
+      return null;
+    }
+  };
+
+  const handleRemove = async (id) => {
+    // ask user first using a toast confirmation (Yes / No)
+    const confirmed = await new Promise((resolve) => {
+      toast((t) => (
+        <div className="p-3">
+          <div className="mb-2 font-medium">Are you sure you want to delete this internship?</div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve(false); }}
+              className="px-3 py-1 text-gray-800 bg-gray-100 border rounded"
+            >
+              No
+            </button>
+            <button
+              onClick={() => { toast.dismiss(t.id); resolve(true); }}
+              className="px-3 py-1 text-white bg-red-600 rounded"
+            >
+              Yes, remove
+            </button>
+          </div>
+        </div>
+      ), { duration: 60000 });
+    });
+
+    if (!confirmed) return;
+
+    // then verify session
+    const sess = await checkSession();
+    let devPayload = null;
+  if (!sess || (!sess.user_id && !sess.role && !sess.company_id)) {
+      // try fallback from storage (localStorage or sessionStorage)
+      const stored = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+      if (stored && (stored.user_id || stored.role || stored.company_id)) {
+        devPayload = stored; // contains user_id, role, company_id
+      } else {
+    toast.error('Not authenticated');
+        return;
+      }
+    }
+
+    try {
+      const form = new FormData();
+      form.append('id', id);
+      if (devPayload) {
+        form.append('dev', '1');
+        if (devPayload.user_id) form.append('user_id', devPayload.user_id);
+        if (devPayload.role) form.append('role', devPayload.role);
+        if (devPayload.company_id) form.append('company_id', devPayload.company_id);
+      }
+      // debug: log payload keys
+      console.debug('Deleting internship, form keys:', Array.from(form.keys()));
+      const res = await fetch('http://localhost/InternBackend/admin/api/delete_internship.php', {
+        method: 'POST',
+        body: form,
+        credentials: 'include'
+      });
+      const text = await res.text();
+      let payload;
+  try {
+        payload = JSON.parse(text);
+      } catch {
+        console.error('Non-JSON response from server:', text);
+        toast.error('Server error: ' + text);
+        return;
+      }
+      if (!res.ok) {
+        toast.error(payload.message || 'Server returned an error');
+        return;
+      }
+      if (payload.success) {
+        setInternships(prev => prev.filter(it => Number(it.id) !== Number(id)));
+        toast.success(payload.message || 'Deleted');
+      } else {
+        toast.error(payload.message || 'Failed to delete');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Delete request failed: ' + (err.message || err));
+    }
+  };
+  // export functionality placeholder
 
   const getWorkTypeBadgeColor = (workType) => {
     switch (workType) {
@@ -55,27 +146,28 @@ export default function InternshipManagement() {
       );
       const data = await res.json();
       if (data.success) {
-        console.log("Internship Details:", data.data);
-        // Set state to show details in a modal or details section
-        // setSelectedInternship(data.data);
+    // show details in modal
+    setSelectedInternship(data.data);
       } else {
-        alert(data.message);
+        toast.error(data.message || 'Failed to load details');
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
+
+  const closeModal = () => setSelectedInternship(null);
 
   return (
     <div className="bg-white">
       <div className="absolute inset-0" />
-      <div className="relative z-10 p-6 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-6xl p-6 mx-auto">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Internship Management</h1>
         </div>
 
-        <div className="mb-4 text-orange-600 font-bold">
+        <div className="mb-4 font-bold text-orange-600">
           View and manage all internship postings (read-only with removal option)
         </div>
 
@@ -83,7 +175,7 @@ export default function InternshipManagement() {
           <div className="relative w-80">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
             <input
-              className="pl-10 pr-3 py-2 w-full rounded bg-orange-100 text-gray-800 border border-orange-600 placeholder-orange-500"
+              className="w-full py-2 pl-10 pr-3 text-gray-800 placeholder-orange-500 bg-orange-100 border border-orange-600 rounded"
               placeholder="Search internships..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -91,7 +183,7 @@ export default function InternshipManagement() {
           </div>
         </div>
 
-        <div className="flex space-x-4 mb-6">
+        <div className="flex mb-6 space-x-4">
           {["all", "active", "expired"].map((tab) => (
             <button
               key={tab}
@@ -111,7 +203,7 @@ export default function InternshipManagement() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="border border-orange-500 bg-white rounded p-6 shadow-sm"
+              className="p-6 bg-white border border-orange-500 rounded shadow-sm"
             >
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
@@ -120,8 +212,8 @@ export default function InternshipManagement() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="text-black flex items-center">
-                      <Building2 className="h-4 w-4 mr-1" />
+                    <p className="flex items-center text-black">
+                      <Building2 className="w-4 h-4 mr-1" />
                       {item.company}
                     </p>
                   </div>
@@ -146,16 +238,16 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 text-sm text-gray-800 mb-4">
+              <div className="grid grid-cols-4 gap-4 mb-4 text-sm text-gray-800">
                 <div>
                   <span className="flex items-center mb-1">
-                    <MapPin className="text-gray-800 h-4 w-4 mr-1" /> Location:
+                    <MapPin className="w-4 h-4 mr-1 text-gray-800" /> Location:
                   </span>
                   <p className="text-orange-600">{item.location}</p>
                 </div>
                 <div>
                   <span className="flex items-center mb-1">
-                    <Calendar className="h-4 w-4 mr-1" /> Duration:
+                    <Calendar className="w-4 h-4 mr-1" /> Duration:
                   </span>
                   <p className="text-orange-600">{item.duration}</p>
                 </div>
@@ -169,28 +261,90 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <p className="text-gray-800 mb-4">{item.description}</p>
+              <p className="mb-4 text-gray-800">{item.description}</p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => viewDetails(item.id)}
-                  className="flex items-center px-4 py-2 rounded border bg-orange-500 hover:bg-gray-400 text-white"
+                  className="flex items-center px-4 py-2 text-white bg-orange-500 border rounded hover:bg-gray-400"
                 >
-                  <Eye className="h-4 w-4 mr-2" />
+                  <Eye className="w-4 h-4 mr-2" />
                   View Details
                 </button>
                 <button
                   onClick={() => handleRemove(item.id)}
-                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
+                  className="flex items-center px-4 py-2 text-white bg-red-600 rounded hover:bg-purple-400"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="w-4 h-4 mr-2" />
                   Remove Listing
                 </button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+        {/* Internship details modal */}
+        {selectedInternship && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="w-full max-w-3xl mx-4">
+              <div className="overflow-hidden bg-white rounded-lg shadow-lg">
+                <div className="flex items-start justify-between p-6 border-b">
+                  <div>
+                    <h3 className="text-xl font-semibold">{selectedInternship.title}</h3>
+                    <div className="text-sm text-gray-600">{selectedInternship.company} • {selectedInternship.location}</div>
+                  </div>
+                  <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+                    <div>
+                      <div className="text-xs text-gray-500">Duration</div>
+                      <div className="font-medium">{selectedInternship.duration}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Type</div>
+                      <div className="font-medium">{selectedInternship.internship_type}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Salary</div>
+                      <div className="font-medium">{selectedInternship.salary || '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Deadline</div>
+                      <div className="font-medium">{selectedInternship.deadline || '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Application Limit</div>
+                      <div className="font-medium">{selectedInternship.application_limit ?? '-'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Posted</div>
+                      <div className="font-medium">{selectedInternship.created_at}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Description</div>
+                    <div className="text-gray-800">{selectedInternship.description}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Requirements</div>
+                    <div className="text-gray-800 whitespace-pre-wrap">{selectedInternship.requirements}</div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-medium">Company Details</h4>
+                    <div className="text-sm text-gray-700">{selectedInternship.company} — {selectedInternship.company_location}</div>
+                    {selectedInternship.website && <div className="text-xs text-blue-600">{selectedInternship.website}</div>}
+                    {selectedInternship.about && <p className="mt-2 text-gray-700">{selectedInternship.about}</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+  <Toaster position="top-center" />
+  </div>
     </div>
   );
 }

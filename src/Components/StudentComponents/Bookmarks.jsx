@@ -106,6 +106,7 @@ const Bookmarks = () => {
     workType: internship.internship_type || internship.workType || "Not specified",
     pay: internship.salary || internship.pay || "Unpaid",
     status: internship.status || "open",
+    logo_img: internship.logo_img || "", // <-- Ensure logo_img is present
   }));
 
   if (bookmarkedInternships.length === 0) {
@@ -138,11 +139,20 @@ const Bookmarks = () => {
               <div key={internship.id} className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#002147]">
-                      <span className="text-lg font-bold text-white">
-                        {internship.company ? internship.company.charAt(0) : "?"}
-                      </span>
-                    </div>
+                    {/* Show logo image if available, else fallback to letter */}
+                    {internship.logo_img ? (
+                      <img
+                        src={`http://localhost/InternBackend/${internship.logo_img}`}
+                        alt={internship.company}
+                        className="object-cover w-12 h-12 bg-white border-2 border-orange-400 rounded-full"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#002147]">
+                        <span className="text-lg font-bold text-white">
+                          {internship.company ? internship.company.charAt(0) : "?"}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <h3 className="text-lg font-semibold text-[#002147]">{internship.title || "Untitled"}</h3>
                       <p className="text-gray-600">{internship.company}</p>

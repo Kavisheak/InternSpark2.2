@@ -19,10 +19,10 @@ const AdminControlPanel = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
       {/* User Management */}
-      <div className="bg-orange-200 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
+      <div className="p-4 bg-orange-200 rounded-lg">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-black">User Management</span>
           <FaUsers color="black" />
         </div>
@@ -30,15 +30,15 @@ const AdminControlPanel = () => {
         <div className="text-sm text-black">{counts.users.suspended} suspended</div>
         <button
           onClick={() => navigate("/admin/usermanage")}
-          className="mt-3 bg-orange-500 hover:bg-gray-600 px-4 py-1 rounded text-sm text-white"
+          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
         >
           Manage
         </button>
       </div>
 
       {/* Internship Listings */}
-      <div className="bg-orange-200 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
+      <div className="p-4 bg-orange-200 rounded-lg">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-black">Internship Listings</span>
           <FaClipboardList color="black" />
         </div>
@@ -46,15 +46,15 @@ const AdminControlPanel = () => {
         <div className="text-sm text-black">Active listings</div>
         <button
           onClick={() => navigate("internshipmanage")}
-          className="mt-3 bg-orange-500 hover:bg-gray-600 px-4 py-1 rounded text-sm text-white"
+          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
         >
           View All
         </button>
       </div>
 
       {/* System Settings */}
-      <div className="bg-orange-200 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
+      <div className="p-4 bg-orange-200 rounded-lg">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-black">System Settings</span>
           <AiOutlineSetting color="black" />
         </div>
@@ -62,7 +62,7 @@ const AdminControlPanel = () => {
         <div className="text-sm text-black">All systems running</div>
         <button
           onClick={() => navigate("settings")}
-          className="mt-3 bg-orange-500 hover:bg-gray-600 px-4 py-1 rounded text-sm text-white"
+          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
         >
           Configure
         </button>

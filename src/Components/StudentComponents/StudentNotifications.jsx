@@ -2,7 +2,7 @@
 import React from "react";
 import axios from "axios";
 
-const StudentNotifications = ({ notifications, setNotifications, fetchNotifications }) => {
+const StudentNotifications = ({ notifications,  fetchNotifications }) => {
   const markAllAsRead = () => {
     axios
       .post(

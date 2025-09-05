@@ -213,6 +213,7 @@ const AvailableInternship = () => {
                     company: internship.company_name || internship.company,
                     workType: internship.internship_type || internship.workType,
                     pay: internship.salary || internship.pay,
+                    logo_img: internship.logo_img || "", // <-- Add this line
                   }}
                   isBookmarked={bookmarkedInternships.some(
                     (item) =>

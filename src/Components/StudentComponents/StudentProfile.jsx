@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { User } from "lucide-react";
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiEdit2, FiTrash2, FiX } from "react-icons/fi";
 import Footer from "../CompanyComponents/Footer";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -26,6 +26,9 @@ export default function StudentProfile() {
   const [newSkill, setNewSkill] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [cvFile, setCvFile] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch existing student profile
   useEffect(() => {
@@ -123,6 +126,70 @@ export default function StudentProfile() {
     }
   };
 
+  // Handle profile image click
+  const handleProfileImageClick = () => {
+    setPreviewImage(profileImage
+      ? URL.createObjectURL(profileImage)
+      : savedData.profile_img
+        ? `http://localhost/InternBackend/${savedData.profile_img}`
+        : null
+    );
+    setShowImageModal(true);
+  };
+
+  // Handle new image upload in modal
+  const handleModalImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+      toast.success("New profile image selected. Save to apply.");
+    }
+  };
+
+  // Handle delete profile image
+  const handleDeleteProfileImage = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await axios.post(
+        "http://localhost/InternBackend/students/api/delete_profile_image.php",
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setProfileImage(null);
+        setSavedData((prev) => ({ ...prev, profile_img: "" }));
+        setPreviewImage(null);
+        toast.success("Profile image deleted.");
+      } else {
+        toast.error(res.data.message || "Delete failed");
+      }
+    } catch {
+      toast.error("Server error deleting image");
+    }
+    setIsDeleting(false);
+    setShowImageModal(false);
+  };
+
+  const handleCVDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type === "application/pdf") {
+        setCvFile(file);
+        toast.success("CV selected!");
+      } else {
+        toast.error("Only PDF files are allowed.");
+      }
+    }
+  };
+
+  const handleCVDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div className="min-h-screen text-[#14213D] bg-white fade-in-up">
       <div className="max-w-6xl px-6 py-10 mx-auto">
@@ -131,7 +198,7 @@ export default function StudentProfile() {
           {/* Sidebar */}
           <div className="p-6 border border-[#D1D5DB] shadow-md bg-[#F8FAFC] rounded-2xl overflow-hidden">
             <div className="flex flex-col items-center mb-6">
-              <div className="relative w-24 h-24 mb-4">
+              <div className="relative w-24 h-24 mb-4 group">
                 {profileImage || savedData.profile_img ? (
                   <img
                     src={
@@ -140,16 +207,20 @@ export default function StudentProfile() {
                         : `http://localhost/InternBackend/${savedData.profile_img}`
                     }
                     alt="Profile"
-                    className="object-cover w-24 h-24 rounded-full"
+                    className="object-cover w-24 h-24 transition duration-200 rounded-full cursor-pointer hover:scale-105"
+                    onClick={handleProfileImageClick}
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-24 h-24 text-3xl text-gray-700 bg-gray-300 rounded-full">
+                  <div
+                    className="flex items-center justify-center w-24 h-24 text-3xl text-gray-700 bg-gray-300 rounded-full cursor-pointer"
+                    onClick={handleProfileImageClick}
+                  >
                     <User className="w-10 h-10" />
                   </div>
                 )}
                 <label htmlFor="profile-upload">
                   <div className="absolute bottom-0 right-0 flex items-center justify-center text-lg font-bold text-white bg-gray-500 rounded-full cursor-pointer w-7 h-7 hover:bg-gray-700">
-                    +
+                    <FiEdit2 />
                   </div>
                 </label>
                 <input
@@ -272,15 +343,74 @@ export default function StudentProfile() {
             </div>
 
             <div className="mt-6">
-              <label htmlFor="cv" className="block mb-1 text-sm font-medium">Upload CV (PDF)</label>
-              <input
-                type="file"
-                id="cv"
-                accept=".pdf"
-                onChange={(e) => setCvFile(e.target.files[0])}
-                className="block w-full text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FCA311]"
-              />
-              {cvFile && <p className="mt-2 text-sm text-gray-600">Selected: {cvFile.name}</p>}
+              <label className="block mb-1 text-sm font-medium">Upload CV (PDF)</label>
+              <div
+                className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 transition ${
+                  cvFile ? "border-green-400 bg-green-50" : "border-gray-300 bg-gray-50"
+                }`}
+                onClick={() => document.getElementById("cv-upload").click()}
+                onDrop={handleCVDrop}
+                onDragOver={handleCVDragOver}
+                style={{ cursor: "pointer" }}
+              >
+                <input
+                  type="file"
+                  id="cv-upload"
+                  accept=".pdf"
+                  onChange={(e) => setCvFile(e.target.files[0])}
+                  className="hidden"
+                />
+                <span className="text-2xl text-[#FCA311] mb-2">
+                  <FiEdit2 />
+                </span>
+                <span className="font-medium text-gray-700">
+                  {cvFile ? "CV Selected" : "Drag & drop or click to upload your CV"}
+                </span>
+                <span className="mt-1 text-xs text-gray-500">
+                  Only PDF files. Max size: 2MB.
+                </span>
+                {cvFile && (
+                  <div className="flex flex-col items-center mt-4">
+                    <span className="text-sm font-semibold text-green-700">{cvFile.name}</span>
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        type="button"
+                        className="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const url = URL.createObjectURL(cvFile);
+                          window.open(url, "_blank");
+                        }}
+                      >
+                        View
+                      </button>
+                      <button
+                        type="button"
+                        className="px-3 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCvFile(null);
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {!cvFile && savedData.cv_file && (
+                  <div className="flex flex-col items-center mt-4">
+                    <button
+                      type="button"
+                      className="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700"
+                      onClick={() => {
+                        window.open(`http://localhost/InternBackend/${savedData.cv_file}`, "_blank");
+                      }}
+                    >
+                      View Existing CV
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <button
@@ -293,6 +423,62 @@ export default function StudentProfile() {
         </div>
       </div>
       <Footer />
+
+      {/* Profile Image Modal */}
+      {showImageModal && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-60">
+          <div className="relative flex flex-col items-center w-full max-w-sm p-8 mt-32 bg-white shadow-2xl rounded-xl">
+            <button
+              className="absolute text-2xl text-gray-500 top-4 right-4 hover:text-gray-700"
+              onClick={() => setShowImageModal(false)}
+              aria-label="Close"
+            >
+              <FiX />
+            </button>
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Profile Preview"
+               className="object-cover w-24 h-24 mb-4 border-4 border-blue-200 rounded-full md:w-48 md:h-48"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-48 h-48 mb-4 bg-gray-200 rounded-full">
+                <User className="w-16 h-16 text-gray-400" />
+              </div>
+            )}
+            <div className="flex gap-4 mt-2">
+              <label
+                htmlFor="modal-profile-upload"
+                className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg cursor-pointer hover:bg-blue-700"
+              >
+                <FiEdit2 />
+                Edit
+                <input
+                  id="modal-profile-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleModalImageUpload}
+                  className="hidden"
+                />
+              </label>
+              {(profileImage || savedData.profile_img) && (
+                <button
+                  className="flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700"
+                  onClick={handleDeleteProfileImage}
+                  disabled={isDeleting}
+                >
+                  <FiTrash2 />
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              )}
+            </div>
+            <p className="mt-4 text-sm text-center text-gray-500">
+              Click "Edit" to upload a new profile picture.<br />
+              Click "Delete" to remove your profile picture.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -26,11 +26,19 @@ const InternshipCard = ({ internship, isBookmarked, onBookmarkToggle }) => {
     <div className="p-6 transition-shadow duration-200 bg-white rounded-lg shadow-md hover:shadow-lg">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-oxfordblue">
-            <span className="text-lg font-bold text-white">
-              {internship.company.charAt(0)}
-            </span>
-          </div>
+          {
+            internship.logo_img ? (
+              <img
+                src={`http://localhost/InternBackend/${internship.logo_img}`}
+                alt={internship.company}
+                className="object-cover w-12 h-12 bg-white border-2 border-orange-400 rounded-full"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-12 h-12 text-xl font-bold text-white bg-orange-500 rounded-full">
+                {internship.company?.[0] || "?"}
+              </div>
+            )
+          }
           <div>
             <h3 className="text-lg font-semibold text-[#002147]">{internship.title}</h3>
             <p className="text-gray-600">{internship.company}</p>

@@ -7,53 +7,30 @@ import { useLocation } from "react-router-dom";
 
 export default function CompanyApplications() {
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const internshipId = params.get("internshipId")
-    ? Number(params.get("internshipId"))
-    : null;
-  const urlSelectedId = params.get("selectedId")
-    ? Number(params.get("selectedId"))
-    : null;
-
   const [applications, setApplications] = useState([]);
-  const [selectedId, setSelectedId] = useState(urlSelectedId);
+  const [selectedId, setSelectedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch applications for the selected internship only
   useEffect(() => {
-    let url = "http://localhost/InternBackend/company/api/applications.php";
-    if (internshipId) url += `?internshipId=${internshipId}`;
+    const params = new URLSearchParams(location.search);
+    const selected = params.get("selectedId");
+    if (selected) setSelectedId(Number(selected));
+  }, [location.search]);
+
+  useEffect(() => {
     axios
-      .get(url, { withCredentials: true })
+      .get("http://localhost/InternBackend/company/api/applications.php", {
+        withCredentials: true,
+      })
       .then((res) => {
         if (res.data.success && Array.isArray(res.data.applications)) {
           setApplications(res.data.applications);
-        } else {
-          setApplications([]);
+          if (res.data.applications.length > 0)
+            setSelectedId(res.data.applications[0].id);
         }
       })
       .catch(() => setApplications([]));
-  }, [internshipId]);
-
-  // Update selectedId if URL changes (user clicks "View" in dashboard)
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const urlSelectedId = params.get("selectedId")
-      ? Number(params.get("selectedId"))
-      : null;
-    setSelectedId(urlSelectedId);
-  }, [location.search]);
-
-  // After applications are loaded, set selectedId if not set or invalid
-  useEffect(() => {
-    if (applications.length === 0) return;
-    if (
-      !selectedId ||
-      !applications.some((app) => app.id === selectedId)
-    ) {
-      setSelectedId(applications[0].id);
-    }
-  }, [applications, selectedId]);
+  }, []);
 
   const handleStatusUpdate = (id, newStatus) => {
     axios

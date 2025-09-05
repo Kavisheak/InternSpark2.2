@@ -7,6 +7,7 @@ export default function ApplicationSidebar({
   setSelectedId,
   searchTerm,
   setSearchTerm,
+  detailHeight,
 }) {
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -27,70 +28,85 @@ export default function ApplicationSidebar({
     .filter((app) => statusFilter === "All" || app.status === statusFilter);
 
   return (
-    <div className="w-full h-full p-4 bg-white shadow-md md:w-1/3 rounded-xl">
-      <h2 className="mb-4 text-xl font-semibold text-gray-800">Recent Applications</h2>
+    <div
+      className="flex flex-col w-full bg-white shadow-md md:w-1/3 rounded-xl"
+      style={{ height: detailHeight === "auto" ? "auto" : `${detailHeight}px` }}
+    >
+      <div className="p-4 border-b">
+        <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          Recent Applications
+        </h2>
 
-      {/* Search Box */}
-      <div className="relative mb-3">
-        <FiSearch className="absolute text-gray-400 top-3 left-3" />
-        <input
-          type="text"
-          placeholder="Search applications..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full py-2 pl-10 pr-4 border rounded-md text-oxfordblue focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
+        {/* Search Box */}
+        <div className="relative mb-3">
+          <FiSearch className="absolute text-gray-400 top-3 left-3" />
+          <input
+            type="text"
+            placeholder="Search applications..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full py-2 pl-10 pr-4 border rounded-md text-oxfordblue focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+        </div>
+
+        {/* Status Filter Dropdown */}
+        <div>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full px-3 py-2 text-sm border rounded-md text-oxfordblue focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+            <option value="All">All</option>
+            <option value="Reviewing">Reviewing</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
       </div>
 
-      {/* Status Filter Dropdown */}
-      <div className="mb-4">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="w-full px-3 py-2 text-sm border rounded-md text-oxfordblue focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
-          <option value="All">All</option>
-          <option value="Reviewing">Reviewing</option>
-          <option value="Shortlisted">Shortlisted</option>
-          <option value="Accepted">Accepted</option>
-          <option value="Rejected">Rejected</option>
-        </select>
-      </div>
-
-      {/* Application List */}
-      <ul className="space-y-2">
-        {filtered.length > 0 ? (
-          filtered.map((app) => (
-            <li
-              key={app.id}
-              onClick={() => setSelectedId(app.id)}
-              className={`p-3 rounded-lg cursor-pointer flex items-center gap-4 border ${
-                selectedId === app.id ? "border-orange-500 bg-orange-50" : "border-gray-200"
-              }`}
-            >
-              <img
-                src={app.image ? `http://localhost/InternBackend/${app.image}` : "/default-avatar.png"}
-                alt={app.name}
-                className="object-cover w-10 h-10 rounded-full"
-              />
-              <div className="flex-grow">
-                <p className="font-medium text-gray-800">{app.name}</p>
-                <p className="text-sm text-gray-500">{app.role}</p>
-                <p className="text-xs text-gray-400">Applied {app.applied}</p>
-              </div>
-              <span
-                className={`text-white text-xs px-2 py-1 rounded-full ${
-                  statusColor[app.status] || "bg-gray-400"
+      {/* Scrollable list */}
+      <div className="flex-1 p-4 overflow-y-auto">
+        <ul className="space-y-2">
+          {filtered.length > 0 ? (
+            filtered.map((app) => (
+              <li
+                key={app.id}
+                onClick={() => setSelectedId(app.id)}
+                className={`p-3 rounded-lg cursor-pointer flex items-center gap-4 border ${
+                  selectedId === app.id
+                    ? "border-orange-500 bg-orange-50"
+                    : "border-gray-200"
                 }`}
               >
-                {app.status}
-              </span>
-            </li>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500">No applications found.</p>
-        )}
-      </ul>
+                <img
+                  src={
+                    app.image
+                      ? `http://localhost/InternBackend/${app.image}`
+                      : "/default-avatar.png"
+                  }
+                  alt={app.name}
+                  className="object-cover w-10 h-10 rounded-full"
+                />
+                <div className="flex-grow">
+                  <p className="font-medium text-gray-800">{app.name}</p>
+                  <p className="text-sm text-gray-500">{app.role}</p>
+                  <p className="text-xs text-gray-400">Applied {app.applied}</p>
+                </div>
+                <span
+                  className={`text-white text-xs px-2 py-1 rounded-full ${
+                    statusColor[app.status] || "bg-gray-400"
+                  }`}
+                >
+                  {app.status}
+                </span>
+              </li>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No applications found.</p>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }

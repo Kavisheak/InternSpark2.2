@@ -62,33 +62,33 @@ export default function SystemSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6 bg-gray-50">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-orange-600 mb-8">System Settings</h1>
+        <h1 className="mb-8 text-3xl font-bold text-orange-600">System Settings</h1>
 
         {/* Tabs On System Tab */}
-        <div className="grid grid-cols-1 mb-6 border rounded overflow-hidden">
+        <div className="grid grid-cols-1 mb-6 overflow-hidden border rounded">
           <button
-            className="py-2 px-4 text-2xl font-medium bg-orange-500 text-white"
+            className="px-4 py-2 text-2xl font-medium text-white bg-orange-500"
           >
            System
           </button>
         </div>
 
         {/* System Tab Content */}
-        <div className="space-y-6 min-h-screen bg-orange-100 ">
-          <div className="border rounded shadow-sm bg-orange p-8">
-            <div className="flex items-center gap-2 text-orange-500 text-xl font-semibold mb-2">
-              <Globe className="h-5 w-5" />
+        <div className="min-h-screen space-y-6 bg-orange-100 ">
+          <div className="p-8 border rounded shadow-sm bg-orange">
+            <div className="flex items-center gap-2 mb-2 text-xl font-semibold text-orange-500">
+              <Globe className="w-5 h-5" />
               System Configuration
             </div>
-            <p className="text-sm text-gray-800 mb-6">General system settings and configurations</p>
+            <p className="mb-6 text-sm text-gray-800">General system settings and configurations</p>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Site Name</label>
               <input
                 type="text"
-                className="w-full border rounded px-3 py-2"
+                className="w-full px-3 py-2 border rounded"
                 value={siteName}
                 onChange={(e) => setSiteName(e.target.value)}
               />
@@ -133,7 +133,7 @@ export default function SystemSettings() {
 
             <button
               onClick={handleSaveSettings}
-              className="mt-6 bg-orange-500 hover:bg-orange-500 text-white px-6 py-2 rounded"
+              className="px-6 py-2 mt-6 text-white bg-orange-500 rounded hover:bg-orange-500"
             >
               Save System Settings
             </button>

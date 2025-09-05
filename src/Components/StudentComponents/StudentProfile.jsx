@@ -171,6 +171,25 @@ export default function StudentProfile() {
     setShowImageModal(false);
   };
 
+  const handleCVDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type === "application/pdf") {
+        setCvFile(file);
+        toast.success("CV selected!");
+      } else {
+        toast.error("Only PDF files are allowed.");
+      }
+    }
+  };
+
+  const handleCVDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div className="min-h-screen text-[#14213D] bg-white fade-in-up">
       <div className="max-w-6xl px-6 py-10 mx-auto">
@@ -330,6 +349,8 @@ export default function StudentProfile() {
                   cvFile ? "border-green-400 bg-green-50" : "border-gray-300 bg-gray-50"
                 }`}
                 onClick={() => document.getElementById("cv-upload").click()}
+                onDrop={handleCVDrop}
+                onDragOver={handleCVDragOver}
                 style={{ cursor: "pointer" }}
               >
                 <input
@@ -378,14 +399,15 @@ export default function StudentProfile() {
                 )}
                 {!cvFile && savedData.cv_file && (
                   <div className="flex flex-col items-center mt-4">
-                    <a
-                      href={`http://localhost/InternBackend/${savedData.cv_file}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
                       className="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700"
+                      onClick={() => {
+                        window.open(`http://localhost/InternBackend/${savedData.cv_file}`, "_blank");
+                      }}
                     >
                       View Existing CV
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>

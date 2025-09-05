@@ -7,10 +7,10 @@ import SystemStatus from "./SystemStatus";
 
 const AdminDashboard = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b bg-white text-white p-6">
+    <div className="min-h-screen p-6 text-white bg-white bg-gradient-to-b">
       
       <AdminControlPanel />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <CriticalAlerts />
         <SystemStatus />
       </div>

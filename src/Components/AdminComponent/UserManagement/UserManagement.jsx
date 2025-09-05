@@ -39,6 +39,7 @@ export default function UserManagement() {
   const [companyReports, setCompanyReports] = useState([]);
   const [showReportsModal, setShowReportsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [pendingSuspends, setPendingSuspends] = useState({});
 
   useEffect(() => {
     fetch("http://localhost/InternBackend/admin/api/users.php")
@@ -81,19 +82,21 @@ export default function UserManagement() {
 
     switch (activeTab) {
       case "students":
-        return matchesSearch && user.type === "Student";
+        return matchesSearch && user.type === "Student" && user.status !== "Suspended";
       case "companies":
-        return matchesSearch && user.type === "Company";
-      
-      default:
-        return matchesSearch;
+        return matchesSearch && user.type === "Company" && user.status !== "Suspended";
+      case "suspended":
+        return matchesSearch && user.status === "Suspended";
+      default: // "all"
+        return matchesSearch && user.status !== "Suspended";
     }
   });
 
   const counts = {
-    all: users.length,
-    students: users.filter((u) => u.type === "Student").length,
-    companies: users.filter((u) => u.type === "Company").length,
+    suspended: users.filter((u) => u.status === "Suspended").length,
+    all: users.filter((u) => u.status !== "Suspended").length,
+    students: users.filter((u) => u.type === "Student" && u.status !== "Suspended").length,
+    companies: users.filter((u) => u.type === "Company" && u.status !== "Suspended").length,
     
   };
 
@@ -106,7 +109,17 @@ export default function UserManagement() {
     const target = users.find((u) => u.id === id);
     const name = target?.name || id;
 
+    // Prevent double-suspending: if the user is already suspended, show a toast and abort
+    if (target?.status === "Suspended") {
+      toast.error("User is already suspended");
+      return;
+    }
+
     const doSuspend = async () => {
+      // optimistic UI: mark as pending and change status locally
+      const prevUsers = JSON.parse(JSON.stringify(users));
+      setPendingSuspends((p) => ({ ...p, [id]: true }));
+      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: "Suspending..." } : u)));
       try {
         const payload = { user_id: id };
         const res = await fetch(
@@ -120,20 +133,32 @@ export default function UserManagement() {
         );
 
         if (!res.ok) {
-          toast.error(`Server returned ${res.status}`);
+          // try to parse JSON error body
+          let errBody = null;
+          try { errBody = await res.json(); } catch { /* ignore */ }
+          setUsers(prevUsers);
+          setPendingSuspends((p) => ({ ...p, [id]: false }));
+          console.error('suspend_user failed', res.status, errBody);
+          toast.error((errBody && errBody.message) ? errBody.message : `Server returned ${res.status}`);
           return;
         }
 
         const data = await res.json();
         if (!data.success) {
+          setUsers(prevUsers);
+          setPendingSuspends((p) => ({ ...p, [id]: false }));
+          console.error('suspend_user response', data);
           toast.error(data.message || "Failed to suspend user");
           return;
         }
 
-        setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: "Suspended" } : u)));
-        toast.success("User suspended and moved to suspended_users");
+  setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: "Suspended" } : u)));
+  setPendingSuspends((p) => ({ ...p, [id]: false }));
+  toast.success(data.message || 'User suspended');
       } catch (err) {
         console.error(err);
+        setUsers(prevUsers);
+        setPendingSuspends((p) => ({ ...p, [id]: false }));
         toast.error("Failed to suspend user");
       }
     };
@@ -233,7 +258,7 @@ export default function UserManagement() {
           { label: "All Users", key: "all", count: counts.all },
           { label: "Students", key: "students", count: counts.students },
           { label: "Companies", key: "companies", count: counts.companies },
-        
+          { label: "Suspended", key: "suspended", count: counts.suspended },
         ].map((tab) => (
           <Button
             key={tab.key}
@@ -313,12 +338,27 @@ export default function UserManagement() {
                 </Button>
 
                 {getReportCount(user) >= 10 && (
-                  <Button
-                    onClick={() => handleSuspendAccount(user.id)}
-                    className="text-white bg-red-600"
-                  >
-                    Suspend Account
-                  </Button>
+                  user.status === 'Suspended' ? (
+                    <Button
+                      onClick={() => toast.error('User is already suspended')}
+                      className={`text-gray-700 bg-gray-100 border border-gray-200`}
+                    >
+                      Already Suspended
+                    </Button>
+                  ) : (
+                    (() => {
+                      const isPending = !!pendingSuspends[user.id];
+                      return (
+                        <Button
+                          onClick={() => handleSuspendAccount(user.id)}
+                          disabled={isPending}
+                          className={`text-white ${isPending ? 'bg-gray-400' : 'bg-red-600'}`}
+                        >
+                          {isPending ? 'Suspending...' : 'Suspend Account'}
+                        </Button>
+                      );
+                    })()
+                  )
                 )}
               </div>
             </CardContent>

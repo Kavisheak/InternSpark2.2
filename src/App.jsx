@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 
 // Pages and Components
 import AdvertismentPage from "./Components/GuestComponents/AdvertismentPage";
@@ -21,9 +20,6 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-
-      {/* Global Toast Notifications */}
-      <Toaster position="top-center" />
 
       {/* Main Route Handling */}
       <Routes>

@@ -11,29 +11,38 @@ export default function CompanyApplications() {
   const [selectedId, setSelectedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [detailHeight, setDetailHeight] = useState("auto");
-
   const detailRef = useRef(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const selected = params.get("selectedId");
-    if (selected) setSelectedId(Number(selected));
-  }, [location.search]);
-
-  useEffect(() => {
+    const internshipId = params.get("internshipId");
+    let url = "http://localhost/InternBackend/company/api/applications.php";
+    if (internshipId) url += `?internshipId=${internshipId}`;
     axios
-      .get("http://localhost/InternBackend/company/api/applications.php", {
-        withCredentials: true,
-      })
+      .get(url, { withCredentials: true })
       .then((res) => {
         if (res.data.success && Array.isArray(res.data.applications)) {
           setApplications(res.data.applications);
-          if (res.data.applications.length > 0)
+
+          // Get selectedId from query string
+          const selectedFromQuery = params.get("selectedId");
+          if (selectedFromQuery) {
+            setSelectedId(Number(selectedFromQuery));
+          } else if (res.data.applications.length > 0) {
             setSelectedId(res.data.applications[0].id);
+          } else {
+            setSelectedId(null);
+          }
+        } else {
+          setApplications([]);
+          setSelectedId(null);
         }
       })
-      .catch(() => setApplications([]));
-  }, []);
+      .catch(() => {
+        setApplications([]);
+        setSelectedId(null);
+      });
+  }, [location.search]);
 
   const handleStatusUpdate = (id, newStatus) => {
     axios
@@ -58,7 +67,6 @@ export default function CompanyApplications() {
 
   const selected = applications.find((app) => app.id === selectedId);
 
-  // measure detail panel height whenever content changes
   useEffect(() => {
     if (detailRef.current) {
       setDetailHeight(detailRef.current.offsetHeight);

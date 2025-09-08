@@ -235,14 +235,11 @@ const ListofInternships = ({ searchTerm }) => {
                 <div className="relative group">
                   <button
                     onClick={() =>
-                      navigate(`/company/applications/${job.Internship_Id}`)
+                      navigate(`/company/applications?internshipId=${job.Internship_Id}`)
                     }
                     className="p-2 transition border rounded-full hover:bg-gray-100"
                   >
-                    <FiUsers
-                      size={16}
-                      className="text-emerald-800 drop-shadow-sm"
-                    />
+                    <FiUsers size={16} className="text-emerald-800 drop-shadow-sm" />
                   </button>
                   <span className="absolute hidden px-2 py-1 mb-2 text-xs text-gray-900 transform -translate-x-1/2 bg-white border rounded-md shadow-sm bottom-full left-1/2 group-hover:inline-block">
                     View Applications

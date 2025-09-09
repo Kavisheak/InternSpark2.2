@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Search,
   Eye,
@@ -35,6 +35,7 @@ const Badge = ({ children, className = "" }) => (
 //  Main Component
 export default function UserManagement() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [users, setUsers] = useState([]);
@@ -42,6 +43,8 @@ export default function UserManagement() {
   const [showReportsModal, setShowReportsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [pendingSuspends, setPendingSuspends] = useState({});
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // honor navigation state (from SystemStatus) or ?suspended=1 query param
@@ -82,6 +85,14 @@ export default function UserManagement() {
           );
           // users loaded
         }
+      });
+
+      // Load review requests
+      fetch("http://localhost/InternBackend/admin/api/review_requests.php", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setRequests(data.data);
+        setLoading(false);
       });
   }, [location]);
 
@@ -301,15 +312,45 @@ export default function UserManagement() {
     ), { duration: 8000 });
   };
 
+  const handleAction = async (id, action, response) => {
+    try {
+      const res = await fetch("http://localhost/InternBackend/admin/api/review_action.php", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ request_id: id, action, response }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        setRequests((prev) => prev.filter((r) => r.Request_Id !== id));
+      } else {
+        toast.error(data.message || "Failed");
+      }
+    } catch {
+      toast.error("Failed");
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="p-6 mx-auto max-w-7xl">
-      <div className="mb-6">
-        <h1 className="mb-2 text-2xl font-semibold text-orange-600">
-          User Suspension Management
-        </h1>
-        <p className="text-gray-800">
-          Monitor and manage users based on report counts
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="mb-2 text-2xl font-semibold text-orange-600">
+            User Suspension Management
+          </h1>
+          <p className="text-gray-800">
+            Monitor and manage users based on report counts
+          </p>
+        </div>
+        <Button
+          className="px-4 py-2 text-white bg-blue-600 rounded"
+          onClick={() => navigate("/admin/review-requests")}
+        >
+          View Review Requests
+        </Button>
       </div>
 
       <div className="flex justify-end mb-6 ">

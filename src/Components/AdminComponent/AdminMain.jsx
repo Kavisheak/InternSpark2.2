@@ -5,6 +5,7 @@ import UserManagement from "./UserManagement/UserManagement";
 import AdminNavbar from "./AdminHomePage/AdminNavbar";
 import InternshipManage from "./InternshipManagement/InternshipManage";
 import SystemSettings from "./SystemSettings/Database";
+import ReviewRequests from "./ReviewRequests"; // <-- Add this import
 
 const AdminMain = () => {
   return (
@@ -39,6 +40,7 @@ const AdminMain = () => {
         <Route path="usermanage" element={<UserManagement />} />
         <Route path="internshipmanage" element={<InternshipManage />} />
         <Route path="settings" element={<SystemSettings />} />
+        <Route path="review-requests" element={<ReviewRequests />} /> {/* <-- Add this route */}
       </Routes>
     </>
   );

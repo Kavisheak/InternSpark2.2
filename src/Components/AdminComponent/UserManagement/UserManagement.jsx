@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import {
   Search,
   Eye,
@@ -33,6 +34,7 @@ const Badge = ({ children, className = "" }) => (
 
 //  Main Component
 export default function UserManagement() {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [users, setUsers] = useState([]);
@@ -42,7 +44,15 @@ export default function UserManagement() {
   const [pendingSuspends, setPendingSuspends] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost/InternBackend/admin/api/users.php")
+    // honor navigation state (from SystemStatus) or ?suspended=1 query param
+    try {
+      const requested = location?.state?.openTab;
+      if (requested === 'suspended') setActiveTab('suspended');
+      const qp = new URLSearchParams(window.location.search);
+      if (qp.get('suspended') === '1') setActiveTab('suspended');
+  } catch { /* ignore */ }
+
+    fetch("http://localhost/InternBackend/admin/api/users.php", { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -73,7 +83,7 @@ export default function UserManagement() {
           // users loaded
         }
       });
-  }, []);
+  }, [location]);
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -228,6 +238,69 @@ export default function UserManagement() {
     }
   };
 
+  const handleUnsuspend = async (id) => {
+    const target = users.find((u) => u.id === id);
+    if (!target) return;
+    if (target.status !== 'Suspended') {
+      toast.error('User is not suspended');
+      return;
+    }
+
+    const prev = JSON.parse(JSON.stringify(users));
+    setUsers((prevU) => prevU.map((u) => (u.id === id ? { ...u, status: 'Unsuspending...' } : u)));
+    try {
+      const res = await fetch('http://localhost/InternBackend/admin/api/unsuspend_user.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: id }),
+      });
+      if (!res.ok) {
+        setUsers(prev);
+        toast.error(`Server returned ${res.status}`);
+        return;
+      }
+      const data = await res.json();
+      if (!data.success) {
+        setUsers(prev);
+        toast.error(data.message || 'Failed to unsuspend');
+        return;
+      }
+
+      // update UI: mark active and zero reports
+      setUsers((prevU) => prevU.map((u) => (u.id === id ? { ...u, status: 'Active', reports: 0, reports_received: 0 } : u)));
+      toast.success(data.message || 'User unsuspended');
+    } catch (err) {
+      console.error(err);
+      setUsers(prev);
+      toast.error('Failed to unsuspend');
+    }
+  };
+
+  const confirmUnsuspend = (user) => {
+    const name = user?.name || user?.id;
+    toast.custom((t) => (
+      <div className={`bg-white p-4 rounded shadow-lg w-full max-w-md ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+        <div className="text-sm text-gray-800">Unsuspend account for <strong>{name}</strong>?</div>
+        <div className="text-xs text-gray-500 mt-1">This will reactivate the user's account and remove related reports. The user will be able to login again.</div>
+        <div className="mt-3 flex justify-end gap-2">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 rounded border text-sm bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => { toast.dismiss(t.id); await handleUnsuspend(user.id); }}
+            className="px-3 py-1 rounded bg-green-600 text-white text-sm"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    ), { duration: 8000 });
+  };
+
   return (
     <div className="p-6 mx-auto max-w-7xl">
       <div className="mb-6">
@@ -255,7 +328,7 @@ export default function UserManagement() {
 
       <div className="grid grid-cols-1 gap-2 mb-6 sm:grid-cols-2 md:grid-cols-4">
         {[
-          { label: "All Users", key: "all", count: counts.all },
+          { label: "Active Users", key: "all", count: counts.all },
           { label: "Students", key: "students", count: counts.students },
           { label: "Companies", key: "companies", count: counts.companies },
           { label: "Suspended", key: "suspended", count: counts.suspended },
@@ -340,10 +413,10 @@ export default function UserManagement() {
                 {getReportCount(user) >= 10 && (
                   user.status === 'Suspended' ? (
                     <Button
-                      onClick={() => toast.error('User is already suspended')}
-                      className={`text-gray-700 bg-gray-100 border border-gray-200`}
+                      onClick={() => confirmUnsuspend(user)}
+                      className={`text-white bg-green-600`}
                     >
-                      Already Suspended
+                      Unsuspend
                     </Button>
                   ) : (
                     (() => {

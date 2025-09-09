@@ -70,6 +70,24 @@ const LoginPage = ({ onNavigateToRegister }) => {
     }
   };
 
+  const handleRequestReview = async () => {
+    try {
+      const res = await fetch("http://localhost/InternBackend/api/request_review.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage("Your review request has been sent to the admin.");
+      } else {
+        setMessage(data.message || "Failed to send review request.");
+      }
+    } catch (err) {
+      setMessage("Failed to send review request.");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gray-300">
       <div className="w-full max-w-md p-10 bg-white border border-blue-200 shadow-2xl rounded-2xl">
@@ -155,6 +173,23 @@ const LoginPage = ({ onNavigateToRegister }) => {
             Sign up
           </button>
         </div>
+
+        {message === "Account suspended. Contact administrator." && (
+          <div className="p-4 mt-4 border border-red-300 rounded bg-red-50">
+            <div className="mb-2 font-semibold text-red-700">
+              Your account has been suspended.
+            </div>
+            <div className="mb-2 text-gray-700">
+              If you believe this is a mistake, you can request a review.
+            </div>
+            <button
+              className="px-4 py-2 font-medium text-white bg-orange-600 rounded"
+              onClick={handleRequestReview}
+            >
+              Contact Admin / Request Review
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

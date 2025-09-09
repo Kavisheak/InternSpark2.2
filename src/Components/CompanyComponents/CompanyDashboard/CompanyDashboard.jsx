@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   MdBusinessCenter,
   MdNotificationsActive,
@@ -7,122 +8,101 @@ import Footer from "../Footer";
 import DashboardBannerSlider from "./DashboardBannerSlider";
 import DashboardRecentApplications from "./DashboardRecentApplications";
 import DashboardActiveInternships from "./DashboardActiveInternships";
+import axios from "axios";
 
 const CompanyDashboard = () => {
-  const recentApplications = [
-    {
-      name: "Naveen Madhava",
-      role: "Frontend Developer Intern",
-      status: "New",
-      time: "2h ago",
-    },
-    {
-      name: "Michael Chen",
-      role: "UX Design Intern",
-      status: "Reviewing",
-      time: "1 day ago",
-    },
-    {
-      name: "Alex Washington",
-      role: "Data Science Intern",
-      status: "Interviewing",
-      time: "3 days ago",
-    },
-    {
-      name: "John Mac",
-      role: "Cyber Intern",
-      status: "Reviewing",
-      time: "2 days ago",
-    },
-  ];
+  const [stats, setStats] = useState({
+    activeInternships: [],
+    totalApplications: 0,
+    newApplications: 0,
+  });
 
-  const activeInternships = [
-    {
-      id: 1,
-      title: "Frontend Developer Intern",
-      deadline: "May 20, 2025",
-      applications: 9,
-      filled: 60,
-    },
-    {
-      id: 2,
-      title: "UI/UX Intern",
-      deadline: "May 30, 2025",
-      applications: 3,
-      filled: 25,
-    },
-    {
-      id: 3,
-      title: "Data Analyst Intern",
-      deadline: "June 10, 2025",
-      applications: 6,
-      filled: 40,
-    },
-  ];
-
-  const totalApplications = activeInternships.reduce(
-    (sum, job) => sum + job.applications,
-    0
-  );
-  const newApplications = recentApplications.filter(
-    (app) => app.status === "New"
-  ).length;
+  useEffect(() => {
+    axios
+      .get("http://localhost/InternBackend/company/api/dashboard_stats.php", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setStats({
+            activeInternships: res.data.activeInternships || [],
+            totalApplications: res.data.totalApplications || 0,
+            newApplications: res.data.newApplications || 0,
+          });
+        }
+      });
+  }, []);
 
   return (
-    <div className="min-h-screen text-white ">
-      
+    <div className="min-h-screen bg-gray-50">
       <div className="fade-in-up">
-      <DashboardBannerSlider />
+        {/* Banner Section */}
+        <DashboardBannerSlider />
 
-      <div className="p-6 pt-10 bg-white md:p-10 ">
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 gap-6 px-6 md:mb-10 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              label: "Active Internships",
-              icon: <MdBusinessCenter size={28} className="text-white" />,
-              value: activeInternships.length,
-              bg: "bg-orange-500",
-            },
-            {
-              label: "New Applications",
-              icon: (
-                <MdNotificationsActive size={28} className="text-teal-600" />
-              ),
-              value: newApplications,
-              bg: "bg-oxfordblue",
-            },
-            {
-              label: "Total Applications",
-              icon: <MdDescription size={28} className="text-pink-600" />,
-              value: totalApplications,
-              bg: "bg-oxfordblue",
-            },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className={`flex items-center p-6 transition-all duration-300 rounded-2xl shadow hover:shadow-lg ${item.bg}`}
-            >
-              <div className="p-4 mr-4 rounded-full shadow-sm">
-                {item.icon}
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white">
-                  {item.value}
-                </h3>
-                <p className="text-sm text-gray-200">{item.label}</p>
-              </div>
-            </div>
-          ))}
+        <div className="p-6 pt-10 md:p-10">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 gap-6 px-4 mb-10 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(stats).map(([key, value], idx) => {
+              let label, icon, bg, iconBg;
+              switch (key) {
+                case "activeInternships":
+                  label = "Active Internships";
+                  icon = <MdBusinessCenter size={28} className="text-white" />;
+                  bg = "bg-white";
+                  iconBg = "bg-orange-500";
+                  break;
+                case "newApplications":
+                  label = "New Applications";
+                  icon = (
+                    <MdNotificationsActive size={28} className="text-white" />
+                  );
+                  bg = "bg-white";
+                  iconBg = "bg-oxfordblue";
+                  break;
+                case "totalApplications":
+                  label = "Total Applications";
+                  icon = <MdDescription size={28} className="text-white" />;
+                  bg = "bg-white";
+                  iconBg = "bg-oxfordblue";
+                  break;
+                default:
+                  return null;
+              }
+
+              return (
+                <div
+                  key={idx}
+                  className={`flex items-center p-6 transition-all duration-300 border rounded-2xl shadow-sm hover:shadow-lg ${bg}`}
+                >
+                  {/* Icon Circle */}
+                  <div
+                    className={`flex items-center justify-center w-14 h-14 rounded-full shadow-md ${iconBg} mr-5`}
+                  >
+                    {icon}
+                  </div>
+
+                  {/* Stat Info */}
+                  <div>
+                    <h3 className="text-3xl font-bold text-oxfordblue">
+                      {value.length !== undefined ? value.length : value}
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-gray-500">
+                      {label}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Recent Applications */}
+          <DashboardRecentApplications />
+
+          {/* Active Internships */}
+          <DashboardActiveInternships />
         </div>
 
-        {/* Recent Applications */}
-        <DashboardRecentApplications />
-
-        {/* Active Internships */}
-        <DashboardActiveInternships />
-      </div>
-      <Footer />
+        <Footer />
       </div>
     </div>
   );

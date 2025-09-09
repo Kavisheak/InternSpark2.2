@@ -68,7 +68,7 @@ export default function UserManagement() {
                   : u.role === "company"
                   ? "Company"
                   : "Admin",
-              status: u.is_active ? "Active" : "Suspended",
+              status: Number(u.is_active) === 1 ? "Active" : "Suspended",
               joined: u.created_at,
               // lastActive removed per UI change
               reports: u.reports ?? 0,
@@ -282,17 +282,17 @@ export default function UserManagement() {
     toast.custom((t) => (
       <div className={`bg-white p-4 rounded shadow-lg w-full max-w-md ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
         <div className="text-sm text-gray-800">Unsuspend account for <strong>{name}</strong>?</div>
-        <div className="text-xs text-gray-500 mt-1">This will reactivate the user's account and remove related reports. The user will be able to login again.</div>
-        <div className="mt-3 flex justify-end gap-2">
+        <div className="mt-1 text-xs text-gray-500">This will reactivate the user's account and remove related reports. The user will be able to login again.</div>
+        <div className="flex justify-end gap-2 mt-3">
           <button
             onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1 rounded border text-sm bg-gray-100"
+            className="px-3 py-1 text-sm bg-gray-100 border rounded"
           >
             Cancel
           </button>
           <button
             onClick={async () => { toast.dismiss(t.id); await handleUnsuspend(user.id); }}
-            className="px-3 py-1 rounded bg-green-600 text-white text-sm"
+            className="px-3 py-1 text-sm text-white bg-green-600 rounded"
           >
             Confirm
           </button>

@@ -35,7 +35,7 @@ const AdminControlPanel = () => {
 
     const load = async () => {
       try {
-        const res = await fetch("http://localhost/InternBackend/admin/api/dashboard.php");
+  const res = await fetch("http://localhost/InternBackend/admin/api/dashboard.php", { credentials: 'include' });
         const data = await res.json();
         if (data && data.success && mounted) {
           setCounts(data.data);
@@ -44,7 +44,7 @@ const AdminControlPanel = () => {
         const hasExpired = Boolean(data && data.data && data.data.internships && typeof data.data.internships.expired !== 'undefined' && data.data.internships.expired !== null);
         if (!hasExpired) {
           // fetch internships list and compute expired
-          const r2 = await fetch("http://localhost/InternBackend/admin/api/internships.php");
+          const r2 = await fetch("http://localhost/InternBackend/admin/api/internships.php", { credentials: 'include' });
           const d2 = await r2.json();
           if (d2 && d2.success && Array.isArray(d2.data) && mounted) {
             const expiredCount = computeExpiredFromList(d2.data);
@@ -92,7 +92,6 @@ const AdminControlPanel = () => {
         </div>
         <div className="text-3xl font-bold text-orange-600">{counts.internships.total}</div>
         <div className="flex items-center justify-between">
-          <div className="text-sm text-black">Active listings</div>
           <div className="text-sm text-black">{counts.internships.expired ?? 0} expired</div>
         </div>
         <button

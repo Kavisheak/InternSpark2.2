@@ -11,6 +11,8 @@ const LoginPage = ({ onNavigateToRegister }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  // safe fallback when prop not provided
+  const goToRegister = typeof onNavigateToRegister === 'function' ? onNavigateToRegister : () => navigate('/register');
 
   // 🔹 Autofill if previously saved
   useEffect(() => {
@@ -74,6 +76,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
     try {
       const res = await fetch("http://localhost/InternBackend/api/request_review.php", {
         method: "POST",
+        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
@@ -83,7 +86,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
       } else {
         setMessage(data.message || "Failed to send review request.");
       }
-    } catch (err) {
+    } catch {
       setMessage("Failed to send review request.");
     }
   };
@@ -167,7 +170,7 @@ const LoginPage = ({ onNavigateToRegister }) => {
         <div className="mt-6 text-center">
           <span className="text-blue-700">Don't have an account? </span>
           <button
-            onClick={onNavigateToRegister}
+              onClick={goToRegister}
             className="font-medium text-blue-600 underline hover:text-blue-800"
           >
             Sign up

@@ -43,7 +43,7 @@ export default function UserManagement() {
   const [showReportsModal, setShowReportsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [pendingSuspends, setPendingSuspends] = useState({});
-  const [requests, setRequests] = useState([]);
+  const [_requests, _setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function UserManagement() {
       fetch("http://localhost/InternBackend/admin/api/review_requests.php", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setRequests(data.data);
+        if (data.success) _setRequests(data.data);
         setLoading(false);
       });
   }, [location]);
@@ -249,70 +249,11 @@ export default function UserManagement() {
     }
   };
 
-  const handleUnsuspend = async (id) => {
-    const target = users.find((u) => u.id === id);
-    if (!target) return;
-    if (target.status !== 'Suspended') {
-      toast.error('User is not suspended');
-      return;
-    }
+  
 
-    const prev = JSON.parse(JSON.stringify(users));
-    setUsers((prevU) => prevU.map((u) => (u.id === id ? { ...u, status: 'Unsuspending...' } : u)));
-    try {
-      const res = await fetch('http://localhost/InternBackend/admin/api/unsuspend_user.php', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: id }),
-      });
-      if (!res.ok) {
-        setUsers(prev);
-        toast.error(`Server returned ${res.status}`);
-        return;
-      }
-      const data = await res.json();
-      if (!data.success) {
-        setUsers(prev);
-        toast.error(data.message || 'Failed to unsuspend');
-        return;
-      }
+  
 
-      // update UI: mark active and zero reports
-      setUsers((prevU) => prevU.map((u) => (u.id === id ? { ...u, status: 'Active', reports: 0, reports_received: 0 } : u)));
-      toast.success(data.message || 'User unsuspended');
-    } catch (err) {
-      console.error(err);
-      setUsers(prev);
-      toast.error('Failed to unsuspend');
-    }
-  };
-
-  const confirmUnsuspend = (user) => {
-    const name = user?.name || user?.id;
-    toast.custom((t) => (
-      <div className={`bg-white p-4 rounded shadow-lg w-full max-w-md ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
-        <div className="text-sm text-gray-800">Unsuspend account for <strong>{name}</strong>?</div>
-        <div className="mt-1 text-xs text-gray-500">This will reactivate the user's account and remove related reports. The user will be able to login again.</div>
-        <div className="flex justify-end gap-2 mt-3">
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1 text-sm bg-gray-100 border rounded"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={async () => { toast.dismiss(t.id); await handleUnsuspend(user.id); }}
-            className="px-3 py-1 text-sm text-white bg-green-600 rounded"
-          >
-            Confirm
-          </button>
-        </div>
-      </div>
-    ), { duration: 8000 });
-  };
-
-  const handleAction = async (id, action, response) => {
+  const _handleAction = async (id, action, response) => {
     try {
       const res = await fetch("http://localhost/InternBackend/admin/api/review_action.php", {
         method: "POST",
@@ -323,7 +264,7 @@ export default function UserManagement() {
       const data = await res.json();
       if (data.success) {
         toast.success(data.message);
-        setRequests((prev) => prev.filter((r) => r.Request_Id !== id));
+        _setRequests((prev) => prev.filter((r) => r.Request_Id !== id));
       } else {
         toast.error(data.message || "Failed");
       }
@@ -451,28 +392,19 @@ export default function UserManagement() {
                   View Reports
                 </Button>
 
-                {getReportCount(user) >= 10 && (
-                  user.status === 'Suspended' ? (
-                    <Button
-                      onClick={() => confirmUnsuspend(user)}
-                      className={`text-white bg-green-600`}
-                    >
-                      Unsuspend
-                    </Button>
-                  ) : (
-                    (() => {
-                      const isPending = !!pendingSuspends[user.id];
-                      return (
-                        <Button
-                          onClick={() => handleSuspendAccount(user.id)}
-                          disabled={isPending}
-                          className={`text-white ${isPending ? 'bg-gray-400' : 'bg-red-600'}`}
-                        >
-                          {isPending ? 'Suspending...' : 'Suspend Account'}
-                        </Button>
-                      );
-                    })()
-                  )
+                {getReportCount(user) >= 10 && user.status !== 'Suspended' && (
+                  (() => {
+                    const isPending = !!pendingSuspends[user.id];
+                    return (
+                      <Button
+                        onClick={() => handleSuspendAccount(user.id)}
+                        disabled={isPending}
+                        className={`text-white ${isPending ? 'bg-gray-400' : 'bg-red-600'}`}
+                      >
+                        {isPending ? 'Suspending...' : 'Suspend Account'}
+                      </Button>
+                    );
+                  })()
                 )}
               </div>
             </CardContent>

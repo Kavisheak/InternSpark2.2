@@ -9,47 +9,49 @@ const Footer = () => {
         <div>
           <h2 className="mb-2 text-sm font-semibold uppercase">Contact</h2>
           <p className="font-bold">
-            Internship Finder Headquarters
+            Department of Computer Science & Technology
             <br />
-            89 Park Dr Boston, MA 02215
+            Uva Wellassa University, Badulla, Sri Lanka
           </p>
-          <p className="mt-2">Phone: 929-242-6868</p>
-          <p className="text-blue-300 underline">support@internfinder.com</p>
+          <p className="mt-2">Phone: +94 55 222 6475</p>
+          <p className="text-blue-300 underline">
+            cststudents@uwu.ac.lk
+          </p>
 
           {/* Social Icons */}
           <div className="flex mt-4 space-x-4 text-xl">
-            <a href="#">
+            <a href="#" aria-label="Twitter">
               <FaTwitter />
             </a>
-            <a href="#">
+            <a href="#" aria-label="LinkedIn">
               <FaLinkedin />
             </a>
-            <a href="#">
+            <a href="#" aria-label="Facebook">
               <FaFacebook />
             </a>
-            <a href="#">
+            <a href="#" aria-label="YouTube">
               <FaYoutube />
             </a>
           </div>
         </div>
 
-        {/* Why Choose Us */}
+        {/* About Us */}
         <div>
           <h2 className="mb-2 text-sm font-semibold uppercase">
-            Why Choose Us
+            About Us
           </h2>
           <ul className="space-y-2 text-gray-300">
-            <li>✅ Verified Internship Listings</li>
-            <li>🎯 Role-based Filtering System</li>
-            <li>📈 Trusted by 500+ Companies</li>
-            <li>💬 Dedicated Student Support</li>
+            <li>👨‍💻 2nd Year Computer Science & Technology Students</li>
+            <li>🎓 Faculty of Applied Sciences</li>
+            <li>🤝 Dedicated to Innovative Projects</li>
+            <li>🌍 Empowering Future Tech Leaders</li>
           </ul>
         </div>
       </div>
 
       {/* Footer Bottom */}
       <div className="pt-4 mt-10 text-sm text-center text-gray-400 border-t border-gray-700">
-        © 2025 Internship Finder | Built to empower your career
+        © 2025 Uva Wellassa University | CST Students – All Rights Reserved
       </div>
     </footer>
   );

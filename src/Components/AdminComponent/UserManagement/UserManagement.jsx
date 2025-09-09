@@ -177,17 +177,17 @@ export default function UserManagement() {
     toast.custom((t) => (
       <div className={`bg-white p-4 rounded shadow-lg w-full max-w-md ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
         <div className="text-sm text-gray-800">Suspend account for <strong>{name}</strong>?</div>
-        <div className="text-xs text-gray-500 mt-1">This will move the user's details to suspended_users and deactivate their account.</div>
-        <div className="mt-3 flex justify-end gap-2">
+        <div className="mt-1 text-xs text-gray-500">This will move the user's details to suspended_users and deactivate their account.</div>
+        <div className="flex justify-end gap-2 mt-3">
           <button
             onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1 rounded border text-sm bg-gray-100"
+            className="px-3 py-1 text-sm bg-gray-100 border rounded"
           >
             Cancel
           </button>
           <button
             onClick={async () => { toast.dismiss(t.id); await doSuspend(); }}
-            className="px-3 py-1 rounded bg-red-600 text-white text-sm"
+            className="px-3 py-1 text-sm text-white bg-red-600 rounded"
           >
             Confirm
           </button>
@@ -369,7 +369,7 @@ export default function UserManagement() {
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
                       <Badge className="text-orange-800 bg-orange-100">{user.status}</Badge>
-                      <div className="text-sm p-2 rounded bg-orange-50 text-orange-800 border border-orange-200">{getReportCount(user)} reports</div>
+                      <div className="p-2 text-sm text-orange-800 border border-orange-200 rounded bg-orange-50">{getReportCount(user)} reports</div>
                     </div>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export default function UserManagement() {
                 {/* View Reports stays on the left; mr-auto pushes Suspend to the right */}
                 <Button
                   onClick={() => handleViewReports(user, user.type)}
-                  className="text-orange-600 border border-orange-300 bg-orange-50 mr-auto"
+                  className="mr-auto text-orange-600 border border-orange-300 bg-orange-50"
                 >
                   <Eye className="w-4 h-4 mr-2" />
                   View Reports
@@ -446,7 +446,7 @@ export default function UserManagement() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden max-h-[80vh]">
           <div className="flex items-start justify-between p-6 border-b">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
+                  <div className="flex items-center justify-center w-12 h-12 text-orange-600 rounded-full bg-orange-50">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.636 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </div>
                   <div>
@@ -462,19 +462,19 @@ export default function UserManagement() {
                   <div className="text-center text-gray-600">No reports found</div>
                 ) : (
                   companyReports.map((report) => (
-                    <div key={report.id} className="bg-white border rounded-lg shadow-sm p-4">
+                    <div key={report.id} className="p-4 bg-white border rounded-lg shadow-sm">
                       <div className="flex items-start justify-between">
                         <div>
                           <h4 className="text-lg font-semibold">Report</h4>
-                          <p className="text-gray-600 mt-2">{report.reason}</p>
+                          <p className="mt-2 text-gray-600">{report.reason}</p>
                         </div>
                         <div className="text-sm text-gray-500">
                           <div>{new Date(report.reported_at).toLocaleString()}</div>
-                          <div className="mt-2 text-right text-xs text-gray-400">{report.reporter_type}</div>
+                          <div className="mt-2 text-xs text-right text-gray-400">{report.reporter_type}</div>
                         </div>
                       </div>
 
-                      <div className="mt-4 border-t pt-4 text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3 pt-4 mt-4 text-sm text-gray-700 border-t sm:grid-cols-2">
                         <div>
                           <div className="text-xs text-gray-500">Reported By</div>
                           <div className="font-medium">{report.reporter_name || report.reporter_email || 'Anonymous'}</div>

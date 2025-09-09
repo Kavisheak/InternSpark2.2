@@ -99,6 +99,7 @@ const StudentNavbar = () => {
   };
 
   const confirmLogout = () => {
+    toast.dismiss("logout-confirm");
     toast((t) => (
       <div className="p-3">
         <p className="mb-2 font-semibold text-white">
@@ -122,7 +123,7 @@ const StudentNavbar = () => {
           </button>
         </div>
       </div>
-    ));
+    ), { id: "logout-confirm" });
   };
 
   return (

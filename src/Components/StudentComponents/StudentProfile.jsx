@@ -116,10 +116,12 @@ export default function StudentProfile() {
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
       if (res.data.success) {
-        toast.success("Profile saved successfully!");
+        toast.dismiss("main-toast");
+        toast.success("Profile saved successfully!",{ id: "main-toast" });
         setSavedData({ ...formData });
       } else {
-        toast.error(res.data.message || "Save failed");
+        toast.dismiss("main-toast");
+        toast.error(res.data.message || "Save failed",{ id: "main-toast" });
       }
     } catch {
       toast.error("Server error saving profile");

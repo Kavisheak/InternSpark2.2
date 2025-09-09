@@ -62,6 +62,7 @@ const CompanyNavbar = () => {
   };
 
   const confirmLogout = () => {
+    toast.dismiss("logout-confirm-c");
     toast((t) => (
       <div className="p-3">
         <p className="mb-2 font-semibold text-white">
@@ -85,7 +86,7 @@ const CompanyNavbar = () => {
           </button>
         </div>
       </div>
-    ), { duration: 8000 });
+    ), { id: "logout-confirm-c", duration: 8000 });
   };
 
   const markNotificationsAsRead = async () => {

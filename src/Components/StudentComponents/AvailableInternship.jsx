@@ -136,7 +136,7 @@ const AvailableInternship = () => {
     });
   }, [internships, activeFilter, selectedTitle]);
 
-  const internshipsToShow = showAll ? filteredInternships : filteredInternships.slice(0, 10);
+  const internshipsToShow = showAll ? filteredInternships : filteredInternships.slice(0, 8);
 
   return (
     <div className="min-h-screen bg-white">
@@ -225,14 +225,23 @@ const AvailableInternship = () => {
               ))}
             </div>
 
-            {filteredInternships.length > 10 && !showAll && (
+            {filteredInternships.length > 8 && (
               <div className="flex justify-center mt-8">
-                <button
-                  className="px-6 py-2 font-semibold text-white transition bg-orange-500 rounded hover:bg-orange-600"
-                  onClick={() => setShowAll(true)}
-                >
-                  See All
-                </button>
+                {!showAll ? (
+                  <button
+                    className="px-6 py-2 font-semibold text-white transition rounded bg-oxfordblue hover:bg-oxfordblue/80"
+                    onClick={() => setShowAll(true)}
+                  >
+                    Show More
+                  </button>
+                ) : (
+                  <button
+                    className="px-6 py-2 font-semibold text-orange-600 transition bg-white border border-orange-500 rounded hover:bg-orange-50"
+                    onClick={() => setShowAll(false)}
+                  >
+                    Show Less
+                  </button>
+                )}
               </div>
             )}
 

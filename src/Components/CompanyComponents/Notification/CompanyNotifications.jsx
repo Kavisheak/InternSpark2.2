@@ -44,7 +44,11 @@ const CompanyNotifications = ({ notifications, fetchNotifications }) => {
         </div>
       </div>
 
-      <ul className="overflow-y-auto divide-y divide-gray-100 max-h-64">
+      <ul
+        className={`divide-y divide-gray-100 ${
+          notifications.length > 2 ? "max-h-52 overflow-y-auto" : ""
+        }`}
+      >
         {notifications.length === 0 ? (
           <li className="px-4 py-4 text-sm text-center text-gray-500">
             No notifications
@@ -66,11 +70,7 @@ const CompanyNotifications = ({ notifications, fetchNotifications }) => {
         )}
       </ul>
 
-      {notifications.length > 0 && (
-        <div className="px-4 py-2 text-xs text-center text-blue-600 cursor-pointer hover:underline">
-          View All
-        </div>
-      )}
+     
     </div>
   );
 };

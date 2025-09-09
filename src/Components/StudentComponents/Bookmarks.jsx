@@ -8,6 +8,7 @@ const Bookmarks = () => {
   const [bookmarkedInternships, setBookmarkedInternships] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedInternship, setSelectedInternship] = useState(null);
+  const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -124,6 +125,8 @@ const Bookmarks = () => {
     );
   }
 
+  const bookmarksToShow = showAll ? normalizedBookmarks : normalizedBookmarks.slice(0, 8);
+
   return (
     <>
       <div className="min-h-screen bg-gray-50 fade-in-up">
@@ -135,7 +138,7 @@ const Bookmarks = () => {
           </p>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {normalizedBookmarks.map((internship) => (
+            {bookmarksToShow.map((internship) => (
               <div key={internship.id} className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -205,6 +208,26 @@ const Bookmarks = () => {
               </div>
             ))}
           </div>
+
+          {normalizedBookmarks.length > 8 && (
+            <div className="flex justify-center mt-8">
+              {!showAll ? (
+                <button
+                  className="px-6 py-2 font-semibold text-white transition bg-orange-500 rounded hover:bg-orange-600"
+                  onClick={() => setShowAll(true)}
+                >
+                  Show All
+                </button>
+              ) : (
+                <button
+                  className="px-6 py-2 font-semibold text-orange-600 transition bg-white border border-orange-500 rounded hover:bg-orange-50"
+                  onClick={() => setShowAll(false)}
+                >
+                  Show Less
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

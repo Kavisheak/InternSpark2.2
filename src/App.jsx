@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages and Components
 import AdvertismentPage from "./Components/GuestComponents/AdvertismentPage";
@@ -16,24 +16,39 @@ import "swiper/css/autoplay";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+// Auth wrapper
+const RequireAuth = ({ children }) => {
+  const isAuthenticated = !!localStorage.getItem("token");
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
 function App() {
   return (
     <Router>
       <ScrollToTop />
-
-      {/* Main Route Handling */}
       <Routes>
         <Route path="/" element={<AdvertismentPage />} />
         <Route path="/login" element={<AuthPage initialIsLogin={true} />} />
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        
 
-        {/* Main Dashboards */}
-        <Route path="/company/*" element={<CompanyMain />} />
-        <Route path="/student/*" element={<StudentMain />} />
-        <Route path="/admin/*" element={<AdminMain />} />
+        {/* Protected Dashboards */}
+        <Route path="/company/*" element={
+          <RequireAuth>
+            <CompanyMain />
+          </RequireAuth>
+        } />
+        <Route path="/student/*" element={
+          <RequireAuth>
+            <StudentMain />
+          </RequireAuth>
+        } />
+        <Route path="/admin/*" element={
+          <RequireAuth>
+            <AdminMain />
+          </RequireAuth>
+        } />
       </Routes>
     </Router>
   );

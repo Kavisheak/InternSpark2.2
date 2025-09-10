@@ -82,16 +82,16 @@ export default function InternshipManagement() {
       toast((t) => (
         <div className="p-3">
           <div className="mb-2 font-medium">Are you sure you want to delete this internship?</div>
-          <div className="flex gap-2 justify-end">
+          <div className="flex justify-end gap-2">
             <button
               onClick={() => { toast.dismiss(t.id); resolve(false); }}
-              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
+              className="px-3 py-1 text-gray-800 bg-gray-100 border rounded"
             >
               No
             </button>
             <button
               onClick={() => { toast.dismiss(t.id); resolve(true); }}
-              className="px-3 py-1 rounded bg-red-600 text-white"
+              className="px-3 py-1 text-white bg-red-600 rounded"
             >
               Yes, remove
             </button>
@@ -183,13 +183,13 @@ export default function InternshipManagement() {
     // Show dev helper options: set admin, set company (derived), or cancel
     await new Promise((resolve) => {
       toast.custom((t) => (
-        <div className="p-3 bg-white rounded shadow-md w-full max-w-sm">
+        <div className="w-full max-w-sm p-3 bg-white rounded shadow-md">
           <div className="mb-2 font-medium">No valid session found for delete</div>
-          <div className="text-sm text-gray-600 mb-3">You can set a temporary dev identity to proceed (local dev only).</div>
-          <div className="flex gap-2 justify-end">
+          <div className="mb-3 text-sm text-gray-600">You can set a temporary dev identity to proceed (local dev only).</div>
+          <div className="flex justify-end gap-2">
             <button
               onClick={() => { toast.dismiss(t.id); resolve('cancel'); }}
-              className="px-3 py-1 rounded border bg-gray-100 text-gray-800"
+              className="px-3 py-1 text-gray-800 bg-gray-100 border rounded"
             >
               Cancel
             </button>
@@ -202,7 +202,7 @@ export default function InternshipManagement() {
                 await deleteRequest(payload);
                 resolve('done');
               }}
-              className="px-3 py-1 rounded bg-orange-500 text-white"
+              className="px-3 py-1 text-white bg-orange-500 rounded"
             >
               Use dev admin
             </button>
@@ -224,7 +224,7 @@ export default function InternshipManagement() {
                 await deleteRequest(payload);
                 resolve('done');
               }}
-              className="px-3 py-1 rounded bg-green-600 text-white"
+              className="px-3 py-1 text-white bg-green-600 rounded"
             >
               Use dev company
             </button>
@@ -271,12 +271,12 @@ export default function InternshipManagement() {
   return (
     <div className="bg-white">
       <div className="absolute inset-0" />
-      <div className="relative z-10 p-6 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-6xl p-6 mx-auto">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Internship Management</h1>
         </div>
 
-        <div className="mb-4 text-orange-600 font-bold">
+        <div className="mb-4 font-bold text-orange-600">
           View and manage all internship postings (read-only with removal option)
         </div>
 
@@ -284,7 +284,7 @@ export default function InternshipManagement() {
           <div className="relative w-80">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
             <input
-              className="pl-10 pr-3 py-2 w-full rounded bg-orange-100 text-gray-800 border border-orange-600 placeholder-orange-500"
+              className="w-full py-2 pl-10 pr-3 text-gray-800 placeholder-orange-500 bg-orange-100 border border-orange-600 rounded"
               placeholder="Search internships..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -292,7 +292,7 @@ export default function InternshipManagement() {
           </div>
         </div>
 
-        <div className="flex space-x-4 mb-6">
+        <div className="flex mb-6 space-x-4">
           {["all", "active", "expired"].map((tab) => (
             <button
               key={tab}
@@ -312,7 +312,7 @@ export default function InternshipManagement() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="border border-orange-500 bg-white rounded p-6 shadow-sm"
+              className="p-6 bg-white border border-orange-500 rounded shadow-sm"
             >
               <div className="flex justify-between mb-4">
                 <div className="flex gap-4">
@@ -321,8 +321,8 @@ export default function InternshipManagement() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="text-black flex items-center">
-                      <Building2 className="h-4 w-4 mr-1" />
+                    <p className="flex items-center text-black">
+                      <Building2 className="w-4 h-4 mr-1" />
                       {item.company}
                     </p>
                   </div>
@@ -363,16 +363,16 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 text-sm text-gray-800 mb-4">
+              <div className="grid grid-cols-4 gap-4 mb-4 text-sm text-gray-800">
                 <div>
                   <span className="flex items-center mb-1">
-                    <MapPin className="text-gray-800 h-4 w-4 mr-1" /> Location:
+                    <MapPin className="w-4 h-4 mr-1 text-gray-800" /> Location:
                   </span>
                   <p className="text-orange-600">{item.location}</p>
                 </div>
                 <div>
                   <span className="flex items-center mb-1">
-                    <Calendar className="h-4 w-4 mr-1" /> Duration:
+                    <Calendar className="w-4 h-4 mr-1" /> Duration:
                   </span>
                   <p className="text-orange-600">{item.duration}</p>
                 </div>
@@ -386,21 +386,21 @@ export default function InternshipManagement() {
                 </div>
               </div>
 
-              <p className="text-gray-800 mb-4">{item.description}</p>
+              <p className="mb-4 text-gray-800">{item.description}</p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => viewDetails(item.id)}
-                  className="flex items-center px-4 py-2 rounded border bg-orange-500 hover:bg-gray-400 text-white"
+                  className="flex items-center px-4 py-2 text-white bg-orange-500 border rounded hover:bg-gray-400"
                 >
-                  <Eye className="h-4 w-4 mr-2" />
+                  <Eye className="w-4 h-4 mr-2" />
                   View Details
                 </button>
                 <button
                   onClick={() => handleRemove(item.id)}
-                  className="flex items-center px-4 py-2 rounded bg-red-600 hover:bg-purple-400 text-white"
+                  className="flex items-center px-4 py-2 text-white bg-red-600 rounded hover:bg-purple-400"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="w-4 h-4 mr-2" />
                   Remove Listing
                 </button>
               </div>
@@ -411,7 +411,7 @@ export default function InternshipManagement() {
         {selectedInternship && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
             <div className="w-full max-w-3xl mx-4">
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="overflow-hidden bg-white rounded-lg shadow-lg">
                 <div className="flex items-start justify-between p-6 border-b">
                   <div>
                     <h3 className="text-xl font-semibold">{selectedInternship.title}</h3>

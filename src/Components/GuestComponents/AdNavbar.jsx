@@ -1,31 +1,37 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+// AdNavbar.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AdNavbar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='bg-gray-100 p-7'>
-      <h1 className="font-bold text-center text-transparent text-7xl bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 bg-clip-text">
-        Intern Spark
+    <nav className="flex items-center justify-between px-8 py-4 shadow-md bg-oxfordblue">
+      {/* Logo */}
+      <h1
+        className="text-2xl font-extrabold tracking-wide text-white cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        Intern<span className="text-[#ff6b35]">Spark</span>
       </h1>
-      <p className="pt-6 font-medium text-center text-black">
-        Discover internship opportunities and post openings to connect students with real-world experience
-      </p>
-      <div className='flex justify-center gap-4 p-8 pt-20 text-center'>
+
+      {/* Buttons */}
+      <div className="flex gap-3">
         <button
-          onClick={() => navigate('/login')}  // Navigate to login page
-          className="px-5 py-2 text-xl font-semibold text-white transition duration-200 rounded-md shadow bg-gradient-to-r from-blue-600 via-blue-500 to-blue-300 hover:opacity-80"
+          onClick={() => navigate("/login")}
+          className="px-5 py-2 text-sm font-semibold text-white transition-transform bg-orange-500 rounded-lg shadow-md hover:opacity-90 hover:scale-105"
         >
           Sign In
         </button>
         <button
-          onClick={() => navigate('/register')}  // Navigate to register page
-          className="px-5 py-2 text-xl font-semibold text-white transition duration-200 rounded-md shadow bg-gradient-to-r from-blue-600 via-blue-500 to-blue-300 hover:opacity-80"
+          onClick={() => navigate("/register")}
+          className="px-5 py-2 text-sm font-semibold text-white rounded-lg border border-[#ff6b35] bg-transparent hover:bg-[#ff6b35] hover:text-white hover:scale-105 hover:shadow-md transition-all"
         >
           Sign Up
         </button>
       </div>
-    </div>
+    </nav>
   );
 };
+
+export default AdNavbar;

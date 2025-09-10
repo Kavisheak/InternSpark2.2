@@ -53,9 +53,13 @@ const CompanyNavbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost/InternBackend/api/logout.php", {}, { withCredentials: true });
+      await axios.post("http://localhost/InternBackend/api/logout.php?action=logout", {}, { withCredentials: true });
+      localStorage.clear();
       toast.success("Logged out successfully!");
-      setTimeout(() => navigate("/"), 1000);
+      // Replace history so back button doesn't go to protected page
+      navigate("/", { replace: true });
+      // Optionally, reload to clear cached state
+      setTimeout(() => window.location.reload(), 800);
     } catch (err) {
       toast.error("Logout failed",err);
     }

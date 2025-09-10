@@ -1,79 +1,67 @@
+// AdHero.jsx
 import React from "react";
 import { cardContents1, cardContents2 } from "../../Constants/Constants";
 import AdTestimonials from "./AdTestimonials";
-
+import { useNavigate } from "react-router-dom";
 
 export const AdHero = () => {
+  const navigate = useNavigate();
+
   return (
-    <div
-      className="
-        min-h-screen
-        w-full
-        overflow-hidden
-        pt-16
-        bg-black
-        [background-image:radial-gradient(circle_at_top_right,_#0d47a1_20%,_transparent_70%)]
-        bg-no-repeat
-        bg-cover
-      "
-    >
-      {/* Title */}
-      <h1 className="mb-12 text-4xl font-bold text-center text-white">
-        Your Internship Process Made Easy
-      </h1>
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="relative flex flex-col items-center justify-center px-6 pt-24 text-center text-white bg-gray-100 pb-28">
+        <h1 className="mb-6 text-5xl font-extrabold leading-tight drop-shadow-md text-oxfordblue">
+          Your Internship Journey,{" "}
+          <span className="text-[#ff6b35]">Simplified</span>
+        </h1>
+        <p className="max-w-2xl mb-10 text-lg text-oxfordblue">
+          Discover opportunities, connect with companies, and build your career
+          with ease.
+        </p>
+        <div className="flex flex-wrap justify-center gap-5">
+          <button
+            className="px-7 py-3 text-lg font-semibold text-white rounded-lg bg-[#ff6b35] shadow-lg hover:opacity-90 hover:scale-105 transition-transform"
+            onClick={() => navigate("/register")}
+          >
+            Get Started
+          </button>
+          <button
+            className="px-7 py-3 text-lg font-semibold text-oxfordblue bg-white border border-[#ff6b35] rounded-lg shadow-md hover:bg-[#ff6b35] hover:text-white hover:scale-105 transition-all"
+            onClick={() => navigate("/about")}
+          >
+            Learn More
+          </button>
+        </div>
+      </section>
 
-      {/* Section for cardContents1 */}
-      <div className="flex justify-center px-6 mb-12">
-        <div className="grid grid-cols-1 gap-y-8 gap-x-16 sm:grid-cols-2 md:grid-cols-3">
-          {cardContents1.map((card, index) => (
+      {/* Features Section */}
+      <section className="px-6 py-20 bg-gray-50">
+        <h2 className="text-3xl font-bold text-center mb-14 text-oxfordblue">
+          Why Choose <span className="text-[#ff6b35]">InternSpark</span>?
+        </h2>
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 place-items-center">
+          {cardContents1.concat(cardContents2).map((card, index) => (
             <div
               key={index}
-              className="flex flex-col items-center p-8 transition-transform transform border shadow-md bg-white/10 backdrop-blur-lg border-white/20 w-80 rounded-2xl hover:scale-105 hover:shadow-xl"
+              className="flex flex-col items-center p-8 text-center transition-transform bg-white border border-gray-200 shadow-md rounded-2xl w-80 hover:scale-105 hover:shadow-xl"
             >
-              <div className="flex items-center mb-4">
-                <div className="flex items-center justify-center p-4 mr-4 text-white border border-blue-300 rounded-full">
-                   {card.icon}
-                </div>
-                <h2 className="text-xl font-semibold text-white">
-                   {card.title}
-                </h2>
+              <div className="flex items-center justify-center w-16 h-16 mb-4 text-white rounded-full shadow-lg bg-oxfordblue">
+                {card.icon}
               </div>
-              <p className="text-sm text-center text-gray-300">
-                {card.content}
-              </p>
+              <h3 className="mb-2 text-xl font-semibold text-oxfordblue">
+                {card.title}
+              </h3>
+              <p className="text-sm text-gray-600">{card.content}</p>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Section for cardContents2 */}
-      <div className="flex justify-center px-6 pb-16 mb-4">
-        <div className="grid grid-cols-1 gap-y-8 gap-x-16 sm:grid-cols-2 md:grid-cols-3">
-          {cardContents2.map((card, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center p-8 transition-transform transform border shadow-md bg-white/10 backdrop-blur-lg border-white/20 w-80 rounded-2xl hover:scale-105 hover:shadow-xl"
-            >
-              <div className="flex items-center mb-4">
-                <div className="flex items-center justify-center p-4 mr-4 text-white border border-blue-300 rounded-full">
-                   {card.icon}
-                </div>
-                <h2 className="text-xl font-semibold text-white">
-                   {card.title}
-                </h2>
-              </div>
-              <p className="text-sm text-center text-gray-300">
-                {card.content}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      </section>
 
       {/* Testimonials Section */}
-      < AdTestimonials/>
+      <AdTestimonials />
     </div>
-  )
+  );
 };
 
-export default AdHero;
+export default AdHero; 

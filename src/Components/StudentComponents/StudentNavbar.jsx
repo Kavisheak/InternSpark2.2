@@ -85,17 +85,22 @@ const StudentNavbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const handleLogout = () => {
-    fetch("http://localhost/InternBackend/api/logout.php", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("studentNotifications");
-    toast.success(" Logged out successfully!");
-    setTimeout(() => navigate("/"), 1000);
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost/InternBackend/api/logout.php?action=logout",
+        {},
+        { withCredentials: true }
+      );
+      localStorage.clear();
+      toast.success("Logged out successfully!");
+      // Replace history so back button doesn't go to protected page
+      navigate("/", { replace: true });
+      // Optionally, reload to clear cached state
+      setTimeout(() => window.location.reload(), 800);
+    } catch (err) {
+      toast.error("Logout failed",err);
+    }
   };
 
   const confirmLogout = () => {

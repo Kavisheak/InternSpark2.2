@@ -1,6 +1,5 @@
 import React from "react";
 
-// Sample testimonials (you can move this to Constants if you wish).
 const testimonials = [
   {
     name: "Alice Johnson",
@@ -22,38 +21,39 @@ const testimonials = [
   },
 ];
 
-// AdTestimonials Component
 export const AdTestimonials = () => {
   return (
-    <div className="flex flex-col items-center px-6 mb-10">
-      <h2 className="mb-4 text-3xl font-semibold text-gray-100">
+    <section className="px-6 py-20 bg-[#f9fafb]">
+      <h2 className="mb-6 text-3xl font-bold text-center text-[#0b2545]">
         Success Stories
       </h2>
-      <h3 className="mx-auto mb-16 text-sm font-normal text-center text-gray-200 max-w-7xl">
-         Our platform has helped numerous students and companies build valuable connections through a simple and efficient internship process. Students can quickly find and apply to internships that match their skills and goals, while companies can easily discover motivated talent to grow their teams. These success stories reflect real experiences of how our platform has made internship searching and hiring faster, more transparent, and more rewarding for everyone involved. Join the community and see how we are shaping futures and fueling career growth every day.
-      </h3>
+      <p className="max-w-3xl mx-auto mb-16 text-center text-gray-600">
+        Our platform has helped countless students and companies build valuable
+        connections. See how InternSpark transforms internship journeys.
+      </p>
 
-
-      <div className="grid grid-cols-1 gap-y-8 gap-x-16 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 place-items-center">
         {testimonials.map((item, idx) => (
           <div
             key={idx}
-            className="flex flex-col p-8 transition-transform transform border shadow-md bg-white/10 backdrop-blur-lg border-white/20 w-80 rounded-2xl hover:scale-105 hover:shadow-xl"
+            className="flex flex-col p-8 text-center transition-transform transform bg-white border border-gray-200 shadow-md rounded-2xl w-80 hover:scale-105 hover:shadow-lg"
           >
-            <p className="mb-4 italic text-gray-300">
-              "{item.quote}"
-            </p>
-            <div className="flex items-center">
-              <img src={item.avatar} alt="" className="w-12 mr-4 rounded-full" />
-              <span className="font-semibold text-gray-100">
+            <p className="mb-4 italic text-gray-700">"{item.quote}"</p>
+            <div className="flex items-center justify-center gap-4">
+              <img
+                src={item.avatar}
+                alt={item.name}
+                className="w-12 h-12 rounded-full"
+              />
+              <span className="font-semibold text-[#0b2545]">
                 {item.name}, {item.role}
               </span>
             </div>
           </div>
         ))}
       </div>
-    </div>
-  )
+    </section>
+  );
 };
 
 export default AdTestimonials;

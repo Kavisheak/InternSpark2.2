@@ -9,6 +9,7 @@ import AdminMain from "./Components/AdminComponent/AdminMain";
 import ScrollToTop from "./Components/ScrollToTop";
 import ForgotPasswordPage from "./Components/Login_Register/ForgotPasswordPage";
 import ResetPasswordPage from "./Components/Login_Register/ResetPasswordPage";
+import LearnMore from "./Components/GuestComponents/LearnMore";
 
 // Swiper styles
 import "swiper/css";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/register" element={<AuthPage initialIsLogin={false} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/learnmore" element={<LearnMore />} />
 
         {/* Protected Dashboards */}
         <Route path="/company/*" element={

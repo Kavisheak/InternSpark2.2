@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Search,
-  Eye,
-  AlertTriangle,
-  User,
-  Building2,
-} from "lucide-react";
-import toast from 'react-hot-toast';
+import { useLocation, useNavigate } from "react-router-dom";
+import { Search, Eye, AlertTriangle, User, Building2 } from "lucide-react";
+import toast from "react-hot-toast";
 
-//  UI Components
+// UI Components
 const Input = ({ className = "", ...props }) => (
-  <input className={`border rounded px-3 py-2 w-full ${className}`} {...props} />
+  <input
+    className={`border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-300 ${className}`}
+    {...props}
+  />
 );
 
 const Button = ({ children, className = "", ...props }) => (
-  <button className={`px-3 py-2 rounded font-medium ${className}`} {...props}>
+  <button
+    className={`px-3 py-2 rounded font-medium transition-colors duration-200 ${className}`}
+    {...props}
+  >
     {children}
   </button>
 );
 
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white shadow rounded  ${className}`}>{children}</div>
+  <div className={`bg-white shadow rounded-lg ${className}`}>{children}</div>
 );
 
 const CardContent = ({ children, className = "" }) => (
@@ -32,7 +32,6 @@ const Badge = ({ children, className = "" }) => (
   <span className={`px-2 py-1 text-sm rounded ${className}`}>{children}</span>
 );
 
-//  Main Component
 export default function UserManagement() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,16 +49,20 @@ export default function UserManagement() {
     // honor navigation state (from SystemStatus) or ?suspended=1 query param
     try {
       const requested = location?.state?.openTab;
-      if (requested === 'suspended') setActiveTab('suspended');
+      if (requested === "suspended") setActiveTab("suspended");
       const qp = new URLSearchParams(window.location.search);
-      if (qp.get('suspended') === '1') setActiveTab('suspended');
-  } catch { /* ignore */ }
+      if (qp.get("suspended") === "1") setActiveTab("suspended");
+    } catch {
+      /* ignore */
+    }
 
-    fetch("http://localhost/InternBackend/admin/api/users.php", { credentials: 'include' })
+    // Fetch users
+    fetch("http://localhost/InternBackend/admin/api/users.php", {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          // Map backend fields to frontend fields
           setUsers(
             data.data.map((u) => ({
               id: u.id,
@@ -73,22 +76,22 @@ export default function UserManagement() {
                   : "Admin",
               status: Number(u.is_active) === 1 ? "Active" : "Suspended",
               joined: u.created_at,
-              // lastActive removed per UI change
               reports: u.reports ?? 0,
               applications: u.applications ?? 0,
               internships: u.internships ?? 0,
               Com_Id: u.Com_Id || null,
               Student_Id: u.Student_Id || null,
-                reports_received: u.reports_received ?? 0,
-                reports_made: u.reports_made ?? 0,
+              reports_received: u.reports_received ?? 0,
+              reports_made: u.reports_made ?? 0,
             }))
           );
-          // users loaded
         }
       });
 
-      // Load review requests
-      fetch("http://localhost/InternBackend/admin/api/review_requests.php", { credentials: "include" })
+    // Load review requests
+    fetch("http://localhost/InternBackend/admin/api/review_requests.php", {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) _setRequests(data.data);
@@ -108,7 +111,7 @@ export default function UserManagement() {
         return matchesSearch && user.type === "Company" && user.status !== "Suspended";
       case "suspended":
         return matchesSearch && user.status === "Suspended";
-      default: // "all"
+      default:
         return matchesSearch && user.status !== "Suspended";
     }
   });
@@ -118,29 +121,24 @@ export default function UserManagement() {
     all: users.filter((u) => u.status !== "Suspended").length,
     students: users.filter((u) => u.type === "Student" && u.status !== "Suspended").length,
     companies: users.filter((u) => u.type === "Company" && u.status !== "Suspended").length,
-    
   };
 
-  // Helper to get authoritative report count (use reports_received when available)
-  const getReportCount = (user) => {
-    return (user?.reports_received ?? user?.reports ?? 0);
-  };
+  const getReportCount = (user) => user?.reports_received ?? user?.reports ?? 0;
 
   const handleSuspendAccount = (id) => {
     const target = users.find((u) => u.id === id);
     const name = target?.name || id;
-
-    // Prevent double-suspending: if the user is already suspended, show a toast and abort
     if (target?.status === "Suspended") {
       toast.error("User is already suspended");
       return;
     }
 
     const doSuspend = async () => {
-      // optimistic UI: mark as pending and change status locally
       const prevUsers = JSON.parse(JSON.stringify(users));
       setPendingSuspends((p) => ({ ...p, [id]: true }));
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: "Suspending..." } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: "Suspending..." } : u))
+      );
       try {
         const payload = { user_id: id };
         const res = await fetch(
@@ -153,92 +151,73 @@ export default function UserManagement() {
           }
         );
 
-        if (!res.ok) {
-          // try to parse JSON error body
-          let errBody = null;
-          try { errBody = await res.json(); } catch { /* ignore */ }
-          setUsers(prevUsers);
-          setPendingSuspends((p) => ({ ...p, [id]: false }));
-          console.error('suspend_user failed', res.status, errBody);
-          toast.error((errBody && errBody.message) ? errBody.message : `Server returned ${res.status}`);
-          return;
-        }
-
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const data = await res.json();
-        if (!data.success) {
-          setUsers(prevUsers);
-          setPendingSuspends((p) => ({ ...p, [id]: false }));
-          console.error('suspend_user response', data);
-          toast.error(data.message || "Failed to suspend user");
-          return;
-        }
+        if (!data.success) throw new Error(data.message || "Failed to suspend user");
 
-  setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: "Suspended" } : u)));
-  setPendingSuspends((p) => ({ ...p, [id]: false }));
-  toast.success(data.message || 'User suspended');
+        setUsers((prev) =>
+          prev.map((u) => (u.id === id ? { ...u, status: "Suspended" } : u))
+        );
+        setPendingSuspends((p) => ({ ...p, [id]: false }));
+        toast.success(data.message || "User suspended");
       } catch (err) {
-        console.error(err);
         setUsers(prevUsers);
         setPendingSuspends((p) => ({ ...p, [id]: false }));
-        toast.error("Failed to suspend user");
+        toast.error(err.message || "Failed to suspend user");
       }
     };
 
-    // show confirmation as a toast with action buttons
-    toast.custom((t) => (
-      <div className={`bg-white p-4 rounded shadow-lg w-full max-w-md ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
-        <div className="text-sm text-gray-800">Suspend account for <strong>{name}</strong>?</div>
-        <div className="mt-1 text-xs text-gray-500">This will move the user's details to suspended_users and deactivate their account.</div>
-        <div className="flex justify-end gap-2 mt-3">
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1 text-sm bg-gray-100 border rounded"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={async () => { toast.dismiss(t.id); await doSuspend(); }}
-            className="px-3 py-1 text-sm text-white bg-red-600 rounded"
-          >
-            Confirm
-          </button>
+    toast.custom(
+      (t) => (
+        <div
+          className={`bg-white p-4 rounded shadow-lg w-full max-w-md transition-transform ${
+            t.visible ? "animate-enter" : "animate-leave"
+          }`}
+        >
+          <div className="text-sm text-gray-800">
+            Suspend account for <strong>{name}</strong>?
+          </div>
+          <div className="mt-1 text-xs text-gray-500">
+            This will move the user's details to suspended_users and deactivate their account.
+          </div>
+          <div className="flex justify-end gap-2 mt-3">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1 text-sm bg-gray-100 border rounded"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                await doSuspend();
+              }}
+              className="px-3 py-1 text-sm text-white bg-red-600 rounded"
+            >
+              Confirm
+            </button>
+          </div>
         </div>
-      </div>
-    ), { duration: 8000 });
+      ),
+      { duration: 8000 }
+    );
   };
 
   const handleViewReports = async (user, role) => {
     try {
       const type = role === "Company" ? "company" : "student";
-  const userId = user.Com_Id || user.Student_Id || user.id || user.User_Id;
+      const userId = user.Com_Id || user.Student_Id || user.id || user.User_Id;
       const url = `http://localhost/InternBackend/admin/api/report_details.php?userId=${encodeURIComponent(
         userId
       )}&type=${type}`;
       const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) {
-        toast.error(`Server returned ${res.status}`);
-        return;
-      }
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const payload = await res.json();
-      if (!payload.success) {
-        toast.error(payload.message || "No reports");
-        return;
-      }
+      if (!payload.success) throw new Error(payload.message || "No reports");
 
-      // if payload is successful but empty, try fallback using website user id (one-time)
-      if (Array.isArray(payload.data) && payload.data.length === 0) {
-        // payload empty; no reports found
-      }
-
-      // normalize and filter results depending on requested type:
       let reportsData = payload.data || [];
-      if (type === "student") {
-        // when viewing a student, show reports made about the student (reported by companies)
-        reportsData = reportsData.filter((r) => r.reporter_type === "company");
-      } else if (type === "company") {
-        // when viewing a company, show reports made about the company (reported by students)
-        reportsData = reportsData.filter((r) => r.reporter_type === "student");
-      }
+      if (type === "student") reportsData = reportsData.filter((r) => r.reporter_type === "company");
+      if (type === "company") reportsData = reportsData.filter((r) => r.reporter_type === "student");
 
       setCompanyReports(reportsData);
       setSelectedUser(user);
@@ -249,65 +228,40 @@ export default function UserManagement() {
     }
   };
 
-  
-
-  
-
-  const _handleAction = async (id, action, response) => {
-    try {
-      const res = await fetch("http://localhost/InternBackend/admin/api/review_action.php", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ request_id: id, action, response }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(data.message);
-        _setRequests((prev) => prev.filter((r) => r.Request_Id !== id));
-      } else {
-        toast.error(data.message || "Failed");
-      }
-    } catch {
-      toast.error("Failed");
-    }
-  };
-
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="p-6 mx-auto max-w-7xl">
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="mb-2 text-2xl font-semibold text-orange-600">
             User Suspension Management
           </h1>
-          <p className="text-gray-800">
-            Monitor and manage users based on report counts
-          </p>
+          <p className="text-gray-800">Monitor and manage users based on report counts</p>
         </div>
         <Button
-          className="px-4 py-2 text-white bg-blue-600 rounded"
+          className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
           onClick={() => navigate("/admin/review-requests")}
         >
           View Review Requests
         </Button>
       </div>
 
-      <div className="flex justify-end mb-6 ">
-        <div className="relative w-80 ">
+      {/* Search */}
+      <div className="flex justify-end mb-6">
+        <div className="relative w-80">
           <Search className="absolute w-4 h-4 text-orange-500 transform -translate-y-1/2 left-3 top-1/2" />
           <Input
-          
             placeholder="Search users..."
-  
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 border border-orange-600 "
+            className="pl-10 border-orange-600"
           />
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="grid grid-cols-1 gap-2 mb-6 sm:grid-cols-2 md:grid-cols-4">
         {[
           { label: "Active Users", key: "all", count: counts.all },
@@ -329,6 +283,7 @@ export default function UserManagement() {
         ))}
       </div>
 
+      {/* User Cards */}
       <div className="space-y-4">
         {filteredUsers.map((user) => (
           <Card key={user.id} className="border border-orange-300">
@@ -348,11 +303,11 @@ export default function UserManagement() {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                      <Badge className="text-orange-800 bg-orange-100">{user.status}</Badge>
-                      <div className="p-2 text-sm text-orange-800 border border-orange-200 rounded bg-orange-50">{getReportCount(user)} reports</div>
-                    </div>
+                <div className="flex items-center space-x-2">
+                  <Badge className="text-orange-800 bg-orange-100">{user.status}</Badge>
+                  <div className="px-2 py-1 text-sm text-orange-800 border border-orange-200 rounded bg-orange-50">
+                    {getReportCount(user)} reports
+                  </div>
                 </div>
               </div>
 
@@ -370,7 +325,7 @@ export default function UserManagement() {
                     {user.type === "Student" ? "Applications:" : "Internships:"}
                   </span>
                   <p className="font-medium">
-                    {user.type === "Student" ? (user.applications ?? 0) : (user.internships ?? 0)}
+                    {user.type === "Student" ? user.applications ?? 0 : user.internships ?? 0}
                   </p>
                 </div>
               </div>
@@ -383,7 +338,6 @@ export default function UserManagement() {
                   </Button>
                 )}
 
-                {/* View Reports stays on the left; mr-auto pushes Suspend to the right */}
                 <Button
                   onClick={() => handleViewReports(user, user.type)}
                   className="mr-auto text-orange-600 border border-orange-300 bg-orange-50"
@@ -392,16 +346,16 @@ export default function UserManagement() {
                   View Reports
                 </Button>
 
-                {getReportCount(user) >= 10 && user.status !== 'Suspended' && (
+                {getReportCount(user) >= 10 && user.status !== "Suspended" && (
                   (() => {
                     const isPending = !!pendingSuspends[user.id];
                     return (
                       <Button
                         onClick={() => handleSuspendAccount(user.id)}
                         disabled={isPending}
-                        className={`text-white ${isPending ? 'bg-gray-400' : 'bg-red-600'}`}
+                        className={`text-white ${isPending ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"}`}
                       >
-                        {isPending ? 'Suspending...' : 'Suspend Account'}
+                        {isPending ? "Suspending..." : "Suspend Account"}
                       </Button>
                     );
                   })()
@@ -412,22 +366,29 @@ export default function UserManagement() {
         ))}
       </div>
 
-      {/* Render company reports modal */}
+      {/* Reports Modal */}
       {showReportsModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="w-full max-w-3xl mx-4">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-h-[80vh]">
-          <div className="flex items-start justify-between p-6 border-b">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden max-h-[80vh]">
+              <div className="flex items-start justify-between p-6 border-b">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center justify-center w-12 h-12 text-orange-600 rounded-full bg-orange-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.636 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <User className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Reports for {selectedUser.name}</h3>
-                    <div className="text-sm text-gray-600">{selectedUser.email} • {companyReports.length} report{companyReports.length !== 1 ? 's' : ''}</div>
+                    <div className="text-sm text-gray-600">
+                      {selectedUser.email} • {companyReports.length} report{companyReports.length !== 1 ? 's' : ''}
+                    </div>
                   </div>
                 </div>
-                <button onClick={() => { setShowReportsModal(false); setSelectedUser(null); }} className="text-gray-400 hover:text-gray-600">✕</button>
+                <button
+                  onClick={() => { setShowReportsModal(false); setSelectedUser(null); }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
               </div>
 
               <div className="p-6 space-y-6 overflow-y-auto max-h-[65vh]">
@@ -466,8 +427,6 @@ export default function UserManagement() {
           </div>
         </div>
       )}
-
-  {/* debug panel removed */}
     </div>
   );
 }

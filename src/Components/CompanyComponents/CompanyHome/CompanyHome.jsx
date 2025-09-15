@@ -70,16 +70,16 @@ const CompanyHome = () => {
             {/* Stats Row */}
             <div className="flex flex-wrap gap-8 mt-10">
               <div>
-                <h3 className="text-2xl font-bold text-[#01165A]">50K+</h3>
-                <p className="text-gray-600">Active Students</p>
+                <h3 className="text-2xl font-bold text-[#01165A]">40+</h3>
+                <p className="text-gray-600">Internship Roles</p>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-[#01165A]">2K+</h3>
-                <p className="text-gray-600">Partner Companies</p>
+                <h3 className="text-2xl font-bold text-[#01165A]">24/7</h3>
+                <p className="text-gray-600">Support Available</p>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-[#01165A]">95%</h3>
-                <p className="text-gray-600">Success Rate</p>
+                <h3 className="text-2xl font-bold text-[#01165A]">Local</h3>
+                <p className="text-gray-600">Opportunities</p>
               </div>
             </div>
           </div>

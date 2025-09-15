@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUsers, FaClipboardList } from "react-icons/fa";
+import { FaUsers, FaUserSlash, FaClipboardList } from "react-icons/fa";
 import { AiOutlineSetting } from "react-icons/ai";
 
 const AdminControlPanel = () => {
   const navigate = useNavigate();
   const [counts, setCounts] = useState({
-  users: { total: 0, suspended: 0 },
-  internships: { total: 0, expired: 0 }
+    users: { total: 0, suspended: 0 },
+    internships: { total: 0, expired: 0 }
   });
 
   useEffect(() => {
@@ -15,50 +15,36 @@ const AdminControlPanel = () => {
 
     const computeExpiredFromList = (list) => {
       if (!Array.isArray(list)) return 0;
-      let expired = 0;
-      for (const i of list) {
+      return list.reduce((acc, i) => {
         try {
-          if (i.deadline) {
-            const dl = new Date(i.deadline);
-            if (!isNaN(dl.getTime()) && dl < new Date()) {
-              expired++;
-              continue;
-            }
-          }
-        } catch {
-          // ignore parse errors for deadline field
-        }
-        if ((i.status || '').toLowerCase() === 'expired') expired++;
-      }
-      return expired;
+          if (i.deadline && new Date(i.deadline) < new Date()) return acc + 1;
+        } catch {}
+        if ((i.status || '').toLowerCase() === 'expired') return acc + 1;
+        return acc;
+      }, 0);
     };
 
     const load = async () => {
       try {
-  const res = await fetch("http://localhost/InternBackend/admin/api/dashboard.php", { credentials: 'include' });
+        const res = await fetch("http://localhost/InternBackend/admin/api/dashboard.php", { credentials: 'include' });
         const data = await res.json();
-        if (data && data.success && mounted) {
+        if (data?.success && mounted) {
           setCounts(data.data);
         }
 
-        const hasExpired = Boolean(data && data.data && data.data.internships && typeof data.data.internships.expired !== 'undefined' && data.data.internships.expired !== null);
-        if (!hasExpired) {
-          // fetch internships list and compute expired
+        if (!data?.data?.internships?.expired) {
           const r2 = await fetch("http://localhost/InternBackend/admin/api/internships.php", { credentials: 'include' });
           const d2 = await r2.json();
-          if (d2 && d2.success && Array.isArray(d2.data) && mounted) {
+          if (d2?.success && Array.isArray(d2.data) && mounted) {
             const expiredCount = computeExpiredFromList(d2.data);
             setCounts((prev) => ({
-              users: (data && data.data && data.data.users) || prev.users,
-              internships: {
-                total: (data && data.data && data.data.internships && typeof data.data.internships.total === 'number') ? data.data.internships.total : (Array.isArray(d2.data) ? d2.data.length : prev.internships.total),
-                expired: expiredCount
-              }
+              users: prev.users,
+              internships: { total: d2.data.length, expired: expiredCount }
             }));
           }
         }
       } catch (err) {
-        console.error('Failed to load dashboard/compute expired', err);
+        console.error('Dashboard load failed', err);
       }
     };
 
@@ -69,50 +55,48 @@ const AdminControlPanel = () => {
   return (
     <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
       {/* User Management */}
-      <div className="p-4 bg-orange-200 rounded-lg">
+      <div className="p-5 bg-white border-l-4 border-orange-500 rounded-lg shadow-lg">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-black">User Management</span>
-          <FaUsers color="black" />
+          <span className="text-sm font-semibold text-gray-700">User Management</span>
+          <FaUsers className="text-xl text-orange-500" />
         </div>
-        <div className="text-3xl font-bold text-orange-600">{counts.users.total}</div>
-        <div className="text-sm text-black">{counts.users.suspended} suspended</div>
+        <div className="text-3xl font-bold text-gray-800">{counts.users.total}</div>
+        <div className="text-sm text-gray-500">{counts.users.suspended} suspended</div>
         <button
           onClick={() => navigate("/admin/usermanage")}
-          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
+          className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-orange-500 rounded hover:bg-orange-600"
         >
           Manage
         </button>
       </div>
 
       {/* Internship Listings */}
-      <div className="p-4 bg-orange-200 rounded-lg">
+      <div className="p-5 bg-white border-l-4 border-orange-500 rounded-lg shadow-lg">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-black">Internship Listings</span>
-          <FaClipboardList color="black" />
+          <span className="text-sm font-semibold text-gray-700">Internship Listings</span>
+          <FaClipboardList className="text-xl text-orange-500" />
         </div>
-        <div className="text-3xl font-bold text-orange-600">{counts.internships.total}</div>
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-black">{counts.internships.expired ?? 0} expired</div>
-        </div>
+        <div className="text-3xl font-bold text-gray-800">{counts.internships.total}</div>
+        <div className="text-sm text-gray-500">{counts.internships.expired} expired</div>
         <button
-          onClick={() => navigate("internshipmanage")}
-          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
+          onClick={() => navigate("/admin/internshipmanage")}
+          className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-orange-500 rounded hover:bg-orange-600"
         >
           View All
         </button>
       </div>
 
       {/* System Settings */}
-      <div className="p-4 bg-orange-200 rounded-lg">
+      <div className="p-5 bg-white border-l-4 border-orange-500 rounded-lg shadow-lg">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-black">System Settings</span>
-          <AiOutlineSetting color="black" />
+          <span className="text-sm font-semibold text-gray-700">System Settings</span>
+          <AiOutlineSetting className="text-xl text-orange-500" />
         </div>
-        <div className="text-xl font-bold text-orange-600">Operational</div>
-        <div className="text-sm text-black">All systems running</div>
+        <div className="text-xl font-bold text-gray-800">Operational</div>
+        <div className="text-sm text-gray-500">All systems running</div>
         <button
-          onClick={() => navigate("settings")}
-          className="px-4 py-1 mt-3 text-sm text-white bg-orange-500 rounded hover:bg-gray-600"
+          onClick={() => navigate("/admin/settings")}
+          className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-orange-500 rounded hover:bg-orange-600"
         >
           Configure
         </button>

@@ -9,21 +9,19 @@ const Bookmarks = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedInternship, setSelectedInternship] = useState(null);
   const [showAll, setShowAll] = useState(false);
+  const [dontAskAgain, setDontAskAgain] = useState(
+    localStorage.getItem("skipBookmarkConfirm") === "true"
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
       .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
       .then((res) => {
-        console.log("Bookmarks Response:", res.data);
         if (res.data.success) setBookmarkedInternships(res.data.internships);
-      })
-      .catch((err) => {
-        console.error("Error fetching bookmarks:", err);
       });
   }, []);
 
-  // Remove expired bookmarks on component mount
   useEffect(() => {
     axios
       .get('http://localhost/InternBackend/students/api/remove_expired_bookmarks.php', { withCredentials: true })
@@ -36,38 +34,37 @@ const Bookmarks = () => {
             });
           });
         }
-        // Now fetch bookmarks after expired ones are removed
         axios
           .get('http://localhost/InternBackend/students/api/get_bookmarked_internships.php', { withCredentials: true })
           .then((res) => {
             if (res.data.success) setBookmarkedInternships(res.data.internships);
-          })
-          .catch((err) => {
-            console.error("Error fetching bookmarks:", err);
           });
       });
   }, []);
 
   const confirmRemove = (internship) => {
-    setSelectedInternship(internship);
-    setShowModal(true);
+    if (dontAskAgain) {
+      handleRemoveBookmarkDirect(internship);
+    } else {
+      setSelectedInternship(internship);
+      setShowModal(true);
+    }
   };
 
-  const handleRemoveBookmark = async () => {
+  const handleRemoveBookmarkDirect = async (internship) => {
     try {
       await axios.post(
         'http://localhost/InternBackend/students/api/toggle_bookmark.php',
-        { internship_id: selectedInternship.Internship_Id || selectedInternship.id },
+        { internship_id: internship.Internship_Id || internship.id },
         { withCredentials: true }
       );
-      // Refetch bookmarks after removal
       const res = await axios.get(
         'http://localhost/InternBackend/students/api/get_bookmarked_internships.php',
         { withCredentials: true }
       );
       if (res.data.success) setBookmarkedInternships(res.data.internships);
 
-      toast.success(`Removed "${selectedInternship.title}" from bookmarks`, {
+      toast.success(`Removed "${internship.title}" from bookmarks`, {
         style: {
           background: '#002147',
           color: 'white',
@@ -82,6 +79,22 @@ const Bookmarks = () => {
       setSelectedInternship(null);
     } catch (err) {
       console.error("Error removing bookmark:", err);
+    }
+  };
+
+  const handleRemoveBookmark = async () => {
+    if (dontAskAgain) {
+      localStorage.setItem("skipBookmarkConfirm", "true");
+    }
+    await handleRemoveBookmarkDirect(selectedInternship);
+  };
+
+  const handleDontAskAgainChange = (e) => {
+    setDontAskAgain(e.target.checked);
+    if (e.target.checked) {
+      localStorage.setItem("skipBookmarkConfirm", "true");
+    } else {
+      localStorage.removeItem("skipBookmarkConfirm");
     }
   };
 
@@ -251,6 +264,18 @@ const Bookmarks = () => {
               </span>{' '}
               from your bookmarks?
             </p>
+            <div className="flex items-center justify-center mb-4">
+              <input
+                type="checkbox"
+                id="dontAskAgain"
+                checked={dontAskAgain}
+                onChange={handleDontAskAgainChange}
+                className="mr-2 accent-orange-500"
+              />
+              <label htmlFor="dontAskAgain" className="text-sm text-gray-700 cursor-pointer">
+                Don't ask me again
+              </label>
+            </div>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowModal(false)}

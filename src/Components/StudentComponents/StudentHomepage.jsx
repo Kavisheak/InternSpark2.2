@@ -1,4 +1,3 @@
-
 "use client"
 
 import { Search, User, Building2 } from "lucide-react"
@@ -85,7 +84,70 @@ export default function StudentHomepage() {
           </div>
         </div>
       </section>
-      <Footer/>
+
+
+
+      {/* Call to Action Banner */}
+      <section className="max-w-4xl px-8 py-16 mx-auto mb-10 text-center text-white rounded-lg shadow-lg bg-gradient-to-r from-orange-500 to-orange-700">
+        <h2 className="mb-4 text-3xl font-bold leading-tight">
+          Ready to launch your career?
+        </h2>
+        <p className="mb-6 text-lg italic">
+          Apply for internships and unlock new opportunities today.
+        </p>
+        <Link
+          to="/student/internships"
+          className="inline-block px-8 py-3 text-lg font-semibold text-orange-700 bg-white rounded hover:bg-orange-100"
+        >
+          Start Exploring
+        </Link>
+      </section>
+
+      {/* Image Gallery */}
+      <section className="w-full px-4 py-12 mx-auto mb-10 max-w-7xl">
+        <div className="flex gap-6 overflow-x-auto">
+          {/*
+            "https://i.pinimg.com/736x/9b/5b/a3/9b5ba3e026d447c24f1a7bf47616024e.jpg",
+            "https://i.pinimg.com/736x/01/34/b0/0134b0fe5ab4c9484d7aa3ae565177f0.jpg",
+            "https://i.pinimg.com/736x/95/fa/d8/95fad867faa47695ab5de245da7b26f2.jpg",
+            "https://i.pinimg.com/736x/51/92/a8/5192a8d657b6562b0530b983a8352d1a.jpg",
+            "https://i.pinimg.com/736x/e3/93/28/e3932816109b6af5b32efd7f231623b3.jpg",
+            "https://i.pinimg.com/736x/1e/25/f5/1e25f5cbfb93f177e175a72720ac56e1.jpg",
+          */}
+          {["https://i.pinimg.com/736x/9b/5b/a3/9b5ba3e026d447c24f1a7bf47616024e.jpg",
+            "https://i.pinimg.com/736x/01/34/b0/0134b0fe5ab4c9484d7aa3ae565177f0.jpg",
+            "https://i.pinimg.com/736x/95/fa/d8/95fad867faa47695ab5de245da7b26f2.jpg",
+            "https://i.pinimg.com/736x/51/92/a8/5192a8d657b6562b0530b983a8352d1a.jpg",
+            "https://i.pinimg.com/736x/e3/93/28/e3932816109b6af5b32efd7f231623b3.jpg",
+            "https://i.pinimg.com/736x/1e/25/f5/1e25f5cbfb93f177e175a72720ac56e1.jpg",
+          ].map((src, idx) => (
+            <img
+              key={idx}
+              src={src}
+              alt={`Student Slide ${idx + 1}`}
+              className="w-full h-[18rem] object-cover rounded-xl shadow-md sm:w-[18rem]"
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Contact/Support Section */}
+      <section className="flex flex-col items-center justify-center max-w-4xl px-6 py-16 mx-auto mb-10 bg-white rounded-lg shadow-lg">
+        <h2 className="mb-4 text-2xl font-bold text-oxfordblue">
+          Need Guidance or Support?
+        </h2>
+        <p className="mb-6 text-lg text-center text-gray-700">
+          Reach out for advice, tips, or any questions about internships and your career path. Our team is here to help you succeed!
+        </p>
+        <Link
+          to="/student/support"
+          className="px-6 py-3 font-semibold text-white bg-orange-500 rounded hover:bg-orange-600"
+        >
+          Talk to Us
+        </Link>
+      </section>
+
+      <Footer />
     </div>
   )
 }

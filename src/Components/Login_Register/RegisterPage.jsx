@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = ({ onNavigateToLogin }) => {
   const [formData, setFormData] = useState({
@@ -27,6 +28,9 @@ const RegisterPage = ({ onNavigateToLogin }) => {
   // Modals
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+
+  const debounceTimers = useRef({});
+  const navigate = useNavigate();
 
   // Validation functions (unchanged)
   const validateUsername = (username) => {
@@ -96,7 +100,16 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     const fieldValue = type === 'checkbox' ? checked : value;
     setFormData(prev => ({ ...prev, [name]: fieldValue }));
     setMessage('');
-    validateField(name, fieldValue);
+
+    // Debounce only for password and confirmPassword
+    if (name === 'password' || name === 'confirmPassword') {
+      if (debounceTimers.current[name]) clearTimeout(debounceTimers.current[name]);
+      debounceTimers.current[name] = setTimeout(() => {
+        validateField(name, fieldValue);
+      }, 600); // 600ms delay
+    } else {
+      validateField(name, fieldValue);
+    }
   };
 
   const handleBlur = (e) => {
@@ -125,7 +138,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
     setIsSubmitting(true);
 
     if (!validateAllFields()) {
-      setMessage('Please fix all validation errors before submitting.');
+      setMessage('⚠️ Please fill out all required fields correctly to create your InternSpark account.');
       setIsSubmitting(false);
       return;
     }
@@ -149,8 +162,11 @@ const RegisterPage = ({ onNavigateToLogin }) => {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Account created successfully! Please sign in.');
-        onNavigateToLogin();
+        if (formData.role === "company") {
+          navigate("/company/");
+        } else {
+          navigate("/student/");
+        }
       } else {
         setMessage(data.message || 'Registration failed.');
       }
@@ -185,20 +201,40 @@ const RegisterPage = ({ onNavigateToLogin }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
           {/* Username */}
           <div>
             <label className="block mb-1 text-sm font-medium text-oxfordblue-800">Username</label>
-            <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur}
-              placeholder="Enter your username" className={getInputClass('username')} maxLength="30" required />
+            <input
+              type="text"
+              name="username"
+              autoComplete="off"
+              value={formData.username}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter your username"
+              className={getInputClass('username')}
+              maxLength="30"
+             
+            />
             {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
           </div>
 
           {/* Email */}
           <div>
             <label className="block mb-1 text-sm font-medium text-oxfordblue-800">Email Address</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur}
-              placeholder="Enter your email" className={getInputClass('email')} maxLength="100" required />
+            <input
+              type="email"
+              name="email"
+              autoComplete="off"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Enter your email"
+              className={getInputClass('email')}
+              maxLength="100"
+              
+            />
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
 
@@ -215,9 +251,18 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <div>
             <label className="block mb-1 text-sm font-medium text-oxfordblue-800">Password</label>
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} name="password" value={formData.password}
-                onChange={handleChange} onBlur={handleBlur} placeholder="Enter your password"
-                className={`${getInputClass('password')} pr-10`} maxLength="128" required />
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter your password"
+                className={`${getInputClass('password')} pr-10`}
+                maxLength="128"
+                
+              />
               <button type="button" onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 flex items-center text-gray-500 right-3 hover:text-oxfordblue-900 focus:outline-none">
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -256,9 +301,18 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <div>
             <label className="block mb-1 text-sm font-medium text-oxfordblue-800">Confirm Password</label>
             <div className="relative">
-              <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword"
-                value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur}
-                placeholder="Confirm your password" className={`${getInputClass('confirmPassword')} pr-10`} maxLength="128" required />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                autoComplete="new-password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Confirm your password"
+                className={`${getInputClass('confirmPassword')} pr-10`}
+                maxLength="128"
+                
+              />
               <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute inset-y-0 flex items-center text-gray-500 right-3 hover:text-oxfordblue-900 focus:outline-none">
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -272,7 +326,8 @@ const RegisterPage = ({ onNavigateToLogin }) => {
             <div className="flex items-start text-sm text-gray-700">
               <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms}
                 onChange={handleChange} onBlur={handleBlur}
-                className={`mt-1 mr-2 ${errors.agreeToTerms ? 'border-red-400' : ''}`} required />
+                className={`mt-1 mr-2 ${errors.agreeToTerms ? 'border-red-400' : ''}`}
+              />
               <span>
                 I agree to the{' '}
                 <button type="button" onClick={() => setShowTerms(true)}
@@ -311,19 +366,160 @@ const RegisterPage = ({ onNavigateToLogin }) => {
       {/* Terms & Privacy Modals (unchanged content, same style as LoginPage popups) */}
       {showTerms && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative">
-            <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Terms of Service</h2>
-            <p className="text-gray-700">...your terms content...</p>
-            <button onClick={() => setShowTerms(false)} className="absolute text-gray-600 top-3 right-3 hover:text-black">✖</button>
+          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative border-2 border-orange-500">
+            {/* Cancel (cross) button at top right */}
+            <button
+              onClick={() => setShowTerms(false)}
+              className="absolute text-2xl font-bold text-gray-600 top-3 right-3 hover:text-orange-600"
+              aria-label="Close"
+            >✖</button>
+            <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Terms of Service – InternSpark</h2>
+            <p className="mb-2 text-sm text-gray-500">Effective Date: <span className="font-semibold text-orange-600">[Insert Date]</span></p>
+            <div className="space-y-5 text-gray-800 text-[1rem]">
+              <p>
+                Welcome to InternSpark. By creating an account or using our platform, you agree to comply with the following Terms of Service. Please read them carefully before proceeding.
+              </p>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">1. General Terms</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>By accessing or using InternSpark, you acknowledge that you are at least 16 years old or the age of majority in your jurisdiction.</li>
+                <li>You agree to use the platform only for lawful purposes and in accordance with these Terms.</li>
+                <li>InternSpark reserves the right to suspend or terminate accounts that violate these Terms or engage in fraudulent, abusive, or harmful behavior.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">2. For Students and Job Seekers</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>Students and job seekers are responsible for ensuring that all information, CVs, resumes, portfolios, and other uploaded content (“Content”) comply with applicable laws and regulations.</li>
+                <li>You guarantee that your Content does not violate any copyright, trademark, intellectual property, or privacy rights of any individual or entity.</li>
+                <li>InternSpark assumes no responsibility for inaccuracies, misrepresentations, or illegal content submitted by users.</li>
+                <li>You agree to release InternSpark from all obligations, liabilities, and claims related to the use or inability to use the platform.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">3. For Companies and Recruiters</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>Organizations must register with valid details and undergo admin verification before posting internships or job opportunities.</li>
+                <li>All postings must clearly specify the role, eligibility criteria, duration, location (or remote), and stipend (if applicable).</li>
+                <li>Misleading, fraudulent, discriminatory, or fake postings are strictly prohibited.</li>
+                <li>Companies must provide:
+                  <ul className="pl-6 space-y-1 list-disc">
+                    <li>A fair and transparent selection process.</li>
+                    <li>Timely communication and constructive feedback to applicants.</li>
+                    <li>Timely payment of agreed stipends (for paid internships).</li>
+                    <li>A safe, harassment-free, and professional working environment.</li>
+                  </ul>
+                </li>
+                <li>Misuse of student data for purposes unrelated to internships is strictly forbidden.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">4. User Responsibilities</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>You are solely responsible for maintaining the confidentiality of your account login credentials.</li>
+                <li>You must not share, sell, or transfer your account to others.</li>
+                <li>You are responsible for all activities conducted under your account.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">5. License & Intellectual Property</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>Unless otherwise stated, InternSpark and/or its licensors own the intellectual property rights for all material on the platform.</li>
+                <li>You are granted a limited license to view and print pages for personal use only, subject to the following restrictions:
+                  <ul className="pl-6 space-y-1 list-disc">
+                    <li>You must not republish material from InternSpark.</li>
+                    <li>You must not reproduce, duplicate, or copy platform content.</li>
+                    <li>You must not use content for competitive or commercial purposes without permission.</li>
+                  </ul>
+                </li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">6. Limitation of Liability</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>InternSpark is not responsible for disputes, agreements, or arrangements made between students and companies outside the platform.</li>
+                <li>The platform is provided “as is,” without warranties of any kind.</li>
+                <li>InternSpark is not liable for any indirect, incidental, or consequential damages arising from use of the service.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">7. Modifications to the Terms</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>InternSpark reserves the right to update or modify these Terms at any time.</li>
+                <li>Such changes will be effective immediately upon posting on the platform.</li>
+                <li>Continued use of InternSpark after changes are posted constitutes acceptance of the modified Terms.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">8. Governing Law</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>These Terms shall be governed by and construed in accordance with the laws of <span className="font-semibold text-orange-600">[Insert Country/Region]</span>.</li>
+                <li>Any disputes shall be subject to the exclusive jurisdiction of the courts located in <span className="font-semibold text-orange-600">[Insert City/Country]</span>.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">9. Contact Us</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>If you have any questions about these Terms, please contact us at:</li>
+                <li>Email: <span className="font-semibold text-orange-600">support@internspark.com</span></li>
+              </ul>
+            </div>
           </div>
         </div>
       )}
       {showPrivacy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative">
-            <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Privacy Policy</h2>
-            <p className="text-gray-700">...your privacy content...</p>
-            <button onClick={() => setShowPrivacy(false)} className="absolute text-gray-600 top-3 right-3 hover:text-black">✖</button>
+          <div className="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh] relative border-2 border-orange-500">
+            {/* Cancel (cross) button at top right */}
+            <button
+              onClick={() => setShowPrivacy(false)}
+              className="absolute text-2xl font-bold text-gray-600 top-3 right-3 hover:text-orange-600"
+              aria-label="Close"
+            >✖</button>
+            <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Privacy Policy – InternSpark</h2>
+            <p className="mb-2 text-sm text-gray-500">Effective Date: <span className="font-semibold text-orange-600">[Insert Date]</span></p>
+            <div className="space-y-5 text-gray-800 text-[1rem]">
+              <p>
+                InternSpark values your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our platform.
+              </p>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">1. Information We Collect</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>We may collect the following types of information:</li>
+                <li>Personal details: name, email address, university ID (if applicable).</li>
+                <li>Account credentials: username and password.</li>
+                <li>Technical data: IP address, browser type, device information, and cookies.</li>
+                <li>Usage data: interactions with our platform, such as pages visited and actions taken.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">2. How We Use Your Information</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>Your information may be used for the following purposes:</li>
+                <li>To create and manage your account.</li>
+                <li>To provide, operate, and improve our services.</li>
+                <li>To send important updates, notifications, and internship opportunities.</li>
+                <li>To ensure security, detect fraud, and prevent misuse of the platform.</li>
+                <li>To comply with legal obligations when required.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">3. Data Protection & Security</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>We use industry-standard encryption and access controls to safeguard your personal data.</li>
+                <li>Access to personal information is restricted to authorized personnel only.</li>
+                <li>We do not sell, rent, or trade your personal data to third parties.</li>
+                <li>Users may request correction or deletion of their data at any time by contacting us.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">4. Cookies & Tracking Technologies</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>InternSpark uses cookies and similar technologies to improve user experience and analyze platform usage.</li>
+                <li>Cookies help us remember your preferences, personalize your experience, and enhance platform functionality.</li>
+                <li>You may disable cookies in your browser settings, though some features may not function properly.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">5. Data Retention</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>We retain your personal data only for as long as necessary to fulfill the purposes outlined in this policy or as required by law.</li>
+                <li>Once data is no longer needed, it is securely deleted or anonymized.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">6. Your Rights</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>Depending on your location, you may have the following rights:</li>
+                <li>The right to access the personal data we hold about you.</li>
+                <li>The right to request corrections or updates.</li>
+                <li>The right to request deletion of your data.</li>
+                <li>The right to withdraw consent where processing is based on consent.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">7. Changes to This Privacy Policy</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>InternSpark may update this Privacy Policy from time to time.</li>
+                <li>Any changes will be posted on this page with an updated effective date.</li>
+                <li>Continued use of the platform after updates constitutes acceptance of the revised policy.</li>
+              </ul>
+              <h3 className="mt-4 mb-2 text-lg font-semibold text-oxfordblue-900">8. Contact Us</h3>
+              <ul className="pl-6 space-y-2 list-disc">
+                <li>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at:</li>
+                <li>Email: <span className="font-semibold text-orange-600">support@internspark.com</span></li>
+              </ul>
+            </div>
           </div>
         </div>
       )}

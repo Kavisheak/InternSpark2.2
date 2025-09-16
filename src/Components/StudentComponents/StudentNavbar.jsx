@@ -9,6 +9,7 @@ const StudentNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,7 +31,6 @@ const StudentNavbar = () => {
       })
       .catch((err) => {
         console.error("Failed to fetch notifications:", err);
-        // Optionally show a toast or alert
       });
   };
 
@@ -53,11 +53,10 @@ const StudentNavbar = () => {
 
     fetchAndCheck();
 
-    const interval = setInterval(fetchAndCheck, 60000); // auto-check every 1 min
+    const interval = setInterval(fetchAndCheck, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Close notifications when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -65,6 +64,9 @@ const StudentNavbar = () => {
         !notificationsRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
+      }
+      if (!event.target.closest(".dropdown-parent")) {
+        setActiveDropdown(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -80,6 +82,14 @@ const StudentNavbar = () => {
     { name: "Internships", path: "/student/internships" },
     { name: "My Applications", path: "/student/applications" },
     { name: "Bookmarks", path: "/student/bookmarks" },
+    {
+      name: "Interviews",
+      path: "/student/interviews",
+      dropdown: [
+        { name: "My Interviews", path: "/student/interviews" },
+        { name: "Interview Process", path: "/student/interview-process" },
+      ],
+    },
     { name: "My Profile", path: "/student/studentprofile" },
   ];
 
@@ -94,12 +104,10 @@ const StudentNavbar = () => {
       );
       localStorage.clear();
       toast.success("Logged out successfully!");
-      // Replace history so back button doesn't go to protected page
       navigate("/", { replace: true });
-      // Optionally, reload to clear cached state
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
-      toast.error("Logout failed",err);
+      toast.error("Logout failed", err);
     }
   };
 
@@ -134,29 +142,61 @@ const StudentNavbar = () => {
   return (
     <nav className="sticky top-0 left-0 z-50 w-full text-white shadow-md bg-oxfordblue">
       <div className="flex items-center justify-between px-4 py-5">
-        {/* Logo */}
         <Link to="/" className="text-xl font-bold">
           Internspark
         </Link>
-
-        {/* Desktop Nav */}
         <ul className="items-center hidden space-x-6 text-sm font-medium md:flex">
-          {navItems.map((item) => (
-            <li key={item.name}>
-              <Link
-                to={item.path}
-                className={`transition ${
-                  isActive(item.path)
-                    ? "underline underline-offset-4"
-                    : "hover:text-white/80"
-                }`}
-              >
-                {item.name}
-              </Link>
-            </li>
-          ))}
-
-          {/* Notification */}
+          {navItems.map((item) => {
+            if (item.dropdown) {
+              return (
+                <li key={item.name} className="relative dropdown-parent">
+                  <button
+                    type="button"
+                    className={`transition text-sm font-medium ${
+                      isActive(item.path)
+                        ? "underline underline-offset-4"
+                        : "hover:text-white/80"
+                    }`}
+                    onClick={() =>
+                      setActiveDropdown(activeDropdown === item.name ? null : item.name)
+                    }
+                  >
+                    {item.name}
+                  </button>
+                  <div
+                    className={`absolute left-0 z-10 w-56 py-2 mt-2 bg-white rounded shadow-lg ${
+                      activeDropdown === item.name ? "block" : "hidden"
+                    }`}
+                  >
+                    {item.dropdown.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        to={sub.path}
+                        className="block px-4 py-2 text-sm text-[#01165A] hover:bg-blue-50 hover:text-blue-700"
+                        onClick={() => setActiveDropdown(null)}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              );
+            }
+            return (
+              <li key={item.name}>
+                <Link
+                  to={item.path}
+                  className={`transition text-sm font-medium ${
+                    isActive(item.path)
+                      ? "underline underline-offset-4"
+                      : "hover:text-white/80"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            );
+          })}
           <li className="relative" ref={notificationsRef}>
             <button
               className="relative p-1 rounded hover:text-white/80"
@@ -175,8 +215,6 @@ const StudentNavbar = () => {
               />
             )}
           </li>
-
-          {/* Logout */}
           <li>
             <button
               onClick={confirmLogout}
@@ -186,8 +224,6 @@ const StudentNavbar = () => {
             </button>
           </li>
         </ul>
-
-        {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
           className="text-2xl text-white md:hidden focus:outline-none"
@@ -195,16 +231,32 @@ const StudentNavbar = () => {
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
-
-      {/* Mobile Nav */}
       {menuOpen && (
         <ul className="px-6 pb-4 space-y-2 text-base font-medium bg-oxfordblue md:hidden">
-          {navItems.map((item) => (
-            <li key={item.name}>
+          {navItems.map((item) => {
+            if (item.dropdown) {
+              return (
+                <div key={item.name} className="mb-2">
+                  <span className="block text-sm font-medium">{item.name}</span>
+                  {item.dropdown.map((sub) => (
+                    <Link
+                      key={sub.name}
+                      to={sub.path}
+                      className="block px-4 py-2 text-sm text-[#01165A] bg-white rounded hover:bg-blue-50 hover:text-blue-700"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
+                </div>
+              );
+            }
+            return (
               <Link
+                key={item.name}
                 to={item.path}
                 onClick={() => setMenuOpen(false)}
-                className={`block py-2 transition ${
+                className={`block py-2 transition text-sm font-medium ${
                   isActive(item.path)
                     ? "underline underline-offset-4"
                     : "hover:text-white/80"
@@ -212,9 +264,8 @@ const StudentNavbar = () => {
               >
                 {item.name}
               </Link>
-            </li>
-          ))}
-
+            );
+          })}
           <li ref={notificationsRef}>
             <button
               onClick={() => setShowNotifications((prev) => !prev)}
@@ -230,7 +281,6 @@ const StudentNavbar = () => {
               />
             )}
           </li>
-
           <li>
             <button
               onClick={() => {

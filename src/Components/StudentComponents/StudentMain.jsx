@@ -6,6 +6,8 @@ import InternshipDetails from "./InternshipDetails";
 import StudentProfile from "./StudentProfile";
 import ViewCompanyProfile from "./ViewCompanyProfile";
 import ViewCompanyContact from "./ViewCompanyContact";
+import StudentInterviews from "./StudentInterviews";
+import InterviewProcess from "./InterviewProcess";
 
 import StudentHomepage from "./StudentHomepage";
 import Notifications from "./Notification";
@@ -73,6 +75,8 @@ const StudentMain = () => {
         <Route path="bookmarks" element={<Bookmarks />} />
         <Route path="companyprofile/:companyId" element={<ViewCompanyProfile />} />
         <Route path="companycontact/:companyId" element={<ViewCompanyContact />} />
+        <Route path="interviews" element={<StudentInterviews />} />
+        <Route path="interview-process" element={<InterviewProcess />} />
       </Routes>
     </div>
   );

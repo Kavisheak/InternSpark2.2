@@ -8,9 +8,11 @@ import CompanyMyInternships from "./CompanyMyInternships/CompanyMyInternships";
 import CompanyApplications from "./CompanyApplications/CompanyApplications";
 import CompanyProfile from "./CompanyProfile/CompanyProfile";
 import PostInternshipForm from "./PostInternshipForm";
+import InterviewSchedule from "./InterviewSchedule/InterviewSchedule";
 
 // Navbar
 import CompanyNavbar from "./CompanyNavbar"; // ✅ Make sure this is correctly imported
+import UpdateInterviewStatus from "./InterviewSchedule/UpdateInterviewStatus";
 
 const CompanyMain = () => {
   return (
@@ -66,6 +68,8 @@ const CompanyMain = () => {
         <Route path="/profile" element={<CompanyProfile />} />
         <Route path="/postinternship" element={<PostInternshipForm />} />
         <Route path="/postinternship/:id" element={<PostInternshipForm />} />
+        <Route path="/schedule-interview" element={<InterviewSchedule />} />
+        <Route path="/update-interview-status" element={<UpdateInterviewStatus />} />
       </Routes>
     </div>
   );

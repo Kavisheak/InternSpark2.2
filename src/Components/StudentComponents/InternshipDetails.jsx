@@ -205,7 +205,11 @@ export default function InternshipDetails() {
 
   const title = internship.title;
   const workType = internship.workType || internship.internship_type;
-  const pay = internship.pay || internship.salary;
+  const payRaw = internship.pay || internship.salary || "";
+  const pay =
+    typeof payRaw === "string"
+      ? payRaw.replace(/^(\s*Rs\.?\s*|\s*RS\.?\s*)/i, "")
+      : payRaw;
 
   return (
     <>
@@ -311,7 +315,7 @@ export default function InternshipDetails() {
                 label="Internship Type"
                 value={workType}
               />
-              <DetailItem icon={<FaDollarSign />} label="Salary" value={pay} />
+              <DetailItem icon={<FaDollarSign />} label="Salary (Per Month)" value={pay} />
               <DetailItem
                 icon={<FaBriefcase />}
                 label="Application Limit"

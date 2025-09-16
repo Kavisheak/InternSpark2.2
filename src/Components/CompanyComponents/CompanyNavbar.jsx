@@ -14,6 +14,7 @@ const CompanyNavbar = () => {
   const navigate = useNavigate();
   const notificationsRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   // Fetch notifications from backend
   const fetchNotifications = async () => {
@@ -31,9 +32,6 @@ const CompanyNavbar = () => {
 
   useEffect(() => {
     fetchNotifications();
-    // Optional polling for real-time updates
-    // const interval = setInterval(fetchNotifications, 30000);
-    // return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -43,6 +41,10 @@ const CompanyNavbar = () => {
         !notificationsRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
+      }
+      // Close dropdown if clicked outside
+      if (!event.target.closest(".dropdown-parent")) {
+        setActiveDropdown(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -56,12 +58,10 @@ const CompanyNavbar = () => {
       await axios.post("http://localhost/InternBackend/api/logout.php?action=logout", {}, { withCredentials: true });
       localStorage.clear();
       toast.success("Logged out successfully!");
-      // Replace history so back button doesn't go to protected page
       navigate("/", { replace: true });
-      // Optionally, reload to clear cached state
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
-      toast.error("Logout failed",err);
+      toast.error("Logout failed", err);
     }
   };
 
@@ -95,19 +95,27 @@ const CompanyNavbar = () => {
 
   const markNotificationsAsRead = async () => {
     try {
-      // Only mark as read, do NOT clear to prevent regeneration
       await axios.post(`${API_BASE}/markAsRead.php`, {}, { withCredentials: true });
-      fetchNotifications(); // Refresh notifications
+      fetchNotifications();
     } catch (err) {
       console.error(err);
     }
   };
 
+  // Dropdown nav items
   const navItems = [
     { name: "Home", path: "/company/" },
     { name: "Dashboard", path: "/company/dashboard" },
     { name: "My Internships", path: "/company/internships" },
     { name: "Applications", path: "/company/applications" },
+    {
+      name: "Interview",
+      path: "/company/interview",
+      dropdown: [
+        { name: "Schedule Interview", path: "/company/schedule-interview" },
+        { name: "Update Interview Status", path: "/company/update-interview-status" },
+      ],
+    },
     { name: "My Profile", path: "/company/profile" },
   ];
 
@@ -118,6 +126,39 @@ const CompanyNavbar = () => {
         <ul className="items-center hidden space-x-6 md:flex">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
+            if (item.dropdown) {
+              return (
+                <li key={item.name} className="relative dropdown-parent">
+                  <button
+                    type="button"
+                    className={`text-sm font-medium cursor-pointer transition ${
+                      isActive ? "underline underline-offset-4" : "hover:text-white/80"
+                    }`}
+                    onClick={() =>
+                      setActiveDropdown(activeDropdown === item.name ? null : item.name)
+                    }
+                  >
+                    {item.name}
+                  </button>
+                  <div
+                    className={`absolute left-0 z-10 w-56 py-2 mt-2 bg-white rounded shadow-lg ${
+                      activeDropdown === item.name ? "block" : "hidden"
+                    }`}
+                  >
+                    {item.dropdown.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        to={sub.path}
+                        className="block px-4 py-2 text-sm text-[#01165A] hover:bg-blue-50 hover:text-blue-700"
+                        onClick={() => setActiveDropdown(null)}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              );
+            }
             return (
               <li key={item.name}>
                 <Link
@@ -172,6 +213,23 @@ const CompanyNavbar = () => {
         <div className="px-6 pb-4 space-y-2 text-white bg-oxfordblue md:hidden">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
+            if (item.dropdown) {
+              return (
+                <div key={item.name} className="mb-2">
+                  <span className="block text-sm font-medium">{item.name}</span>
+                  {item.dropdown.map((sub) => (
+                    <Link
+                      key={sub.name}
+                      to={sub.path}
+                      className="block px-4 py-2 text-sm text-[#01165A] bg-white rounded hover:bg-blue-50 hover:text-blue-700"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
+                </div>
+              );
+            }
             return (
               <Link
                 key={item.name}

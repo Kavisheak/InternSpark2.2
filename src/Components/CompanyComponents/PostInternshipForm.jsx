@@ -261,6 +261,7 @@ const PostInternshipForm = () => {
   const [isEditable, setIsEditable] = useState(!isViewOnlyMode && !id);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isCustomTitle, setIsCustomTitle] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -291,6 +292,15 @@ const PostInternshipForm = () => {
               applicationLimit: internship.application_limit || "",
             });
 
+            // Show custom input if title is not in the list
+            if (
+              internship.title &&
+              !internshipTitles.includes(internship.title)
+            ) {
+              setIsCustomTitle(true);
+            } else {
+              setIsCustomTitle(false);
+            }
             setIsEditable(!isViewOnlyMode);
           } else {
             toast.error(
@@ -314,12 +324,8 @@ const PostInternshipForm = () => {
     if (!isEditable) return;
     let { name, value } = e.target;
 
-    // Allow only numbers in salary and duration
-    if (
-      name === "salary" ||
-      name === "duration" ||
-      name === "applicationLimit"
-    ) {
+    // Only allow numbers in duration and applicationLimit
+    if (name === "duration" || name === "applicationLimit") {
       value = value.replace(/\D/g, ""); // remove non-digits
     }
 
@@ -338,6 +344,8 @@ const PostInternshipForm = () => {
     if (!formData.title.trim()) newErrors.title = "Please select a title";
     if (!formData.duration.trim())
       newErrors.duration = "Please fill out this field";
+    else if (formData.duration === "0")
+      newErrors.duration = "Duration cannot be 0";
     if (!formData.description.trim())
       newErrors.description = "Please fill out this field";
     if (!formData.requirements.trim())
@@ -428,25 +436,51 @@ const PostInternshipForm = () => {
             <label className="block mb-1 font-semibold text-oxfordblue">
               Internship Title
             </label>
-            <select
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              disabled={!isEditable}
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
-                ${
-                  errors.title
-                    ? "border-red-600 focus:ring-red-400"
-                    : "border-gray-400 focus:ring-[#2128BD]"
-                }`}
-            >
-              <option value="">--- Select Title ---</option>
-              {internshipTitles.map((title) => (
-                <option key={title} value={title}>
-                  {title}
-                </option>
-              ))}
-            </select>
+            {!isCustomTitle ? (
+              <select
+                name="title"
+                value={formData.title}
+                onChange={(e) => {
+                  if (e.target.value === "__custom__") {
+                    setIsCustomTitle(true);
+                    setFormData({ ...formData, title: "" });
+                  } else {
+                    setIsCustomTitle(false);
+                    handleChange(e);
+                  }
+                }}
+                disabled={!isEditable}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
+                  ${
+                    errors.title
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
+              >
+                <option value="">--- Select Title ---</option>
+                {internshipTitles.map((title) => (
+                  <option key={title} value={title}>
+                    {title}
+                  </option>
+                ))}
+                <option value="__custom__">New +</option>
+              </select>
+            ) : (
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                disabled={!isEditable}
+                placeholder="Type your internship title"
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
+                  ${
+                    errors.title
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
+              />
+            )}
             {errors.title && (
               <p className="mt-1 text-sm text-red-600">{errors.title}</p>
             )}
@@ -501,17 +535,25 @@ const PostInternshipForm = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block mb-1 font-semibold text-oxfordblue">
-                Salary (Rs)
+                Salary Range (Rs)
               </label>
-              <input
-                type="text"
+              <select
                 name="salary"
                 value={formData.salary}
                 onChange={handleChange}
                 disabled={!isEditable}
-                placeholder="e.g., 90000"
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
-              />
+              >
+                <option value="">--- Select Salary Range ---</option>
+                <option value="Rs 0 - Rs 10,000">Rs 0 - Rs 10,000</option>
+                <option value="Rs 10,000 - Rs 25,000">Rs 10,000 - Rs 25,000</option>
+                <option value="Rs 25,000 - Rs 50,000">Rs 25,000 - Rs 50,000</option>
+                <option value="Rs 50,000 - Rs 75,000">Rs 50,000 - Rs 75,000</option>
+                <option value="Rs 75,000 - Rs 100,000">Rs 75,000 - Rs 100,000</option>
+                <option value="Rs 100,000+">Rs 100,000+</option>
+                <option value="Negotiable">Negotiable</option>
+                <option value="Unpaid">Unpaid</option>
+              </select>
             </div>
             <div>
               <label className="block mb-1 font-semibold text-oxfordblue">

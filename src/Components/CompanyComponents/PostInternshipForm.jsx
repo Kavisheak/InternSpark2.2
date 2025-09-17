@@ -256,6 +256,8 @@ const PostInternshipForm = () => {
     requirements: "",
     deadline: "",
     applicationLimit: "",
+    workingHoursStart: "",
+    workingHoursEnd: "",
   });
 
   const [isEditable, setIsEditable] = useState(!isViewOnlyMode && !id);
@@ -290,6 +292,8 @@ const PostInternshipForm = () => {
               requirements: internship.requirements || "",
               deadline: internship.deadline || "",
               applicationLimit: internship.application_limit || "",
+              workingHoursStart: internship.working_hours?.split(" to ")[0] || "",
+              workingHoursEnd: internship.working_hours?.split(" to ")[1] || "",
             });
 
             // Show custom input if title is not in the list
@@ -374,6 +378,9 @@ const PostInternshipForm = () => {
         id: id || null,
         salary: formData.salary ? `Rs ${formData.salary}` : "",
         duration: formData.duration ? `${formData.duration} months` : "",
+        workingHours: formData.workingHoursStart && formData.workingHoursEnd
+          ? `${formData.workingHoursStart} to ${formData.workingHoursEnd}`
+          : "",
       };
 
       const res = await axios.post(
@@ -397,6 +404,8 @@ const PostInternshipForm = () => {
             requirements: "",
             deadline: "",
             applicationLimit: "",
+            workingHoursStart: "",
+            workingHoursEnd: "",
           });
         }
         navigate("/company/internships");
@@ -614,7 +623,7 @@ const PostInternshipForm = () => {
               onChange={handleChange}
               disabled={!isEditable}
               rows="4"
-              placeholder="Skills and qualifications..."
+              placeholder="Please list each requirement on a separate line..."
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
                 ${
                   errors.requirements
@@ -672,6 +681,56 @@ const PostInternshipForm = () => {
               {errors.applicationLimit && (
                 <p className="mt-1 text-sm text-red-600">
                   {errors.applicationLimit}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Working Hours */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Working Hours Start
+              </label>
+              <input
+                type="time"
+                name="workingHoursStart"
+                value={formData.workingHoursStart}
+                onChange={handleChange}
+                disabled={!isEditable}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
+                  ${
+                    errors.workingHoursStart
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
+              />
+              {errors.workingHoursStart && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.workingHoursStart}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold text-oxfordblue">
+                Working Hours End
+              </label>
+              <input
+                type="time"
+                name="workingHoursEnd"
+                value={formData.workingHoursEnd}
+                onChange={handleChange}
+                disabled={!isEditable}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100
+                  ${
+                    errors.workingHoursEnd
+                      ? "border-red-600 focus:ring-red-400"
+                      : "border-gray-400 focus:ring-[#2128BD]"
+                  }`}
+              />
+              {errors.workingHoursEnd && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.workingHoursEnd}
                 </p>
               )}
             </div>

@@ -302,8 +302,8 @@ export default function InternshipDetails() {
               />
               <DetailItem
                 icon={<FaClock />}
-                label="Duration"
-                value={internship.duration}
+                label="Working Hours"
+                value={formatWorkingHours(internship.working_hours)}
               />
               <DetailItem
                 icon={<FaCalendarAlt />}
@@ -592,4 +592,21 @@ function ReportModal({
       </div>
     </div>
   );
+}
+
+function formatWorkingHours(workingHours) {
+  if (!workingHours) return "";
+  const [start, end] = workingHours.split(" to ");
+  if (!start || !end) return workingHours;
+
+  const format = (t) => {
+    const [h, m] = t.split(":");
+    const hour = parseInt(h, 10);
+    const minute = m || "00";
+    const ampm = hour >= 12 ? "p.m." : "a.m.";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${minute.padStart(2, "0")} ${ampm}`;
+  };
+
+  return `${format(start)} to ${format(end)}`;
 }

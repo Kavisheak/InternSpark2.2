@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Globe } from "lucide-react";
+import { Globe, Mail } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 // Helper function to save system settings
@@ -26,6 +26,9 @@ export default function SystemSettings() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [userRegistration, setUserRegistration] = useState(true);
   const [companyRegistration, setCompanyRegistration] = useState(true);
+  const [maintenanceDateTime, setMaintenanceDateTime] = useState("");
+  const [maintenanceStart, setMaintenanceStart] = useState("");
+  const [maintenanceEnd, setMaintenanceEnd] = useState("");
 
   // Fetch current system settings on mount
   useEffect(() => {
@@ -54,6 +57,8 @@ export default function SystemSettings() {
               s.company_registration === "1" ||
                 String(s.company_registration).toLowerCase() === "true"
             );
+          if (s.maintenance_start) setMaintenanceStart(s.maintenance_start);
+          if (s.maintenance_end) setMaintenanceEnd(s.maintenance_end);
         }
       } catch (e) {
         console.debug("Could not fetch system settings", e);
@@ -67,6 +72,8 @@ export default function SystemSettings() {
       user_registration: userRegistration ? "1" : "0",
       company_registration: companyRegistration ? "1" : "0",
       site_name: siteName,
+      maintenance_start: maintenanceStart, // <-- add this
+      maintenance_end: maintenanceEnd, // <-- and this
     };
 
     toast.promise(saveSystemSettings(payload), {
@@ -77,6 +84,59 @@ export default function SystemSettings() {
           : data.message || "Failed to update settings.",
       error: (err) => `Error: ${err.message || "Failed to save settings."}`,
     });
+  };
+
+  // Send maintenance email to all users except admin
+  const handleSendMaintenanceEmail = async () => {
+    if (!maintenanceStart || !maintenanceEnd) {
+      toast.error("Please select both start and end date/time.");
+      return;
+    }
+
+    const startStr = new Date(maintenanceStart).toLocaleString();
+    const endStr = new Date(maintenanceEnd).toLocaleString();
+    const confirmed = window.confirm(
+      `Are you sure you want to send a maintenance notification email to all users?\n\nScheduled maintenance:\nFrom: ${startStr}\nTo:   ${endStr}`
+    );
+    if (!confirmed) return;
+
+    const now = new Date();
+    const start = new Date(maintenanceStart);
+    const end = new Date(maintenanceEnd);
+
+    if (start <= now) {
+      toast.error("Maintenance start time must be after the current time.");
+      return;
+    }
+    if (end <= now) {
+      toast.error("Maintenance end time must be after the current time.");
+      return;
+    }
+    if (end <= start) {
+      toast.error("Maintenance end time must be after the start time.");
+      return;
+    }
+
+    const res = await fetch(
+      "http://localhost/InternBackend/admin/api/send_maintenance_email.php",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          maintenance_start: maintenanceStart,
+          maintenance_end: maintenanceEnd,
+        }),
+      }
+    );
+    const data = await res.json();
+    if (data.success) {
+      toast.success("Maintenance email sent to all users.");
+      setMaintenanceStart("");
+      setMaintenanceEnd("");
+    } else {
+      toast.error(data.message || "Failed to send maintenance email.");
+    }
   };
 
   return (
@@ -140,12 +200,6 @@ export default function SystemSettings() {
           {/* Switch Settings */}
           {[
             {
-              label: "Maintenance Mode",
-              description: "Put the site in maintenance mode",
-              value: maintenanceMode,
-              onChange: () => setMaintenanceMode((prev) => !prev),
-            },
-            {
               label: "Student Registration",
               description: "Allow new student registrations",
               value: userRegistration,
@@ -174,6 +228,57 @@ export default function SystemSettings() {
               />
             </div>
           ))}
+
+          {/* Maintenance Mode Switch */}
+          <div className="flex items-center justify-between py-4 border-t">
+            <div>
+              <p className="font-medium text-gray-800">Maintenance Mode</p>
+              <p className="text-sm text-gray-500">
+                Put the site in maintenance mode
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              checked={maintenanceMode}
+              onChange={() => setMaintenanceMode((prev) => !prev)}
+              className="w-5 h-5 accent-orange-500"
+            />
+          </div>
+
+          {/* Maintenance Email Scheduler (Time Range) */}
+          <div className="flex flex-col gap-2 py-4 border-t">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Maintenance Start (Date & Time)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={maintenanceStart}
+                  onChange={(e) => setMaintenanceStart(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Maintenance End (Date & Time)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={maintenanceEnd}
+                  onChange={(e) => setMaintenanceEnd(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleSendMaintenanceEmail}
+              className="flex items-center self-end gap-2 px-4 py-2 mt-2 font-semibold text-white bg-orange-500 rounded-lg hover:bg-orange-600"
+            >
+              <Mail className="w-4 h-4" />
+              Send Maintenance Email
+            </button>
+          </div>
 
           <button
             onClick={handleSaveSettings}

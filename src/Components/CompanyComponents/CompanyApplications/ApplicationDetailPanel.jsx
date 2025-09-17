@@ -210,7 +210,11 @@ export default function ApplicationDetailPanel({
         <a
           href={
             selected.cv
-              ? `http://localhost/InternBackend/${selected.cv}`
+              ? (selected.cv.startsWith("http")
+                  ? selected.cv
+                  : selected.cv.startsWith("/")
+                  ? `http://localhost${selected.cv}`
+                  : `http://localhost/InternBackend/${selected.cv}`)
               : "/sample-cv.pdf"
           }
           download

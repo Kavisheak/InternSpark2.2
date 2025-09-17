@@ -116,6 +116,14 @@ const CompanyNavbar = () => {
         { name: "Update Interview Status", path: "/company/update-interview-status" },
       ],
     },
+    {
+      name: "Mentor Management",
+      path: "/company/mentor-management/add",
+      dropdown: [
+        { name: "Add New Mentors", path: "/company/mentor-management/add" },
+        { name: "Allocate Mentors", path: "/company/mentor-management/allocate" },
+      ],
+    },
     { name: "My Profile", path: "/company/profile" },
   ];
 

@@ -545,7 +545,7 @@ const PostInternshipForm = () => {
                 className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2128BD] disabled:bg-gray-100"
               >
                 <option value="">--- Select Salary Range ---</option>
-                <option value="Rs 0 - Rs 10,000">Rs 0 - Rs 10,000</option>
+                <option value="Rs 5000 - Rs 10,000">Rs 5000 - Rs 10,000</option>
                 <option value="Rs 10,000 - Rs 25,000">Rs 10,000 - Rs 25,000</option>
                 <option value="Rs 25,000 - Rs 50,000">Rs 25,000 - Rs 50,000</option>
                 <option value="Rs 50,000 - Rs 75,000">Rs 50,000 - Rs 75,000</option>

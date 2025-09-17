@@ -9,6 +9,8 @@ import CompanyApplications from "./CompanyApplications/CompanyApplications";
 import CompanyProfile from "./CompanyProfile/CompanyProfile";
 import PostInternshipForm from "./PostInternshipForm";
 import InterviewSchedule from "./InterviewSchedule/InterviewSchedule";
+import MentorManagement from "./MentorManagement";
+import AllocateMentors from "./AllocateMentors"; // Add this import
 
 // Navbar
 import CompanyNavbar from "./CompanyNavbar"; // ✅ Make sure this is correctly imported
@@ -70,6 +72,9 @@ const CompanyMain = () => {
         <Route path="/postinternship/:id" element={<PostInternshipForm />} />
         <Route path="/schedule-interview" element={<InterviewSchedule />} />
         <Route path="/update-interview-status" element={<UpdateInterviewStatus />} />
+        <Route path="/mentor-management" element={<MentorManagement />} />
+        <Route path="/mentor-management/add" element={<MentorManagement tab="add" />} />
+        <Route path="/mentor-management/allocate" element={<AllocateMentors />} /> {/* Change this line */}
       </Routes>
     </div>
   );

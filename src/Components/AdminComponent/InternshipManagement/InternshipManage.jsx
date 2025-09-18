@@ -7,6 +7,9 @@ export default function InternshipManagement() {
   const [activeTab, setActiveTab] = useState("all");
   const [internships, setInternships] = useState([]);
   const [selectedInternship, setSelectedInternship] = useState(null);
+  const [showReportsModal, setShowReportsModal] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [reportsInternship, setReportsInternship] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost/InternBackend/admin/api/internships.php")
@@ -152,6 +155,25 @@ export default function InternshipManagement() {
     }
   };
 
+  const handleViewReports = async (internship) => {
+    try {
+      const res = await fetch(
+        `http://localhost/InternBackend/admin/api/internship_reports.php?internship_id=${internship.id}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setReports(data.data || []);
+        setReportsInternship(internship);
+        setShowReportsModal(true);
+      } else {
+        toast.error(data.message || "No reports found");
+      }
+    } catch (err) {
+      toast.error("Failed to load reports");
+    }
+  };
+
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       <h1 className="mb-4 text-3xl font-bold text-gray-900">Internship Management</h1>
@@ -274,6 +296,12 @@ export default function InternshipManagement() {
                 >
                   <Trash2 className="w-4 h-4" /> Remove Listing
                 </button>
+                <button
+                  onClick={() => handleViewReports(item)}
+                  className="flex items-center gap-2 px-4 py-2 text-orange-600 border border-orange-300 rounded-lg bg-orange-50 hover:bg-orange-100"
+                >
+                  <Eye className="w-4 h-4" /> View Reports
+                </button>
               </div>
             </div>
           );
@@ -340,6 +368,66 @@ export default function InternshipManagement() {
                 <p className="text-gray-700">{selectedInternship.company} — {selectedInternship.company_location}</p>
                 {selectedInternship.website && <p className="text-xs text-blue-600">{selectedInternship.website}</p>}
                 {selectedInternship.about && <p className="mt-2 text-gray-700">{selectedInternship.about}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REPORTS MODAL */}
+      {showReportsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="w-full max-w-2xl mx-4">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden max-h-[80vh]">
+              <div className="flex items-center justify-between p-6 border-b">
+                <div>
+                  <h3 className="text-xl font-semibold text-orange-600">
+                    Reports for {reportsInternship?.title}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    {reports.length} report{reports.length !== 1 ? "s" : ""}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowReportsModal(false)}
+                  className="text-2xl text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-6 space-y-6 overflow-y-auto max-h-[65vh]">
+                {reports.length === 0 ? (
+                  <div className="text-center text-gray-600">No reports found</div>
+                ) : (
+                  reports.map((report) => (
+                    <div key={report.id} className="p-4 bg-white border rounded-lg shadow-sm">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="text-lg font-semibold">Report</h4>
+                          <p className="mt-2 text-gray-600">{report.reason}</p>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          <div>{new Date(report.reported_at).toLocaleString()}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-3 pt-4 mt-4 text-sm text-gray-700 border-t sm:grid-cols-2">
+                        <div>
+                          <div className="text-xs text-gray-500">Reported By</div>
+                          <div className="font-medium">
+                            {report.fname || ""} {report.lname || ""}
+                          </div>
+                          {report.email && (
+                            <div className="text-xs text-gray-500">{report.email}</div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500">Student ID</div>
+                          <div className="font-medium">{report.Student_Id || "-"}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

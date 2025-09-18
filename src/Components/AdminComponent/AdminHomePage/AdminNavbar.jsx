@@ -39,7 +39,7 @@ const AdminNavbar = () => {
   const confirmLogout = () => {
     toast((t) => (
       <div className="p-3">
-        <p className="mb-2 font-semibold text-white">
+        <p className="mb-2 font-semibold text-black">
           Are you sure you want to logout?
         </p>
         <div className="flex justify-end space-x-2">

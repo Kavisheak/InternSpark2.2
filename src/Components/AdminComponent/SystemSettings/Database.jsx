@@ -29,6 +29,8 @@ export default function SystemSettings() {
   const [maintenanceDateTime, setMaintenanceDateTime] = useState("");
   const [maintenanceStart, setMaintenanceStart] = useState("");
   const [maintenanceEnd, setMaintenanceEnd] = useState("");
+  const [maxFailedAttempts, setMaxFailedAttempts] = useState(3);
+  const [lockoutDuration, setLockoutDuration] = useState(15); // in minutes
 
   // Fetch current system settings on mount
   useEffect(() => {
@@ -59,6 +61,10 @@ export default function SystemSettings() {
             );
           if (s.maintenance_start) setMaintenanceStart(s.maintenance_start);
           if (s.maintenance_end) setMaintenanceEnd(s.maintenance_end);
+          if (s.max_failed_attempts)
+            setMaxFailedAttempts(Number(s.max_failed_attempts));
+          if (s.lockout_duration)
+            setLockoutDuration(Number(s.lockout_duration));
         }
       } catch (e) {
         console.debug("Could not fetch system settings", e);
@@ -74,6 +80,8 @@ export default function SystemSettings() {
       site_name: siteName,
       maintenance_start: maintenanceStart, // <-- add this
       maintenance_end: maintenanceEnd, // <-- and this
+      max_failed_attempts: maxFailedAttempts,
+      lockout_duration: lockoutDuration,
     };
 
     toast.promise(saveSystemSettings(payload), {
@@ -95,48 +103,112 @@ export default function SystemSettings() {
 
     const startStr = new Date(maintenanceStart).toLocaleString();
     const endStr = new Date(maintenanceEnd).toLocaleString();
-    const confirmed = window.confirm(
-      `Are you sure you want to send a maintenance notification email to all users?\n\nScheduled maintenance:\nFrom: ${startStr}\nTo:   ${endStr}`
+
+    toast(
+      (t) => (
+        <span>
+          <div className="mb-2 font-semibold text-orange-700">
+            Confirm Maintenance Notification
+          </div>
+          <div className="mb-2 text-gray-700">
+            Are you sure you want to send a maintenance notification email to all
+            users?
+            <br />
+            <span className="block mt-2 text-xs text-gray-500">
+              Scheduled maintenance:
+              <br />
+              <b>From:</b> {startStr}
+              <br />
+              <b>To:</b> {endStr}
+            </span>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <button
+              className="px-3 py-1 font-semibold text-white bg-orange-600 rounded hover:bg-orange-700"
+              onClick={async () => {
+                toast.dismiss(t.id);
+
+                const now = new Date();
+                const start = new Date(maintenanceStart);
+                const end = new Date(maintenanceEnd);
+
+                if (start <= now) {
+                  toast.error(
+                    "Maintenance start time must be after the current time."
+                  );
+                  return;
+                }
+                if (end <= now) {
+                  toast.error(
+                    "Maintenance end time must be after the current time."
+                  );
+                  return;
+                }
+                if (end <= start) {
+                  toast.error("Maintenance end time must be after the start time.");
+                  return;
+                }
+
+                const res = await fetch(
+                  "http://localhost/InternBackend/admin/api/send_maintenance_email.php",
+                  {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      maintenance_start: maintenanceStart,
+                      maintenance_end: maintenanceEnd,
+                    }),
+                  }
+                );
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(
+                    "System: Maintenance notification email sent to all users.",
+                    {
+                      style: {
+                        background: "#fff",
+                        color: "#333",
+                        borderLeft: "6px solid #ea580c",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        padding: "12px 20px",
+                      },
+                      iconTheme: {
+                        primary: "#ea580c",
+                        secondary: "#fff",
+                      },
+                    }
+                  );
+                  setMaintenanceStart("");
+                  setMaintenanceEnd("");
+                } else {
+                  toast.error(data.message || "Failed to send maintenance email.");
+                }
+              }}
+            >
+              Yes, Send
+            </button>
+            <button
+              className="px-3 py-1 font-semibold text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+          </div>
+        </span>
+      ),
+      { duration: 12000 }
     );
-    if (!confirmed) return;
+  };
 
-    const now = new Date();
-    const start = new Date(maintenanceStart);
-    const end = new Date(maintenanceEnd);
-
-    if (start <= now) {
-      toast.error("Maintenance start time must be after the current time.");
-      return;
-    }
-    if (end <= now) {
-      toast.error("Maintenance end time must be after the current time.");
-      return;
-    }
-    if (end <= start) {
-      toast.error("Maintenance end time must be after the start time.");
-      return;
-    }
-
-    const res = await fetch(
-      "http://localhost/InternBackend/admin/api/send_maintenance_email.php",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          maintenance_start: maintenanceStart,
-          maintenance_end: maintenanceEnd,
-        }),
-      }
-    );
-    const data = await res.json();
-    if (data.success) {
-      toast.success("Maintenance email sent to all users.");
-      setMaintenanceStart("");
-      setMaintenanceEnd("");
-    } else {
-      toast.error(data.message || "Failed to send maintenance email.");
-    }
+  const saveMaintenanceWindow = async (start, end) => {
+    await saveSystemSettings({
+      maintenance_start: start,
+      maintenance_end: end,
+    });
   };
 
   return (
@@ -256,6 +328,25 @@ export default function SystemSettings() {
                   type="datetime-local"
                   value={maintenanceStart}
                   onChange={(e) => setMaintenanceStart(e.target.value)}
+                  onBlur={async (e) => {
+                    await saveMaintenanceWindow(e.target.value, maintenanceEnd);
+                    toast.success("System: Maintenance start time updated.", {
+                      style: {
+                        background: "#fff",
+                        color: "#333",
+                        borderLeft: "6px solid #ea580c",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        padding: "12px 20px",
+                      },
+                      iconTheme: {
+                        primary: "#ea580c",
+                        secondary: "#fff",
+                      },
+                    });
+                  }}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
                 />
               </div>
@@ -267,6 +358,25 @@ export default function SystemSettings() {
                   type="datetime-local"
                   value={maintenanceEnd}
                   onChange={(e) => setMaintenanceEnd(e.target.value)}
+                  onBlur={async (e) => {
+                    await saveMaintenanceWindow(maintenanceStart, e.target.value);
+                    toast.success("System: Maintenance end time updated.", {
+                      style: {
+                        background: "#fff",
+                        color: "#333",
+                        borderLeft: "6px solid #ea580c",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        padding: "12px 20px",
+                      },
+                      iconTheme: {
+                        primary: "#ea580c",
+                        secondary: "#fff",
+                      },
+                    });
+                  }}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
                 />
               </div>
@@ -278,6 +388,45 @@ export default function SystemSettings() {
               <Mail className="w-4 h-4" />
               Send Maintenance Email
             </button>
+          </div>
+
+          {/* Account Lockout Settings */}
+          <div className="flex flex-col gap-4 py-4 border-t">
+            <h2 className="text-lg font-semibold text-gray-800">
+              Account Lockout Settings
+            </h2>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Max Failed Login Attempts
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={maxFailedAttempts}
+                  onChange={(e) =>
+                    setMaxFailedAttempts(Number(e.target.value))
+                  }
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Lockout Duration (minutes)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={lockoutDuration}
+                  onChange={(e) =>
+                    setLockoutDuration(Number(e.target.value))
+                  }
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+            </div>
           </div>
 
           <button

@@ -36,6 +36,9 @@ export default function InternshipDetails() {
 
   const [cancelModal, setCancelModal] = useState(false);
 
+  const [preferredCV, setPreferredCV] = useState(null);
+  const [cvUploading, setCvUploading] = useState(false);
+
   useEffect(() => {
     let active = true;
     setLoading(true);
@@ -90,10 +93,33 @@ export default function InternshipDetails() {
   }, [id]);
 
   const proceedApplication = async () => {
+    setCvUploading(true);
     try {
+      let cvUrl = null;
+      if (preferredCV) {
+        // Upload preferred CV
+        const formData = new FormData();
+        formData.append("cv", preferredCV);
+        const uploadRes = await axios.post(
+          `${API_BASE}/upload_cv.php`,
+          formData,
+          { withCredentials: true }
+        );
+        if (uploadRes.data.success && uploadRes.data.cv_url) {
+          cvUrl = uploadRes.data.cv_url;
+        } else {
+          toast.error(uploadRes.data.message || "CV upload failed.");
+          setCvUploading(false);
+          return;
+        }
+      }
+      // Apply for internship
       const res = await axios.post(
         `${API_BASE}/applications.php`,
-        { internship_id: internship.id ?? internship.Internship_Id ?? id },
+        {
+          internship_id: internship.id ?? internship.Internship_Id ?? id,
+          preferred_cv: cvUrl, // null if not uploaded
+        },
         { withCredentials: true }
       );
       if (res.data.success) {
@@ -108,7 +134,9 @@ export default function InternshipDetails() {
     } catch {
       toast.error("Failed to apply.");
     }
+    setCvUploading(false);
     setShowApplyModal(false);
+    setPreferredCV(null);
   };
 
   const handleCancelApplication = async () => {
@@ -402,17 +430,13 @@ export default function InternshipDetails() {
 
       {/* Apply Confirmation Modal */}
       {showApplyModal && (
-        <ConfirmModal
-          title="Confirm Application"
-          message={
-            <>
-              Are you sure you want to apply for{" "}
-              <span className="font-semibold text-[#FCA311]">"{title}"</span>?
-            </>
-          }
-          confirmText="Yes, Apply"
+        <ApplyWithCVModal
+          title="Apply for Internship"
           onCancel={() => setShowApplyModal(false)}
           onConfirm={proceedApplication}
+          preferredCV={preferredCV}
+          setPreferredCV={setPreferredCV}
+          cvUploading={cvUploading}
         />
       )}
 
@@ -594,11 +618,63 @@ function ReportModal({
   );
 }
 
+function ApplyWithCVModal({
+  title,
+  onCancel,
+  onConfirm,
+  preferredCV,
+  setPreferredCV,
+  cvUploading,
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="relative p-6 bg-white rounded-xl w-[90%] max-w-md shadow-lg text-center">
+        <button
+          className="absolute text-gray-400 top-4 right-4 hover:text-gray-600"
+          onClick={onCancel}
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <h2 className="text-xl font-semibold text-[#002147] mb-4">{title}</h2>
+        <p className="mb-4 text-sm text-gray-600">
+          You can apply with your profile CV or upload a preferred CV for this application.
+        </p>
+        <div className="mb-4">
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={e => setPreferredCV(e.target.files[0] || null)}
+            disabled={cvUploading}
+          />
+          <div className="mt-2 text-xs text-gray-500">
+            {preferredCV ? `Selected: ${preferredCV.name}` : "No file selected. Profile CV will be used."}
+          </div>
+        </div>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+            disabled={cvUploading}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded hover:bg-orange-600"
+            disabled={cvUploading}
+          >
+            {cvUploading ? "Applying..." : "Apply"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function formatWorkingHours(workingHours) {
-  if (!workingHours) return "";
+  if (!workingHours || !workingHours.trim()) return "Flexible";
   const [start, end] = workingHours.split(" to ");
   if (!start || !end) return workingHours;
-
   const format = (t) => {
     const [h, m] = t.split(":");
     const hour = parseInt(h, 10);
@@ -607,6 +683,5 @@ function formatWorkingHours(workingHours) {
     const hour12 = hour % 12 === 0 ? 12 : hour % 12;
     return `${hour12}:${minute.padStart(2, "0")} ${ampm}`;
   };
-
   return `${format(start)} to ${format(end)}`;
 }

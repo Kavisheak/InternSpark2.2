@@ -374,7 +374,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               aria-label="Close"
             >✖</button>
             <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Terms of Service – InternSpark</h2>
-            <p className="mb-2 text-sm text-gray-500">Effective Date: <span className="font-semibold text-orange-600">[Insert Date]</span></p>
+            
             <div className="space-y-5 text-gray-800 text-[1rem]">
               <p>
                 Welcome to InternSpark. By creating an account or using our platform, you agree to comply with the following Terms of Service. Please read them carefully before proceeding.
@@ -460,7 +460,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
               aria-label="Close"
             >✖</button>
             <h2 className="mb-4 text-3xl font-bold text-oxfordblue-900">Privacy Policy – InternSpark</h2>
-            <p className="mb-2 text-sm text-gray-500">Effective Date: <span className="font-semibold text-orange-600">[Insert Date]</span></p>
+            
             <div className="space-y-5 text-gray-800 text-[1rem]">
               <p>
                 InternSpark values your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our platform.

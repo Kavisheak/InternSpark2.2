@@ -33,10 +33,9 @@ export default function ApplicationSidebar({
       // If no search, show all
       if (skillTerms.length === 0) return true;
       // Combine all skills into a single string (case-insensitive)
-      const skills =
-        Array.isArray(app.skills)
-          ? app.skills.join(" ").toLowerCase()
-          : (app.skills || "").toLowerCase();
+      const skills = Array.isArray(app.skills)
+        ? app.skills.join(" ").toLowerCase()
+        : (app.skills || "").toLowerCase();
       // Every search term must be present in skills
       return skillTerms.every((term) => skills.includes(term));
     })
@@ -74,7 +73,6 @@ export default function ApplicationSidebar({
             <option value="All">All</option>
             <option value="Reviewing">Reviewing</option>
             <option value="Shortlisted">Shortlisted</option>
-            <option value="Accepted">Accepted</option>
             <option value="Rejected">Rejected</option>
           </select>
         </div>

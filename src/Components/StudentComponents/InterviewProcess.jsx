@@ -78,10 +78,9 @@ const InterviewProcess = () => {
         <div className="space-y-10">
           {interviews.map((iv) => {
             const canUpload =
+              !iv.cv && iv.certificates.length === 0 && iv.other_docs.length === 0 &&
               (iv.interview_date > today ||
-                (iv.interview_date === today &&
-                  padTime(iv.interview_time) > nowTime)) &&
-              (!iv.cv || iv.certificates.length === 0 || iv.other_docs.length === 0);
+                (iv.interview_date === today && padTime(iv.interview_time) > nowTime));
 
             const interviewDone =
               iv.interview_date < today ||
@@ -214,7 +213,7 @@ const InterviewProcess = () => {
                 </div>
 
                 {/* Upload Section */}
-                {canUpload && (
+                {canUpload ? (
                   <div className="p-6 mt-6 border border-[#FF7A00]/30 rounded-xl bg-[#FF7A00]/5">
                     <div className="mb-3 text-lg font-semibold text-[#01165A]">
                       Upload Documents (Optional)
@@ -354,6 +353,10 @@ const InterviewProcess = () => {
                         ? "Uploading..."
                         : "Upload Documents"}
                     </button>
+                  </div>
+                ) : (
+                  <div className="p-4 mt-6 text-center text-green-700 border border-green-200 bg-green-50 rounded-xl">
+                    Documents have already been submitted for this interview. You cannot upload again.
                   </div>
                 )}
               </div>

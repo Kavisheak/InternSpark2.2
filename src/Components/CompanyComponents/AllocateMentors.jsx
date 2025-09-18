@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast"; // Add this import at the top if not present
 
 // Utility to shuffle arrays
 function shuffle(array) {
@@ -95,23 +96,18 @@ const AllocateMentors = () => {
     let newAllocations = { ...allocations };
     const posts = [...new Set(students.map(s => s.post))];
 
-    console.log("Mentors:", mentors.map(m => m.expertise));
-    console.log("Student Posts:", students.map(s => s.post));
-
     posts.forEach(post => {
-      console.log("Allocating for post:", post);
+      // Only mentors with matching expertise
       const mentorsForPost = shuffle(
         mentors.filter(
           m =>
             m.expertise &&
-            m.expertise.trim() === post.trim()
+            m.expertise.trim().toLowerCase() === post.trim().toLowerCase()
         )
       );
-      console.log("Mentors found for this post:", mentorsForPost.map(m => m.expertise));
-
       const studentsForPost = shuffle(
         students.filter(
-          s => s.post && s.post.trim() === post.trim()
+          s => s.post && s.post.trim().toLowerCase() === post.trim().toLowerCase()
         )
       );
 
@@ -143,7 +139,12 @@ const AllocateMentors = () => {
   };
 
   const allAllocated = students.every(s => {
-    const mentorId = allocations[s.id];
+    const mentorId = allocations[`${s.id}-${s.post}`];
+    return mentorId && mentors.some(m => String(m.id) === String(mentorId));
+  });
+
+  const anyAllocated = students.some(s => {
+    const mentorId = allocations[`${s.id}-${s.post}`];
     return mentorId && mentors.some(m => String(m.id) === String(mentorId));
   });
 
@@ -152,6 +153,17 @@ const AllocateMentors = () => {
     if (loading) {
       content = <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>;
     } else {
+      // Remove duplicate students for the same post
+      const uniqueStudents = [];
+      const seen = new Set();
+      students.forEach(s => {
+        const key = `${s.id}-${s.post}`;
+        if (!seen.has(key)) {
+          uniqueStudents.push(s);
+          seen.add(key);
+        }
+      });
+
       content = (
         <div style={{
           background: "#fff",
@@ -200,14 +212,41 @@ const AllocateMentors = () => {
                   { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
                 );
                 if (res.data && res.data.success) {
-                  alert(
-                    `Emails sent!\nMentors: ${res.data.mentors_emailed}\nStudents: ${res.data.students_emailed}`
+                  toast.success(
+                    `Emails sent!\nMentors: ${res.data.mentors_emailed}\nStudents: ${res.data.students_emailed}`,
+                    {
+                      style: {
+                        background: "#002147",
+                        color: "#fff",
+                        borderLeft: "6px solid #FF8500",
+                        fontSize: "1rem",
+                        borderRadius: "0.75rem",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.18)",
+                      },
+                      iconTheme: {
+                        primary: "#FF8500",
+                        secondary: "#fff",
+                      },
+                    }
                   );
                 } else {
-                  alert("Failed to send emails.");
+                  toast.error("Failed to send emails.", {
+                    style: {
+                      background: "#002147",
+                      color: "#fff",
+                      borderLeft: "6px solid #ef4444",
+                      fontSize: "1rem",
+                      borderRadius: "0.75rem",
+                      boxShadow: "0 8px 20px rgba(0,0,0,0.18)",
+                    },
+                    iconTheme: {
+                      primary: "#ef4444",
+                      secondary: "#fff",
+                    },
+                  });
                 }
               } catch (err) {
-                alert("Failed to send emails.",err);
+                alert("Failed to send emails.", err);
               }
               setSaving(false);
             }}
@@ -218,12 +257,12 @@ const AllocateMentors = () => {
               padding: "0.6rem 1.5rem",
               border: "none",
               borderRadius: 8,
-              cursor: allAllocated && !saving ? "pointer" : "not-allowed",
+              cursor: anyAllocated && !saving ? "pointer" : "not-allowed",
               marginBottom: "1.5rem",
               fontSize: "1rem",
               marginLeft: "1rem"
             }}
-            disabled={!allAllocated || saving}
+            disabled={!anyAllocated || saving}
           >
             {saving ? "Sending..." : "Send Mail"}
           </button>
@@ -248,7 +287,7 @@ const AllocateMentors = () => {
             }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <tbody>
-                  {Array.isArray(students) && students.map((student) => {
+                  {Array.isArray(uniqueStudents) && uniqueStudents.map((student) => {
                     const allocationKey = `${student.id}-${student.post}`;
                     const mentorId = allocations[allocationKey];
                     const mentor = mentors.find(m => String(m.id) === String(mentorId));

@@ -26,7 +26,6 @@ export default function ApplicationDetailPanel({
     "Pending",
     "Reviewing",
     "Shortlisted",
-    "Accepted",
     "Rejected",
   ];
 

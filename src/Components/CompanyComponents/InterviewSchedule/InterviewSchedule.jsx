@@ -48,7 +48,7 @@ const InterviewSchedule = () => {
 
   useEffect(() => {
     setLoading(true);
-    let url = "http://localhost/InternBackend/company/api/get_accepted_candidates.php";
+    let url = "http://localhost/InternBackend/company/api/get_shortlisted_candidates.php";
     if (selectedTitle) {
       url += `?title=${encodeURIComponent(selectedTitle)}`;
     }
@@ -117,7 +117,7 @@ const InterviewSchedule = () => {
       setScheduleModalOpen(false);
       // Optionally refresh candidate list
       setLoading(true);
-      let url = "http://localhost/InternBackend/company/api/get_accepted_candidates.php";
+      let url = "http://localhost/InternBackend/company/api/get_shortlisted_candidates.php";
       if (selectedTitle) {
         url += `?title=${encodeURIComponent(selectedTitle)}`;
       }

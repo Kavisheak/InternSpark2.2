@@ -672,10 +672,9 @@ function ApplyWithCVModal({
 }
 
 function formatWorkingHours(workingHours) {
-  if (!workingHours) return "";
+  if (!workingHours || !workingHours.trim()) return "Flexible";
   const [start, end] = workingHours.split(" to ");
   if (!start || !end) return workingHours;
-
   const format = (t) => {
     const [h, m] = t.split(":");
     const hour = parseInt(h, 10);
@@ -684,6 +683,5 @@ function formatWorkingHours(workingHours) {
     const hour12 = hour % 12 === 0 ? 12 : hour % 12;
     return `${hour12}:${minute.padStart(2, "0")} ${ampm}`;
   };
-
   return `${format(start)} to ${format(end)}`;
 }

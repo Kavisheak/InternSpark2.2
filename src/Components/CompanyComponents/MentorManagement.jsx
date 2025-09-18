@@ -65,7 +65,18 @@ const MentorManagement = () => {
 
   const handleAddMentor = async (e) => {
     e.preventDefault();
-    if (!mentorName.trim() || !mentorEmail.trim() || !mentorExpertise) return;
+    if (!mentorName.trim()) {
+      toast.error(" Mentor name is required.");
+      return;
+    }
+    if (!mentorEmail.trim()) {
+      toast.error(" Mentor email is required.");
+      return;
+    }
+    if (!mentorExpertise) {
+      toast.error(" Mentor expertise must be selected.");
+      return;
+    }
 
     // Prevent duplicate in frontend (optional, backend will also check)
     const duplicateEmailDifferentName = mentors.some(
@@ -74,7 +85,7 @@ const MentorManagement = () => {
         m.name.trim().toLowerCase() !== mentorName.trim().toLowerCase()
     );
     if (duplicateEmailDifferentName) {
-      alert("This email is already used by another mentor name!");
+      toast.error("This email is already used by another mentor name!");
       return;
     }
 
@@ -85,7 +96,7 @@ const MentorManagement = () => {
         m.expertise === mentorExpertise
     );
     if (duplicate) {
-      alert("This mentor with the same name, email, and expertise is already added!");
+      toast.error("This mentor with the same name, email, and expertise is already added!");
       return;
     }
 
@@ -101,30 +112,70 @@ const MentorManagement = () => {
         setMentorName("");
         setMentorEmail("");
         setMentorExpertise(internshipPosts[0]?.title || "");
+        toast.success("Mentor added successfully!");
       } else {
-        alert(res.data.message || "Failed to add mentor");
+        toast.error(res.data.message || "Failed to add mentor");
       }
     } catch (err) {
-      alert("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     }
   };
 
   const handleDeleteMentor = async (mentorId) => {
-    if (!window.confirm("Are you sure you want to remove this mentor?")) return;
-    try {
-      const res = await axios.post(
-        "http://localhost/InternBackend/company/api/delete_mentor.php",
-        { mentor_id: mentorId, company_id: companyId }
-      );
-      if (res.data.success) {
-        setMentors(mentors.filter((m) => m.id !== mentorId));
-        toast && toast.success("Mentor removed successfully!");
-      } else {
-        toast && toast.error(res.data.message || "Failed to remove mentor");
-      }
-    } catch (err) {
-      toast && toast.error("Server error. Please try again.");
-    }
+    toast(
+      (t) => (
+        <span>
+          Are you sure you want to remove this mentor?
+          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+            <button
+              style={{
+                background: "#FF4C4C",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.3rem 1rem",
+                fontWeight: 500,
+                cursor: "pointer",
+              }}
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  const res = await axios.post(
+                    "http://localhost/InternBackend/company/api/delete_mentor.php",
+                    { mentor_id: mentorId, company_id: companyId }
+                  );
+                  if (res.data.success) {
+                    setMentors(mentors.filter((m) => m.id !== mentorId));
+                    toast.success("Mentor removed successfully!");
+                  } else {
+                    toast.error(res.data.message || "Failed to remove mentor");
+                  }
+                } catch (err) {
+                  toast.error("Server error. Please try again.");
+                }
+              }}
+            >
+              Yes, Remove
+            </button>
+            <button
+              style={{
+                background: "#eee",
+                color: "#222",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.3rem 1rem",
+                fontWeight: 500,
+                cursor: "pointer",
+              }}
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+          </div>
+        </span>
+      ),
+      { duration: 8000 }
+    );
   };
 
   return (
@@ -197,7 +248,6 @@ const MentorManagement = () => {
                 transition: "border 0.2s",
               }}
               placeholder="Enter mentor name"
-              required
             />
           </div>
           <div>
@@ -225,7 +275,6 @@ const MentorManagement = () => {
                 transition: "border 0.2s",
               }}
               placeholder="Enter mentor email"
-              required
             />
           </div>
           <div>
@@ -251,7 +300,6 @@ const MentorManagement = () => {
                 background: "#fff",
                 outline: "none",
               }}
-              required
             >
               {internshipPosts.length === 0 && (
                 <option value="">No posts available</option>

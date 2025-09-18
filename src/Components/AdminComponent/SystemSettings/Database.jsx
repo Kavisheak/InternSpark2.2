@@ -29,6 +29,8 @@ export default function SystemSettings() {
   const [maintenanceDateTime, setMaintenanceDateTime] = useState("");
   const [maintenanceStart, setMaintenanceStart] = useState("");
   const [maintenanceEnd, setMaintenanceEnd] = useState("");
+  const [maxFailedAttempts, setMaxFailedAttempts] = useState(3);
+  const [lockoutDuration, setLockoutDuration] = useState(15); // in minutes
 
   // Fetch current system settings on mount
   useEffect(() => {
@@ -59,6 +61,10 @@ export default function SystemSettings() {
             );
           if (s.maintenance_start) setMaintenanceStart(s.maintenance_start);
           if (s.maintenance_end) setMaintenanceEnd(s.maintenance_end);
+          if (s.max_failed_attempts)
+            setMaxFailedAttempts(Number(s.max_failed_attempts));
+          if (s.lockout_duration)
+            setLockoutDuration(Number(s.lockout_duration));
         }
       } catch (e) {
         console.debug("Could not fetch system settings", e);
@@ -74,6 +80,8 @@ export default function SystemSettings() {
       site_name: siteName,
       maintenance_start: maintenanceStart, // <-- add this
       maintenance_end: maintenanceEnd, // <-- and this
+      max_failed_attempts: maxFailedAttempts,
+      lockout_duration: lockoutDuration,
     };
 
     toast.promise(saveSystemSettings(payload), {
@@ -278,6 +286,45 @@ export default function SystemSettings() {
               <Mail className="w-4 h-4" />
               Send Maintenance Email
             </button>
+          </div>
+
+          {/* Account Lockout Settings */}
+          <div className="flex flex-col gap-4 py-4 border-t">
+            <h2 className="text-lg font-semibold text-gray-800">
+              Account Lockout Settings
+            </h2>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Max Failed Login Attempts
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={maxFailedAttempts}
+                  onChange={(e) =>
+                    setMaxFailedAttempts(Number(e.target.value))
+                  }
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Lockout Duration (minutes)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={lockoutDuration}
+                  onChange={(e) =>
+                    setLockoutDuration(Number(e.target.value))
+                  }
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+              </div>
+            </div>
           </div>
 
           <button

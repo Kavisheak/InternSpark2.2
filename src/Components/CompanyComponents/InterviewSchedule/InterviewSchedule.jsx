@@ -6,26 +6,45 @@ import UpdateInterviewStatus from "./UpdateInterviewStatus";
 
 const defaultProfileImg = "/default-profile.png";
 
-const internshipTitles = [
-  "Frontend Developer",
-  "Backend Developer",
-  "UI/UX Designer",
-  "Marketing Intern",
-  "Data Analyst",
-];
-
 const InterviewSchedule = () => {
   const [selectedTitle, setSelectedTitle] = useState("");
   const [search, setSearch] = useState("");
-  
+  const [internshipTitles, setInternshipTitles] = useState([]);
   const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filterType, setFilterType] = useState("all"); // "all", "scheduled", "unscheduled"
+  const [filterType, setFilterType] = useState("all");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [pendingRescheduleRequestId, setPendingRescheduleRequestId] = useState(null);
   const [showRescheduleRequests, setShowRescheduleRequests] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
+
+  // Step 1: Fetch company ID
+  useEffect(() => {
+    fetch("http://localhost/InternBackend/company/api/get_company_id.php", {
+      credentials: "include",
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.company_id) setCompanyId(data.company_id);
+      });
+  }, []);
+
+  // Step 2: Fetch internships for this company
+  useEffect(() => {
+    if (!companyId) return;
+    fetch(`http://localhost/InternBackend/company/api/get_internship_posts.php?company_id=${companyId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setInternshipTitles(data.map(i => i.title));
+        } else {
+          setInternshipTitles([]);
+        }
+      })
+      .catch(() => setInternshipTitles([]));
+  }, [companyId]);
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +60,14 @@ const InterviewSchedule = () => {
         setLoading(false);
       });
   }, [selectedTitle]);
+
+  // Helper to check if interview is in the past
+  function isInterviewInPast(candidate) {
+    if (!candidate.interview_date || !candidate.interview_time) return false;
+    const now = new Date();
+    const interviewDateTime = new Date(`${candidate.interview_date}T${candidate.interview_time}`);
+    return interviewDateTime <= now;
+  }
 
   // Filter by search and scheduled/unscheduled
   const filteredCandidates = candidates.filter((c) => {
@@ -59,7 +86,8 @@ const InterviewSchedule = () => {
     const matchesReschedule =
       !showRescheduleRequests ||
       (c.reschedule_id && c.reschedule_status === "pending");
-    return matchesSearch && matchesType && matchesReschedule;
+    const notInPast = !isInterviewInPast(c);
+    return matchesType && matchesReschedule && notInPast;
   });
 
   const handleScheduleInterview = async (details) => {
@@ -132,8 +160,12 @@ const InterviewSchedule = () => {
     }
   };
 
+  // Only count pending requests for visible (not-in-past) candidates
   const pendingRescheduleCount = candidates.filter(
-    c => c.reschedule_id && c.reschedule_status === "pending"
+    c =>
+      c.reschedule_id &&
+      c.reschedule_status === "pending" &&
+      !isInterviewInPast(c)
   ).length;
 
   return (
@@ -160,13 +192,7 @@ const InterviewSchedule = () => {
               </option>
             ))}
           </select>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search candidate name or email"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
+          
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
@@ -277,6 +303,7 @@ const InterviewSchedule = () => {
           onClose={() => setScheduleModalOpen(false)}
           candidate={selectedCandidate || { name: "", email: "" }}
           onSchedule={handleScheduleInterview}
+          companyId={companyId} // <-- pass this prop
         />
         <CompanyRescheduleModal
           open={rescheduleModalOpen}

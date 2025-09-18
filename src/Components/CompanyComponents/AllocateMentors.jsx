@@ -94,24 +94,40 @@ const AllocateMentors = () => {
   const handleRandomAllocate = async () => {
     let newAllocations = { ...allocations };
     const posts = [...new Set(students.map(s => s.post))];
+
+    console.log("Mentors:", mentors.map(m => m.expertise));
+    console.log("Student Posts:", students.map(s => s.post));
+
     posts.forEach(post => {
-      const studentsForPost = shuffle(
-        students.filter(s => {
-          const mentorId = allocations[s.id];
-          // Only allocate if not allocated or allocated mentor does not exist
-          return (
-            !mentorId ||
-            !mentors.some(m => String(m.id) === String(mentorId))
-          );
-        }).filter(s => s.post === post)
+      console.log("Allocating for post:", post);
+      const mentorsForPost = shuffle(
+        mentors.filter(
+          m =>
+            m.expertise &&
+            m.expertise.trim() === post.trim()
+        )
       );
-      const mentorsForPost = shuffle(mentors.filter(m => m.expertise === post));
-      if (mentorsForPost.length === 0) return;
+      console.log("Mentors found for this post:", mentorsForPost.map(m => m.expertise));
+
+      const studentsForPost = shuffle(
+        students.filter(
+          s => s.post && s.post.trim() === post.trim()
+        )
+      );
+
+      if (mentorsForPost.length === 0) {
+        studentsForPost.forEach(student => {
+          newAllocations[`${student.id}-${student.post}`] = null;
+        });
+        return;
+      }
+
       studentsForPost.forEach((student, idx) => {
         const mentor = mentorsForPost[idx % mentorsForPost.length];
-        newAllocations[student.id] = mentor.id;
+        newAllocations[`${student.id}-${student.post}`] = mentor.id;
       });
     });
+
     setSaving(true);
     try {
       await axios.post(
@@ -191,7 +207,7 @@ const AllocateMentors = () => {
                   alert("Failed to send emails.");
                 }
               } catch (err) {
-                alert("Failed to send emails.");
+                alert("Failed to send emails.",err);
               }
               setSaving(false);
             }}
@@ -233,10 +249,11 @@ const AllocateMentors = () => {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <tbody>
                   {Array.isArray(students) && students.map((student) => {
-                    const mentorId = allocations[student.id];
+                    const allocationKey = `${student.id}-${student.post}`;
+                    const mentorId = allocations[allocationKey];
                     const mentor = mentors.find(m => String(m.id) === String(mentorId));
                     return (
-                      <tr key={student.id} style={{ borderBottom: "1px solid #eee" }}>
+                      <tr key={allocationKey} style={{ borderBottom: "1px solid #eee" }}>
                         <td style={{ padding: "0.75rem" }}>
                           <span style={{ fontWeight: 600 }}>{student.name}</span>
                           <br />

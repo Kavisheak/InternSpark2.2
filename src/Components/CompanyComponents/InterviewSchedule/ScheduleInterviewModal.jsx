@@ -1,20 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const interviewTypes = [
   { value: "onsite", label: "Onsite" },
   { value: "online", label: "Online" },
 ];
 
-function ScheduleInterviewModal({ open, onClose, candidate, onSchedule }) {
-  // Pre-fill modal fields if interview is scheduled
+function ScheduleInterviewModal({ open, onClose, candidate, onSchedule, companyId }) {
   const [type, setType] = useState(candidate.interview_type || "");
   const [date, setDate] = useState(candidate.interview_date || "");
   const [time, setTime] = useState(candidate.interview_time || "");
   const [meetingLink, setMeetingLink] = useState(candidate.meeting_link || "");
   const [location, setLocation] = useState(candidate.location || "");
   const [error, setError] = useState("");
+  const [internships, setInternships] = useState([]);
 
-  // Reset modal fields when candidate changes
+  useEffect(() => {
+    if (!companyId) return;
+    fetch(`http://localhost/InternBackend/company/api/get_internship_posts.php?company_id=${companyId}`)
+      .then(res => res.json())
+      .then(data => setInternships(Array.isArray(data) ? data : []))
+      .catch(() => setInternships([]));
+  }, [companyId]);
+
   React.useEffect(() => {
     setType(candidate.interview_type || "");
     setDate(candidate.interview_date || "");
@@ -136,6 +143,21 @@ function ScheduleInterviewModal({ open, onClose, candidate, onSchedule }) {
             />
           </div>
         )}
+        <div className="mb-3">
+          <label className="block mb-1 font-semibold text-oxfordblue">Internship</label>
+          <select
+            value={candidate.Internship_Id || ""}
+            disabled
+            className="w-full px-4 py-2 bg-gray-100 border rounded"
+          >
+            <option value="">Select Internship</option>
+            {internships.map((intern) => (
+              <option key={intern.id} value={intern.id}>
+                {intern.title}
+              </option>
+            ))}
+          </select>
+        </div>
         {error && <div className="mb-3 text-sm text-red-600">{error}</div>}
         <button
           className={`w-full py-3 font-semibold text-white ${

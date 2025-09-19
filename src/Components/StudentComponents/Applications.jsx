@@ -52,7 +52,7 @@ export default function MyApplications() {
     { name: "All", count: applications.length },
     { name: "Shortlisted", count: statusCounts.Shortlisted || 0 },
     { name: "Reviewing", count: statusCounts.Reviewing || 0 },
-    { name: "Accepted", count: statusCounts.Accepted || 0 },
+    
     { name: "Rejected", count: statusCounts.Rejected || 0 },
   ];
 

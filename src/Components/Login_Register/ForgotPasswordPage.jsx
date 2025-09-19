@@ -15,8 +15,9 @@ const ForgotPasswordPage = () => {
 
     try {
       const res = await axios.post(
-        'http://localhost/InternBackend/api/request_reset.php',
-        { email }
+        'http://localhost/InternBackend/api/forgot_password.php',
+        { email },
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
       setMessage(res.data.message);

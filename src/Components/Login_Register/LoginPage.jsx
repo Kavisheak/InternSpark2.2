@@ -220,10 +220,11 @@ const LoginPage = ({ onNavigateToRegister }) => {
         {message === "Account suspended. Contact administrator." && (
           <div className="p-4 mt-6 border border-red-300 rounded-lg bg-red-50">
             <div className="mb-2 font-semibold text-red-700">
-              Your account has been suspended.
+              Your account is currently unavailable due to policy reasons.
             </div>
             <div className="mb-3 text-sm text-gray-700">
-              If you believe this is a mistake, you can request a review.
+              If you believe this is an error or need further assistance, you may
+              request a review from the administrator.
             </div>
             <button
               className="px-4 py-2 font-medium text-white bg-orange-600 rounded-lg shadow hover:bg-orange-500"

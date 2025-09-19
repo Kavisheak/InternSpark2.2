@@ -13,6 +13,7 @@ const StudentNavbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -263,8 +264,8 @@ const StudentNavbar = () => {
                 <div key={item.name} className="mb-2">
                   <button
                     onClick={() =>
-                      setActiveDropdown(
-                        activeDropdown === item.name ? null : item.name
+                      setActiveMobileDropdown(
+                        activeMobileDropdown === item.name ? null : item.name
                       )
                     }
                     className="flex items-center justify-between w-full px-2 py-2 text-sm font-medium text-white hover:text-[#F97316]"
@@ -273,18 +274,21 @@ const StudentNavbar = () => {
                     <ChevronDown
                       size={16}
                       className={`transition-transform ${
-                        activeDropdown === item.name ? "rotate-180" : ""
+                        activeMobileDropdown === item.name ? "rotate-180" : ""
                       }`}
                     />
                   </button>
-                  {activeDropdown === item.name && (
+                  {activeMobileDropdown === item.name && (
                     <div className="mt-1 ml-4 space-y-1">
                       {item.dropdown.map((sub) => (
                         <Link
                           key={sub.name}
                           to={sub.path}
                           className="block px-3 py-2 text-sm text-white bg-[#01165A] rounded hover:bg-[#F97316]/20 hover:text-gray-300"
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setActiveMobileDropdown(null);
+                          }}
                         >
                           {sub.name}
                         </Link>

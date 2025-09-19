@@ -242,7 +242,7 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <div>
             <label className="block mb-1 text-sm font-medium text-oxfordblue-800">Role</label>
             <select name="role" value={formData.role} onChange={handleChange} className={getInputClass('role')} required>
-              <option value="student">Student</option>
+              <option value="student">Internship Seeker</option>
               <option value="company">Company</option>
             </select>
           </div>
